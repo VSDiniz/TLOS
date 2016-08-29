@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="80" height="18" tilewidth="32" tileheight="32" nextobjectid="1">
+ <tileset firstgid="1" name="Dungeon" tilewidth="32" tileheight="32" tilecount="90" columns="9">
+  <image source="2db3cac388bcc3126be413825ba13f86.jpg" width="288" height="320"/>
+ </tileset>
+ <tileset firstgid="91" name="Castle2" tilewidth="32" tileheight="32" spacing="2" margin="5" tilecount="272" columns="17">
+  <image source="tileset_wip___01_by_smilecythe-d4cmmwg.png" width="613" height="563"/>
+  <terraintypes>
+   <terrain name="Novo Terreno" tile="-1"/>
+   <terrain name="Novo Terreno2" tile="-1"/>
+   <terrain name="Novo Terreno3" tile="-1"/>
+   <terrain name="Novo Terreno4" tile="-1"/>
+  </terraintypes>
+  <tile id="19" terrain="2,2,2,2"/>
+  <tile id="34" terrain="3,3,3,3"/>
+  <tile id="208" terrain="0,0,0,0"/>
+  <tile id="221" terrain="1,1,1,1"/>
+ </tileset>
+ <layer name="Camada de Tiles 1" width="80" height="18">
+  <data encoding="base64" compression="zlib">
+   eJzt1kENgDAQRcGtCyzgAFU4gAAOoA5a6pOvYTehafIO42GamTW47QhZETInRCwAAOB3E0J6/310G4BhHXLC5ZJbHrhkKVLh8soHzF4irw==
+  </data>
+ </layer>
+</map>
