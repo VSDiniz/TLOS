@@ -5,13 +5,12 @@ Created on Thu Aug 18 08:53:45 2016
 @author: vini_
 """
 
-import pygame, sys, constants, platforms, pytmx
-from pytmx.util_pygame import load_pygame
+import pygame, constants, platforms, sys
 
 class Level():
     # Classe genérica para definir um level
  
-    def __init__(self, player, enemy):
+    def __init__(self, player, enemy, screen):
         # Lista de sprites usadas em todos os levels
         self.platform_list = None
         self.enemy_list = None
@@ -21,7 +20,8 @@ class Level():
  
         # Quanto o world se deslocou esquerda/direita
         self.world_shift = 0
-        self.level_limit = -1000
+#        self.world_shifty = 0
+        self.level_limit = -900
         self.platform_list = pygame.sprite.Group()
         self.enemy_list = pygame.sprite.Group()
         self.player = player
@@ -35,72 +35,56 @@ class Level():
     def draw(self, screen):
         # Desenha tudo num level 
         # Desenha o background
-        screen.fill(constants.BLUE)
+        screen.fill(constants.GRAY)
         # Faz o world se deslocar mais lentamente que o player
-        screen.blit(self.background,(self.world_shift // 3,0)) 
+        screen.blit(self.background, (self.world_shift // 1,5))
  
         # Desenha todas as listas de sprites
         self.platform_list.draw(screen)
         self.enemy_list.draw(screen)
- 
+         
     def shift_world(self, shift_x):
         # Desloca o world quando o player se move
         # Mantém controle de quanto o world se desloca
         self.world_shift += shift_x
+#        self.world_shifty += shift_y
  
         # Passa por toda a lista de sprites e altera
         for platform in self.platform_list:
             platform.rect.x += shift_x
+#            platform.rect.y += shift_y
  
         for enemy in self.enemy_list:
             enemy.rect.x += shift_x
+#            enemy.rect.y += shift_y
  
 # Cria as plataformas para o level
- 
-class Level_00(Level):
- 
-    def __init__(self, player):
- 
-        Level.__init__(self, player)
- 
-        self.background = pygame.image.load("images/background.jpg").convert()
-        self.background.set_colorkey(constants.WHITE)
-        
- 
 class Level_01(Level):
  
-    def __init__(self, player, enemy):
+    def __init__(self, player, enemy, screen):
  
-        Level.__init__(self, player, enemy)
+        Level.__init__(self, player, enemy, screen)
  
-        self.background = pygame.image.load("images/castle.png").convert() #101,5,48,150
-        self.background.set_colorkey(constants.WHITE)
-        self.level_limit = -2500
+        self.background = pygame.image.load("images/map2.png").convert()
+        self.background = pygame.transform.scale2x(self.background)
+        self.level_limit = 6400
  
         # Array com o tipo de plataforma e coordenadas (x,y) para localização
-        level = [ [platforms.STONE_PLATFORM_MIDDLE, constants.SCREEN_WIDTH-48, constants.SCREEN_HEIGHT-12],
-                  [platforms.STONE_PLATFORM_MIDDLE, constants.SCREEN_WIDTH-(48*2), constants.SCREEN_HEIGHT-12],
-                  [platforms.STONE_PLATFORM_MIDDLE, constants.SCREEN_WIDTH-(48*3), constants.SCREEN_HEIGHT-12],
-                  [platforms.STONE_PLATFORM_MIDDLE, constants.SCREEN_WIDTH-(48*4), constants.SCREEN_HEIGHT-12],
-                  [platforms.STONE_PLATFORM_MIDDLE, constants.SCREEN_WIDTH-(48*5), constants.SCREEN_HEIGHT-12],
-                  [platforms.STONE_PLATFORM_MIDDLE, constants.SCREEN_WIDTH-(48*6), constants.SCREEN_HEIGHT-12],
-                  [platforms.STONE_PLATFORM_MIDDLE, constants.SCREEN_WIDTH-(48*7), constants.SCREEN_HEIGHT-12],
-                  [platforms.STONE_PLATFORM_MIDDLE, constants.SCREEN_WIDTH-(48*8), constants.SCREEN_HEIGHT-12],
-                  [platforms.STONE_PLATFORM_MIDDLE, constants.SCREEN_WIDTH-(48*9), constants.SCREEN_HEIGHT-12],
-                  [platforms.STONE_PLATFORM_MIDDLE, constants.SCREEN_WIDTH-(48*10), constants.SCREEN_HEIGHT-12],
-                  [platforms.STONE_PLATFORM_MIDDLE, constants.SCREEN_WIDTH-(48*11), constants.SCREEN_HEIGHT-12],
-                  [platforms.STONE_PLATFORM_MIDDLE, constants.SCREEN_WIDTH-(48*12), constants.SCREEN_HEIGHT-12],
-                  [platforms.STONE_PLATFORM_MIDDLE, constants.SCREEN_WIDTH-(48*13), constants.SCREEN_HEIGHT-12],
-                  [platforms.STONE_PLATFORM_MIDDLE, constants.SCREEN_WIDTH-(48*14), constants.SCREEN_HEIGHT-12],
-                  [platforms.STONE_PLATFORM_MIDDLE, constants.SCREEN_WIDTH-(48*15), constants.SCREEN_HEIGHT-12],
-                  [platforms.STONE_PLATFORM_MIDDLE, constants.SCREEN_WIDTH-(48*16), constants.SCREEN_HEIGHT-12],
-                  [platforms.STONE_PLATFORM_MIDDLE, constants.SCREEN_WIDTH-(48*17), constants.SCREEN_HEIGHT-12],
-                  [platforms.STONE_PLATFORM_MIDDLE, constants.SCREEN_WIDTH-(48*18), constants.SCREEN_HEIGHT-12],
-                  [platforms.STONE_PLATFORM_MIDDLE, constants.SCREEN_WIDTH-(48*19), constants.SCREEN_HEIGHT-12],
-                  [platforms.STONE_PLATFORM_MIDDLE, constants.SCREEN_WIDTH-(48*20), constants.SCREEN_HEIGHT-12],
-                  [platforms.STONE_PLATFORM_MIDDLE, constants.SCREEN_WIDTH-(48*21), constants.SCREEN_HEIGHT-12],
+        level = [[platforms.plat1, 928, 555],
+                 [platforms.plat2, 1760, 555],
+                 [platforms.plat3, 2624, 555],
+                 [platforms.plat4, 3616, 555],
+                 [platforms.plat5, 4832, 555],
+                 [platforms.plat2, 5696, 555],
+                 [platforms.plat6, 6500, 555],
+                 [platforms.stone_wall, 6705, 0],
+                 [platforms.floatplat, 4450, 395],
+                 [platforms.floatplat, 5442, 395],
+                 [platforms.block2, 4192, 586],
+                 [platforms.block1, 4384, 555],
+                 [platforms.block1, 4608, 555],
+                 [platforms.block2, 4768, 586],
                   ]
- 
  
         # Passa pelo array e adiciona plataformas
         for platform in level:
@@ -111,42 +95,34 @@ class Level_01(Level):
             block.enemy = self.enemy
             self.platform_list.add(block)
  
-        # Adiciona uma plataforma móvel
-        block = platforms.MovingPlatform(platforms.STONE_PLATFORM_MIDDLE)
-        block.rect.x = 1350
-        block.rect.y = 280
-        block.boundary_left = 1350
-        block.boundary_right = 1600
-        block.change_x = 1
-        block.player = self.player
-        block.enemy = self.enemy
-        block.level = self
-        self.platform_list.add(block)
+#==============================================================================
+#         # Adiciona uma plataforma móvel
+#         block = platforms.MovingPlatform(platforms.STONE_PLATFORM_MIDDLE)
+#         block.rect.x = 1350
+#         block.rect.y = 380
+#         block.boundary_left = 1350
+#         block.boundary_right = 1600
+#         block.change_x = 1
+#         block.player = self.player
+#         block.enemy = self.enemy
+#         block.level = self
+#         self.platform_list.add(block)
+#==============================================================================
  
  
 class Level_02(Level):
  
-    def __init__(self, player, enemy):
+    def __init__(self, player, enemy, screen):
  
-        Level.__init__(self, player, enemy)
+        Level.__init__(self, player, enemy, screen)
  
-        self.background = pygame.image.load("images/background.png").convert()
-        self.background.set_colorkey(constants.WHITE)
-        self.level_limit = -1000
+        self.background = pygame.image.load("images/map3.png").convert()
+        self.background = pygame.transform.scale2x(self.background)
+        self.level_limit = 3600
  
-        level = [ [platforms.STONE_PLATFORM_LEFT, 500, 550],
-                  [platforms.STONE_PLATFORM_MIDDLE, 570, 550],
-                  [platforms.STONE_PLATFORM_RIGHT, 640, 550],
-                  [platforms.GRASS_LEFT, 800, 400],
-                  [platforms.GRASS_MIDDLE, 870, 400],
-                  [platforms.GRASS_RIGHT, 940, 400],
-                  [platforms.GRASS_LEFT, 1000, 500],
-                  [platforms.GRASS_MIDDLE, 1070, 500],
-                  [platforms.GRASS_RIGHT, 1140, 500],
-                  [platforms.STONE_PLATFORM_LEFT, 1120, 280],
-                  [platforms.STONE_PLATFORM_MIDDLE, 1190, 280],
-                  [platforms.STONE_PLATFORM_RIGHT, 1260, 280],
-                  ]
+        level = [[platforms.plat7, 650, 555],
+                 [platforms.stone_wall, 550, 0],
+                 [platforms.stone_wall, 2820, 0]]
  
  
         for platform in level:
@@ -156,23 +132,29 @@ class Level_02(Level):
             block.player = self.player
             self.platform_list.add(block)
  
-        block = platforms.MovingPlatform(platforms.STONE_PLATFORM_MIDDLE)
-        block.rect.x = 1500
-        block.rect.y = 300
-        block.boundary_top = 100
-        block.boundary_bottom = 550
-        block.change_y = -1
-        block.player = self.player
-        block.level = self
-        self.platform_list.add(block)
+#==============================================================================
+#         block = platforms.MovingPlatform(platforms.STONE_PLATFORM_MIDDLE)
+#         block.rect.x = 1500
+#         block.rect.y = 300
+#         block.boundary_top = 100
+#         block.boundary_bottom = 550
+#         block.change_y = -1
+#         block.player = self.player
+#         block.level = self
+#         self.platform_list.add(block)
+#==============================================================================
         
 def start_screen():
     
     background = pygame.image.load("images/background.png").convert()
+    background = pygame.transform.scale(background, (constants.SCREEN_WIDTH, constants.SCREEN_HEIGHT))
+    
+    pygame.mixer.music.load("sounds/Main Theme (Classic).wav")
+    pygame.mixer.music.play(-1)
         
-    game_title = constants.soulsFont.render("THE LEGEND OF SOULS", True, constants.WHITE, None)
-    press_start = constants.bitsFont.render("Press ENTER", True, constants.WHITE, None)
-    not_start = constants.not_startBF.render("I said ENTER", True, constants.WHITE, None)
+    game_title = constants.soulsFont_M.render("THE LEGEND OF SOULS", True, constants.WHITE, None)
+    press_start = constants.bitsFont_M.render("Press ENTER", True, constants.WHITE, None)
+    not_start = constants.bitsFont_P.render("I said ENTER", True, constants.WHITE, None)
 
     instart = True
 
@@ -180,7 +162,7 @@ def start_screen():
         screen1 = pygame.display.set_mode((constants.SCREEN_WIDTH, constants.SCREEN_HEIGHT))
         screen1.blit(background, (0,0))
         game_title_rect = game_title.get_rect()
-        game_title_rect.center = (constants.SCREEN_WIDTH / 2, constants.SCREEN_HEIGHT - 450)
+        game_title_rect.center = (constants.SCREEN_WIDTH / 2, constants.SCREEN_HEIGHT - 525)
         screen1.blit(game_title, game_title_rect)
         press_start_rect = press_start.get_rect()
         press_start_rect.center = (constants.SCREEN_WIDTH / 2, constants.SCREEN_HEIGHT - 100)
@@ -190,12 +172,12 @@ def start_screen():
         for event in pygame.event.get():
             pressed = pygame.key.get_pressed()
             if event.type == pygame.QUIT:
-                sys.exit() # Fecha a janela se o usuário clicar em fechar
+                sys.exit()#pygame.quit() # Fecha a janela se o usuário clicar em fechar
             if event.type == pygame.KEYDOWN:
                 if ((pressed[pygame.K_LALT] and pressed[pygame.K_F4]) or (pressed[pygame.K_RALT] and pressed[pygame.K_F4])):
-                    sys.exit() # Fecha a janela se o usuário pressionar ALT+F4
+                    sys.exit()#pygame.quit() # Fecha a janela se o usuário pressionar ALT+F4
                     
-                elif pressed[pygame.K_RETURN]:
+                elif pressed[pygame.K_RETURN] or pressed[pygame.K_KP_ENTER]:
                     instart = False # Sai da tela de início
                 else:
                     not_start_rect = not_start.get_rect() # Zoa o usuário
@@ -203,3 +185,85 @@ def start_screen():
                     screen1.blit(not_start, not_start_rect)
                     pygame.display.update()
                     pygame.event.wait()
+                                        
+                    
+def instructions():
+    
+    background = pygame.image.load("images/scroll.jpg").convert()
+    background = pygame.transform.scale(background, (constants.SCREEN_WIDTH, constants.SCREEN_HEIGHT))
+    
+    pygame.mixer.music.load("sounds/Song of Storms.wav")
+    pygame.mixer.music.play(-1)
+    
+    scroll1 = constants.scrollFont_M.render("INSTRUCTIONS", True, constants.BLACK, None)
+    scroll2 = constants.scrollFont_P.render("Press A or Left Arrow and D or Right Arrow to move", True, constants.BLACK, None)
+    scroll3 = constants.scrollFont_P.render("Press W or Up Arrow to jump", True, constants.BLACK, None)
+    scroll4 = constants.scrollFont_P.render("Press E to recover HP", True, constants.BLACK, None)
+    scroll5 = constants.scrollFont_P.render("Press R to light attack and F to heavy attack", True, constants.BLACK, None)
+    scroll6 = constants.scrollFont_P.render("Press Q to parry and light attack to riposte", True, constants.BLACK, None)
+    scroll7 = constants.scrollFont_P.render("Press Left Shift to roll", True, constants.BLACK, None)
+    scroll8 = constants.scrollFont_P.render("Press ENTER to exit the instructions", True, constants.BLACK, None)
+    
+    instruct = True
+
+    while instruct:
+        
+        screen1 = pygame.display.set_mode((constants.SCREEN_WIDTH, constants.SCREEN_HEIGHT))
+        screen1.blit(background, (0,0))
+    
+        scroll1_rect = scroll1.get_rect()
+        scroll1_rect.center = (constants.SCREEN_WIDTH / 2, constants.SCREEN_HEIGHT - 525)
+        screen1.blit(scroll1, scroll1_rect)
+        scroll2_rect = scroll2.get_rect()
+        scroll2_rect.center = (constants.SCREEN_WIDTH / 2, constants.SCREEN_HEIGHT - 450)
+        screen1.blit(scroll2, scroll2_rect)
+        scroll3_rect = scroll3.get_rect()
+        scroll3_rect.center = (constants.SCREEN_WIDTH / 2, constants.SCREEN_HEIGHT - 400)
+        screen1.blit(scroll3, scroll3_rect)
+        scroll4_rect = scroll4.get_rect()
+        scroll4_rect.center = (constants.SCREEN_WIDTH / 2, constants.SCREEN_HEIGHT - 350)
+        screen1.blit(scroll4, scroll4_rect)
+        scroll5_rect = scroll5.get_rect()
+        scroll5_rect.center = (constants.SCREEN_WIDTH / 2, constants.SCREEN_HEIGHT - 300)
+        screen1.blit(scroll5, scroll5_rect)
+        scroll6_rect = scroll6.get_rect()
+        scroll6_rect.center = (constants.SCREEN_WIDTH / 2, constants.SCREEN_HEIGHT - 250)
+        screen1.blit(scroll6, scroll6_rect)
+        scroll7_rect = scroll7.get_rect()
+        scroll7_rect.center = (constants.SCREEN_WIDTH / 2, constants.SCREEN_HEIGHT - 200)
+        screen1.blit(scroll7, scroll7_rect)
+        scroll8_rect = scroll8.get_rect()
+        scroll8_rect.center = (constants.SCREEN_WIDTH / 2, constants.SCREEN_HEIGHT - 50)
+        screen1.blit(scroll8, scroll8_rect)
+        
+        pygame.display.update()
+        
+        for event in pygame.event.get():
+            pressed = pygame.key.get_pressed()
+            if event.type == pygame.QUIT:
+                sys.exit()#pygame.quit() # Fecha a janela se o usuário clicar em fechar
+            if event.type == pygame.KEYDOWN:
+                if ((pressed[pygame.K_LALT] and pressed[pygame.K_F4]) or (pressed[pygame.K_RALT] and pressed[pygame.K_F4])):
+                    sys.exit()#pygame.quit() # Fecha a janela se o usuário pressionar ALT+F4
+                    
+                elif pressed[pygame.K_RETURN] or pressed[pygame.K_KP_ENTER]:
+                    instruct = False # Sai da tela de instruções
+    
+    
+def play(current_level_no):
+        
+    if current_level_no == 0:
+        pygame.mixer.music.load("sounds/Bloodborne Soundtrack OST - Cleric Beast.wav")
+        pygame.mixer.music.play(-1)
+    elif current_level_no == 1:
+        pygame.mixer.music.load("sounds/Bloodborne Soundtrack OST - Cleric Beast.wav")
+        pygame.mixer.music.play(-1)
+
+def msg_player(msge, screen):
+    
+    msg = constants.bitsFont_P.render(msge, True, constants.WHITE, None)
+    msg_rect = msg.get_rect()
+    msg_rect.centerx = (constants.SCREEN_WIDTH / 2)
+    msg_rect.y = 25
+    screen.blit(msg, (msg_rect.centerx, msg_rect.y))
+    

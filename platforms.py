@@ -5,8 +5,7 @@ Created on Thu Aug 18 08:54:18 2016
 @author: vini_
 """
 
-import pygame
- 
+import pygame, constants
 from spritesheet_functions import SpriteSheet
  
 """ As constantes definem o tipo de plataforma:
@@ -16,13 +15,18 @@ from spritesheet_functions import SpriteSheet
         Largura da sprite
         Altura da sprite """
  
-GRASS_LEFT            = (576, 720, 70, 70)
-GRASS_RIGHT           = (576, 576, 70, 70)
-GRASS_MIDDLE          = (504, 576, 70, 70)
-STONE_PLATFORM_LEFT   = (432, 720, 70, 40)
-STONE_PLATFORM_MIDDLE = (174, 196, 48, 12)
-STONE_PLATFORM_RIGHT  = (792, 648, 70, 40)
-STONE_WALL = (101, 5, 48, 150)
+plat1 = (0, 0, 608, 64)
+plat2 = (0, 0, 640, 64)
+plat3 = (0, 0, 768, 64)
+plat4 = (0, 0, 576, 64)
+plat5 = (0, 0, 480, 64)
+plat6 = (0, 0, 250, 16)
+plat7 = (0, 0, 2200, 64)
+floatplat = (0, 0, 124, 16)
+block1 = (0, 0, 32, 32)
+block2 = (0, 0, 64, 32)
+block3 = (0, 0, 96, 32)
+stone_wall = (0, 0, 64, 1600)
  
 class Platform(pygame.sprite.Sprite):
     # Plataforma onde o player pode pular
@@ -32,15 +36,21 @@ class Platform(pygame.sprite.Sprite):
             O usuário passa um array de 4 números como indicado no topo do código """
         super().__init__()
  
-        sprite_sheet = SpriteSheet("images/castle.png")
+        sprite_sheet = SpriteSheet("images/whiteplatform.png")
+
         # Pega a imagem para esta plataforma
         self.image = sprite_sheet.get_image(sprite_sheet_data[0],
                                             sprite_sheet_data[1],
                                             sprite_sheet_data[2],
                                             sprite_sheet_data[3])
+        
+        # Deixa as plataformas transparentes                                            
+        self.image.set_colorkey(constants.WHITE)
  
         self.rect = self.image.get_rect()
- 
+        
+        self.mask = pygame.mask.from_surface(self.image)
+         
  
 class MovingPlatform(Platform):
     # Plataforma móvel
