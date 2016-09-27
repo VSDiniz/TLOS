@@ -495,7 +495,7 @@ class Player(pygame.sprite.Sprite):
 #   Movimentos do player:
 #==============================================================================
     def jump(self):
-        if not self.defending: 
+#        if not self.defending:
             # Move o player 2 pixels para baixo para verificar se existe uma plataforma
             self.rect.y += 2
             platform_hit_list = pygame.sprite.spritecollide(self, self.level.platform_list, False)
@@ -509,13 +509,13 @@ class Player(pygame.sprite.Sprite):
                 
     def go_left(self):
         # Quando o player vai para a esquerda
-        if not self.defending:
+#        if not self.defending:
             self.change_x = - 6
             self.direction = "L"
  
     def go_right(self):
         # Quando o player vai para a direita
-        if not self.defending:
+#        if not self.defending:
             self.change_x = 6
             self.direction = "R"
  
@@ -759,7 +759,7 @@ class Player(pygame.sprite.Sprite):
         self.defending = False
         self.health = self.maxhealth
         self.estus_rn = 5
-        self.rect.y = 50
+        self.rect.y = -150
         
     def clocker(self):
         if self.start_clocker:

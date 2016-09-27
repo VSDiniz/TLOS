@@ -44,17 +44,16 @@ def main():
     player1.level = current_level
     boss1.level = current_level
     
+    # Define posição inicial do enemy
+    boss1.rect.x = 750
+    boss1.rect.y = constants.SCREEN_HEIGHT - boss1.rect.height - 30
+    active_sprite_list.add(boss1)
     
     # Define posição inicial do player
     player1.rect.x = 6000#1075
     player1.rect.y = constants.SCREEN_HEIGHT - (player1.rect.height - 45)
     active_sprite_list.add(player1)
-    
-    # Define posição inicial do enemy
-    boss1.rect.x = 750
-    boss1.rect.y = constants.SCREEN_HEIGHT - boss1.rect.height - 30
-    active_sprite_list.add(boss1)
- 
+     
     #Loop até o usuário fechar o jogo
     ingame = True
  
@@ -134,7 +133,7 @@ def main():
                     if player1.possible("latk"):
                         player1.calc_stamina(15)
                         player1.latk = True
-#                    boss1.calc_damage(200)
+                    boss1.calc_damage(200)
                     
                 if event.key == pygame.K_o:
                     if player1.possible("hatk"):
@@ -173,7 +172,8 @@ def main():
                 
                 # Abre a tela de instruções
                 if event.key == pygame.K_RETURN or pressed[pygame.K_KP_ENTER]:
-                    levels.instructions()
+                    if current_level_no != 1:
+                        levels.instructions()
             
             # Calcula a regeneração de vida do player
             if event.type == estus_regen:
@@ -264,6 +264,10 @@ def main():
         # Todo código de desenhar
         current_level.draw(screen)
         active_sprite_list.draw(screen)
+        if current_level_no == 0:
+            black_surf = pygame.Surface((constants.SCREEN_WIDTH, constants.SCREEN_HEIGHT), pygame.SRCALPHA)
+            black_surf.fill((0, 0, 0, 10))
+            screen.blit(black_surf, (0, 0))
         player1.player_hud(screen)
         if current_level_no == 1:
             boss1.boss_hud(screen)
