@@ -89,92 +89,92 @@ class Boss(pygame.sprite.Sprite):
         self.level = None
  
         self.delay = self.i = self.s = 0        
-        sprite_sheet = spritesheet_functions.SpriteSheet("images/ganon6.png")
+        sprite_sheet = spritesheet_functions.SpriteSheet("images/ganon7.png")
         
         
         # Carrega todas as sprites paradas viradas para a direita/esquerda
         "Esperar"
-        list1 = [[11, 894, 48, 62],
-                 [65, 894, 48, 62],
-                 [121, 894, 48, 62],
-                 [178, 894, 48, 62],
-                 [121, 894, 48, 62],
-                 [65, 894, 48, 62]]
-#        list1 = [[0, 0, 113, 73],
-#                 [120, 0, 113, 73],
-#                 [240, 0, 113, 73],
-#                 [320, 0, 113, 73],
-#                 [240, 0, 113, 73],
-#                 [120, 0, 113, 73]]
+#        list1 = [[11, 894, 48, 62],
+#                 [65, 894, 48, 62],
+#                 [121, 894, 48, 62],
+#                 [178, 894, 48, 62],
+#                 [121, 894, 48, 62],
+#                 [65, 894, 48, 62]]
+        list1 = [[0, 0, 113, 73],
+                 [120, 0, 113, 73],
+                 [240, 0, 113, 73],
+                 [360, 0, 113, 73],
+                 [240, 0, 113, 73],
+                 [120, 0, 113, 73]]
                  
-        self.waiting_frames_r = spritesheet_functions.createSprite(sprite_sheet,list1, 0, 1, constants.BLACK)
+        self.waiting_frames_r = spritesheet_functions.createSprite(sprite_sheet,list1, 0, 1, constants.DARKBLUE)
         # Vira todas as imagens para a esquerda
-        self.waiting_frames_l = spritesheet_functions.createSprite(sprite_sheet,list1, 1, 1, constants.BLACK)               
+        self.waiting_frames_l = spritesheet_functions.createSprite(sprite_sheet,list1, 1, 1, constants.DARKBLUE)               
         
         # Carrega todas as sprites correndo viradas para a direita numa lista
         "Correr"
-        list1 = [[10, 976, 52, 62],
-                 [71, 976, 52, 62],
-                 [128, 976, 52, 62],
-                 [181, 976, 52, 62],
-                 [238, 976, 52, 62],
-                 [300, 976, 52, 62],
-                 [356, 976, 52, 62],
-                 [410, 976, 52, 62]]
-#        list1 = [[120, 80, 113, 73],
-#                 [240, 80, 113, 73],
-#                 [360, 80, 113, 73],
-#                 [480, 80, 113, 73],
-#                 [620, 80, 113, 73],
-#                 [0, 160, 113, 73],
-#                 [120, 160, 113, 73],
-#                 [240, 160, 113, 73]]
+#        list1 = [[10, 976, 52, 62],
+#                 [71, 976, 52, 62],
+#                 [128, 976, 52, 62],
+#                 [181, 976, 52, 62],
+#                 [238, 976, 52, 62],
+#                 [300, 976, 52, 62],
+#                 [356, 976, 52, 62],
+#                 [410, 976, 52, 62]]
+        list1 = [[120, 80, 113, 73],
+                 [240, 80, 113, 73],
+                 [360, 80, 113, 73],
+                 [480, 80, 113, 73],
+                 [600, 80, 113, 73],
+                 [0, 160, 113, 73],
+                 [120, 160, 113, 73],
+                 [240, 160, 113, 73]]
                  
-        self.walking_frames_r = spritesheet_functions.createSprite(sprite_sheet,list1, 0, 1, constants.BLACK)
+        self.walking_frames_r = spritesheet_functions.createSprite(sprite_sheet,list1, 0, 1, constants.DARKBLUE)
  
         # Carrega todas as imagens correndo viradas para a direita e as vira para a esquerda
-        list1 = [[410, 976, 52, 62],
-                 [356, 976, 52, 62],
-                 [300, 976, 52, 62],
-                 [238, 976, 52, 62],
-                 [181, 976, 52, 62],
-                 [128, 976, 52, 62],
-                 [71, 976, 52, 62],
-                 [10, 976, 52, 62]]
-#        list1 = [[240, 160, 113, 73],
-#                 [120, 160, 113, 73],
-#                 [0, 160, 113, 73],
-#                 [600, 80, 113, 73],
-#                 [480, 80, 113, 73],
-#                 [360, 80, 113, 73],
-#                 [240, 80, 113, 73],
-#                 [120, 80, 113, 73]]
+#        list1 = [[410, 976, 52, 62],
+#                 [356, 976, 52, 62],
+#                 [300, 976, 52, 62],
+#                 [238, 976, 52, 62],
+#                 [181, 976, 52, 62],
+#                 [128, 976, 52, 62],
+#                 [71, 976, 52, 62],
+#                 [10, 976, 52, 62]]
+        list1 = [[240, 160, 113, 73],
+                 [120, 160, 113, 73],
+                 [0, 160, 113, 73],
+                 [600, 80, 113, 73],
+                 [480, 80, 113, 73],
+                 [360, 80, 113, 73],
+                 [240, 80, 113, 73],
+                 [120, 80, 113, 73]]
                  
-        self.walking_frames_l = spritesheet_functions.createSprite(sprite_sheet,list1, 1, 1, constants.BLACK)
+        self.walking_frames_l = spritesheet_functions.createSprite(sprite_sheet,list1, 1, 1, constants.DARKBLUE)
         
         # Carrega todas as imagens pulando viradas para a direita numa lista
         "Pular"
-        list1 = [[15, 1068, 41, 52],
-                 [64, 1051, 41, 70],
-                 [108, 1051, 41, 70]]
-#        list1 = [[480, 0, 113, 73],
-#                 [600, 0, 113, 73],
-#                 [0, 80, 113, 73]]
+#        list1 = [[15, 1068, 41, 52],
+#                 [64, 1051, 41, 70],
+#                 [108, 1051, 41, 70]]
+        list1 = [[480, 0, 113, 73],
+                 [600, 0, 113, 73],
+                 [0, 80, 113, 73]]
                  
-        self.jumping_frames_r = spritesheet_functions.createSprite(sprite_sheet,list1, 0, 1, constants.BLACK)
+        self.jumping_frames_r = spritesheet_functions.createSprite(sprite_sheet,list1, 0, 1, constants.DARKBLUE)
         # Vira todas as imagens para a esquerda
-        self.jumping_frames_l = spritesheet_functions.createSprite(sprite_sheet,list1, 1, 1, constants.BLACK)
+        self.jumping_frames_l = spritesheet_functions.createSprite(sprite_sheet,list1, 1, 1, constants.DARKBLUE)
 #==============================================================================
 #         
 #==============================================================================
         # Carrega todas as imagens de defesa viradas para a direita numa lista
         "Defender"
-        list1 = [[537, 1625, 43, 60]]
-#        list1 = [[0, 320, 113, 73]]
+#        list1 = [[537, 1625, 43, 60]]
+        list1 = [[0, 320, 113, 73]]
         
-        self.defense_frames_r = spritesheet_functions.createSprite(sprite_sheet,list1, 0, 1, constants.BLACK)
+        self.defense_frames_r = spritesheet_functions.createSprite(sprite_sheet,list1, 0, 1, constants.DARKBLUE)
         # Vira as imagens para a esquerda
-        self.defense_frames_l = spritesheet_functions.createSprite(sprite_sheet,list1, 1, 1, constants.BLACK)         
+        self.defense_frames_l = spritesheet_functions.createSprite(sprite_sheet,list1, 1, 1, constants.DARKBLUE)         
         
         # Carrega todas as imagens de quebra de guarda viradas para a direita numa lista
         "Quebra de guarda"
@@ -187,10 +187,10 @@ class Boss(pygame.sprite.Sprite):
         
         # Carrega todas as imagens de parry viradas para a direita numa lista
         "Parry"
-#        list1 = [[418, 1618, 49, 67],
-#                 [479, 1615, 40, 70]]
-        list1 = [[240, 320, 113, 73],
-                 [360, 320, 113, 73],]
+        list1 = [[418, 1618, 49, 67],
+                 [479, 1615, 40, 70]]
+#        list1 = [[240, 320, 113, 73],
+#                 [360, 320, 113, 73],]
                  
         self.parry_frames_r = spritesheet_functions.createSprite(sprite_sheet,list1, 0, 1, constants.BLACK)
         # Vira as imagens para a esquerda
@@ -211,62 +211,66 @@ class Boss(pygame.sprite.Sprite):
         
         # Carrega todas as imagens de rolar viradas para a direita numa lista        
         "Rolar"
-        list1 = [[237, 1298, 62, 68]]
-#        list1 = [[600, 160, 113, 73]]
+#        list1 = [[237, 1298, 62, 68]]
+        list1 = [[600, 240, 113, 73]]
         
-        self.roll_frames_r = spritesheet_functions.createSprite(sprite_sheet,list1, 0, 1, constants.BLACK)
+        self.roll_frames_r = spritesheet_functions.createSprite(sprite_sheet,list1, 0, 1, constants.DARKBLUE)
         # Vira todas as imagens para a esquerda
-        self.roll_frames_l = spritesheet_functions.createSprite(sprite_sheet,list1, 1, 1, constants.BLACK)
+        self.roll_frames_l = spritesheet_functions.createSprite(sprite_sheet,list1, 1, 1, constants.DARKBLUE)
         
         # Carrega todas as imagens de ataque leve viradas para a direita numa lista
         "Ataque leve"
-        list1 = [[12, 1149, 45, 58],
-                 [70, 1149, 53, 58],
-                 [140, 1150, 62, 58],
-                 [217, 1149, 66, 58],
-                 [217, 1149, 66, 58],
-                 [367, 1150, 50, 58],
-                 [423, 1150, 79, 58],
-                 [12, 1149, 45, 58],
-                 [70, 1149, 53, 58]]
-#        list1 = [[360, 160, 113, 73],
-#                 [480, 160, 113, 73],
-#                 [600, 160, 113, 73],
-#                 [0, 240, 113, 73],
-#                 [0, 240, 113, 73],
-#                 [240, 240, 113, 73],
-#                 [360, 240, 113, 73],
-#                 [360, 160, 113, 73],
-#                 [480, 160, 113, 73]]
+#        list1 = [[12, 1149, 45, 58],
+#                 [70, 1149, 53, 58],
+#                 [140, 1150, 62, 58],
+#                 [217, 1149, 66, 58],
+#                 [217, 1149, 66, 58],
+#                 [367, 1150, 50, 58],
+#                 [423, 1150, 79, 58],
+#                 [12, 1149, 45, 58],
+#                 [70, 1149, 53, 58]]
+        list1 = [[360, 160, 113, 73],
+                 [480, 160, 113, 73],
+                 [600, 160, 113, 73],
+                 [0, 240, 113, 73],
+                 [0, 240, 113, 73],
+                 [240, 240, 113, 73],
+                 [360, 240, 113, 73],
+                 [360, 160, 113, 73],
+                 [480, 160, 113, 73]]
                  
-        self.lightatk_frames_r = spritesheet_functions.createSprite(sprite_sheet,list1, 0, 1, constants.BLACK)
+        self.lightatk_frames_r = spritesheet_functions.createSprite(sprite_sheet,list1, 0, 1, constants.DARKBLUE)
         # Vira as imagens para a esquerda
-        self.lightatk_frames_l = spritesheet_functions.createSprite(sprite_sheet,list1, 1, 1, constants.BLACK)
+        self.lightatk_frames_l = spritesheet_functions.createSprite(sprite_sheet,list1, 1, 1, constants.DARKBLUE)
         
         # Carrega todas as imagens de ataque pesado viradas para a direita numa lista
         "Ataque pesado"
-        list1 = [[12, 1149, 45, 58],
-                 [70, 1149, 53, 58],
-                 [140, 1150, 62, 58],
-                 [620, 1150, 89, 58],
-                 [217, 1149, 66, 58],
-                 [367, 1150, 50, 58],
-                 [499, 1027, 105, 111],
-                 [12, 1149, 45, 58],
-                 [70, 1149, 53, 58]]
-#        list1 = [[360, 160, 113, 73],
-#                 [480, 160, 113, 73],
-#                 [600, 160, 113, 73],
-#                 [0, 240, 113, 73],
-#                 [120, 240, 113, 73],
-#                 [240, 240, 113, 73],
-#                 [480, 240, 113, 73],
-#                 [360, 160, 113, 73],
-#                 [480, 160, 113, 73]]
+#        list1 = [[12, 1149, 45, 58],
+#                 [70, 1149, 53, 58],
+#                 [140, 1150, 62, 58],
+#                 [620, 1150, 89, 58],
+#                 [217, 1149, 66, 58],
+#                 [367, 1150, 50, 58],
+#                 [499, 1027, 105, 111],
+#                 [12, 1149, 45, 58],
+#                 [70, 1149, 53, 58]]
+        list1 = [[360, 160, 113, 73],
+                 [480, 160, 113, 73],
+                 [600, 160, 113, 73],
+                 [0, 240, 113, 73],
+                 [120, 240, 113, 73],
+                 [120, 240, 113, 73],
+                 [240, 240, 113, 73],
+                 [480, 240, 113, 73],
+                 [480, 240, 113, 73],
+                 [480, 240, 113, 73],
+                 [360, 160, 113, 73],
+                 [480, 160, 113, 73],
+                 [480, 160, 113, 73]]
                  
-        self.heavyatk_frames_r = spritesheet_functions.createSprite(sprite_sheet,list1, 0, 1, constants.BLACK)
+        self.heavyatk_frames_r = spritesheet_functions.createSprite(sprite_sheet,list1, 0, 1, constants.DARKBLUE)
         # Vira as imagens para a esquerda
-        self.heavyatk_frames_l = spritesheet_functions.createSprite(sprite_sheet,list1, 1, 1, constants.BLACK)
+        self.heavyatk_frames_l = spritesheet_functions.createSprite(sprite_sheet,list1, 1, 1, constants.DARKBLUE)
         
         # Carrega todas as imagens tomando dano viradas para a direita numa lista
         "Tomar dano"
@@ -565,12 +569,29 @@ class Boss(pygame.sprite.Sprite):
                     constants.s += 1
             else: 
                 constants.delay += 1
-        
+            
+    # Calcula o dano recebido pelo boss
     def calc_damage(self, damage):
-        if self.health - damage > 0:
-            self.health -= damage
-        else:
-            self.health = 0
+        # Verifica se o boss está defendendo
+        if self.guard:
+            if self.defending:
+                self.calc_stamina(damage/2) # Reduz stamina
+                if self.stamina <= 0:
+                    self.stamina = 0
+                    self.guard_break() # Quebra guarda
+                                        
+            else:
+                if self.direction == "R":
+                    self.image = self.takedmg_frames_r[0]
+                else:
+                    self.image = self.takedmg_frames_l[0]
+                if self.health - damage > 0:
+                    self.health -= damage # Reduz vida
+                else:
+                    self.health = 0
+#        else:
+#            self.health -= damage*2                    
+                    
         if self.health <= 0:
             self.live = False
         

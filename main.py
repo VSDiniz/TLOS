@@ -160,15 +160,15 @@ def main():
                     if player1.possible("roll"):
                         player1.active_roll()
                         pygame.time.set_timer(player_roll, 1)
-#                    if not boss1.jumping:
-#                        boss1.active_roll()
-#                        pygame.time.set_timer(boss_roll, 1)
+                    if not boss1.jumping:
+                        boss1.active_roll()
+                        pygame.time.set_timer(boss_roll, 1)
                     
                 # Coloca o player em posição de defesa
                 if event.key == pygame.K_z:
                     if player1.possible("move"):
                         player1.defend()
-#                    boss1.defend()
+                    boss1.defend()
                 
                 # Abre a tela de instruções
                 if event.key == pygame.K_RETURN or pressed[pygame.K_KP_ENTER]:
@@ -210,8 +210,8 @@ def main():
                 if event.key == pygame.K_z:
                     player1.defending = False
 #                    player1.guard = True
-#                    boss1.defending = False
-#                    boss1.guard = True
+                    boss1.defending = False
+                    boss1.guard = True
                     
         if constants.player_roll_frames <= 0:            
             pygame.time.set_timer(player_roll, 0)

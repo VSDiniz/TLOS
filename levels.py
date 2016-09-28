@@ -83,8 +83,7 @@ class Level_01(Level):
                  [platforms.block2, 4192, 586],
                  [platforms.block1, 4384, 555],
                  [platforms.block1, 4608, 555],
-                 [platforms.block2, 4768, 586],
-                  ]
+                 [platforms.block2, 4768, 586]]
  
         # Passa pelo array e adiciona plataformas
         for platform in level:

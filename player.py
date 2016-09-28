@@ -401,12 +401,29 @@ class Player(pygame.sprite.Sprite):
 #                     # Se o player estiver indo para a esquerda, faz o oposto
 #                     self.rect.left = block.rect.right
 #==============================================================================
-                    if self.change_x > 0:
-#                    if self.rect.right == block.rect.left and self.rect.bottom == block.rect.top:
+#==============================================================================
+#                     if self.change_x > 0:
+# #                    if self.rect.right == block.rect.left and self.rect.bottom == block.rect.top:
+#                         self.rect.right = block.rect.left
+#                     elif self.change_x < 0:
+# #                    elif self.rect.left == block.rect.right and self.rect.bottom == block.rect.top:
+#                         # Se o player estiver indo para a esquerda, faz o oposto
+#                         self.rect.left = block.rect.right
+#==============================================================================
+                if self.rect.bottom < block.rect.bottom and self.rect.bottom > block.rect.top:
+                    if self.rect.left < block.rect.left and self.rect.right > block.rect.left:
                         self.rect.right = block.rect.left
-                    elif self.change_x < 0:
-#                    elif self.rect.left == block.rect.right and self.rect.bottom == block.rect.top:
-                        # Se o player estiver indo para a esquerda, faz o oposto
+                    if self.rect.right > block.rect.right and self.rect.left < block.rect.right:
+                        self.rect.left = block.rect.right
+                if self.rect.top > block.rect.top and self.rect.top < block.rect.bottom:
+                    if self.rect.left < block.rect.left and self.rect.right > block.rect.left:
+                        self.rect.right = block.rect.left
+                    if self.rect.right > block.rect.right and self.rect.left < block.rect.right:
+                        self.rect.left = block.rect.right
+                if self.rect.top <= block.rect.top and self.rect.bottom >= block.rect.bottom:
+                    if self.rect.left < block.rect.left and self.rect.right > block.rect.left:
+                        self.rect.right = block.rect.left
+                    if self.rect.right > block.rect.right and self.rect.left < block.rect.right:
                         self.rect.left = block.rect.right
 
         # Move para cima/baixo
@@ -437,16 +454,28 @@ class Player(pygame.sprite.Sprite):
         for block in block_hit_list:
             if pygame.sprite.collide_rect(self,block): 
             # Redefine a posição do player baseada no topo/fundo do objeto
-                if self.change_y > 0 and not self.on_ground:
-                    self.rect.bottom = block.rect.top
-                    self.on_ground = True
-                    self.jumping = False
-                    self.change_y = 0
-                elif self.change_y < 0 and not self.on_ground:
-                    self.rect.top = block.rect.bottom
- 
-            if isinstance(block, MovingPlatform):
-                self.rect.x += 2 * block.change_x
+#==============================================================================
+#                 if self.change_y > 0 and not self.on_ground:
+#                     self.rect.bottom = block.rect.top
+#                     self.on_ground = True
+#                     self.jumping = False
+#                     self.change_y = 0
+#                 elif self.change_y < 0 and not self.on_ground:
+#                     self.rect.top = block.rect.bottom
+#  
+#             if isinstance(block, MovingPlatform):
+#                 self.rect.x += 2 * block.change_x
+#==============================================================================
+                if self.rect.right > block.rect.left and self.rect.left < block.rect.right:
+                    if self.rect.bottom > block.rect.top and (self.rect.bottom - 10) < block.rect.top:
+                        if self.change_y > 0 and not self.on_ground:
+                            self.rect.bottom = block.rect.top
+                            self.on_ground = True
+                            self.jumping = False
+                            self.change_y = 0
+                    if self.rect.top < block.rect.bottom and (self.rect.top - 10) > block.rect.bottom:
+                        if self.change_y < 0 and not self.on_ground:
+                            self.rect.top = block.rect.bottom
                 
 #        if self.live and self.guard and not self.jumping:
 #            if self.stamina > 0:
