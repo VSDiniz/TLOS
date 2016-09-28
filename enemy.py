@@ -5,11 +5,10 @@ Created on Sat Aug 20 13:25:12 2016
 @author: vini_
 """
 
-import pygame, constants
+import pygame, constants, spritesheet_functions
 from platforms import MovingPlatform
-from spritesheet_functions import SpriteSheet
 
-class Enemy(pygame.sprite.Sprite):
+class Boss(pygame.sprite.Sprite):
  
     def __init__(self):
  
@@ -37,134 +36,67 @@ class Enemy(pygame.sprite.Sprite):
         # Lista de sprites que o player pode esbarrar
         self.level = None
  
-        sprite_sheet = SpriteSheet("images/ganon1.png")
+        sprite_sheet = spritesheet_functions.SpriteSheet("images/ganon1.png")
         
         # Carrega todas as sprites paradas viradas para a direita
-        image_wait = sprite_sheet.get_image(11, 890, 48, 62, constants.DARKBLUE)
-        image_wait = pygame.transform.scale2x(image_wait)
-        self.waiting_frames_r.append(image_wait)
-        image_wait = sprite_sheet.get_image(65, 890, 48, 62, constants.DARKBLUE)
-        image_wait = pygame.transform.scale2x(image_wait)
-        self.waiting_frames_r.append(image_wait)
-        image_wait = sprite_sheet.get_image(121, 890, 48, 62, constants.DARKBLUE)
-        image_wait = pygame.transform.scale2x(image_wait)
-        self.waiting_frames_r.append(image_wait)
-        image_wait = sprite_sheet.get_image(178, 890, 48, 62, constants.DARKBLUE)
-        image_wait = pygame.transform.scale2x(image_wait)
-        self.waiting_frames_r.append(image_wait)
+        list1 = [[11, 890, 48, 62],
+                 [65, 890, 48, 62],
+                 [121, 890, 48, 62],
+                 [178, 890, 48, 62]]        
+        
+        self.waiting_frames_r = spritesheet_functions.createSprite(sprite_sheet,list1, 0, 1, constants.DARKBLUE)
         
         # Carrega todas as sprites paradas viradas para a direita e as vira para a esquerda
-        image_wait = sprite_sheet.get_image(11, 890, 48, 62, constants.DARKBLUE)
-        image_wait = pygame.transform.flip(image_wait, True, False)
-        image_wait = pygame.transform.scale2x(image_wait)
-        self.waiting_frames_l.append(image_wait)
-        image_wait = sprite_sheet.get_image(65, 890, 48, 62, constants.DARKBLUE)
-        image_wait = pygame.transform.flip(image_wait, True, False)
-        image_wait = pygame.transform.scale2x(image_wait)
-        self.waiting_frames_l.append(image_wait)
-        image_wait = sprite_sheet.get_image(121, 890, 48, 62, constants.DARKBLUE)
-        image_wait = pygame.transform.flip(image_wait, True, False)
-        image_wait = pygame.transform.scale2x(image_wait)
-        self.waiting_frames_l.append(image_wait)
-        image_wait = sprite_sheet.get_image(178, 890, 48, 62, constants.DARKBLUE)
-        image_wait = pygame.transform.flip(image_wait, True, False)
-        image_wait = pygame.transform.scale2x(image_wait)
-        self.waiting_frames_l.append(image_wait)
+        list1 = [[178, 890, 48, 62],
+                 [121, 890, 48, 62],
+                 [65, 890, 48, 62],
+                 [11, 890, 48, 62]]        
+        
+        self.waiting_frames_l = spritesheet_functions.createSprite(sprite_sheet,list1, 1, 1, constants.DARKBLUE)        
         
         # Carrega todas as sprites correndo viradas para a direita numa lista
-        image = sprite_sheet.get_image(10, 976, 52, 57, constants.DARKBLUE)
-        image = pygame.transform.scale2x(image)
-        self.walking_frames_r.append(image)
-        image = sprite_sheet.get_image(71, 976, 52, 57, constants.DARKBLUE)
-        image = pygame.transform.scale2x(image)
-        self.walking_frames_r.append(image)
-        image = sprite_sheet.get_image(128, 976, 52, 57, constants.DARKBLUE)
-        image = pygame.transform.scale2x(image)
-        self.walking_frames_r.append(image)
-        image = sprite_sheet.get_image(181, 976, 52, 57, constants.DARKBLUE)
-        image = pygame.transform.scale2x(image)
-        self.walking_frames_r.append(image)
-        image = sprite_sheet.get_image(238, 976, 52, 57, constants.DARKBLUE)
-        image = pygame.transform.scale2x(image)
-        self.walking_frames_r.append(image)
-        image = sprite_sheet.get_image(300, 976, 52, 57, constants.DARKBLUE)
-        image = pygame.transform.scale2x(image)
-        self.walking_frames_r.append(image)
-        image = sprite_sheet.get_image(356, 976, 52, 57, constants.DARKBLUE)
-        image = pygame.transform.scale2x(image)
-        self.walking_frames_r.append(image)
-        image = sprite_sheet.get_image(410, 976, 52, 57, constants.DARKBLUE)
-        image = pygame.transform.scale2x(image)
-        self.walking_frames_r.append(image)
+        list1 = [[10, 976, 52, 57],
+                 [71, 976, 52, 57],
+                 [128, 976, 52, 57],
+                 [181, 976, 52, 57],
+                 [238, 976, 52, 57],
+                 [300, 976, 52, 57],
+                 [356, 976, 52, 57],
+                 [410, 976, 52, 57]]
+                 
+        self.walking_frames_r = spritesheet_functions.createSprite(sprite_sheet,list1, 0, 1, constants.DARKBLUE)
  
         # Carrega todas as imagens correndo viradas para a direita e as vira para a esquerda
-        image = sprite_sheet.get_image(410, 976, 52, 57, constants.DARKBLUE)
-        image = pygame.transform.flip(image, True, False)
-        image = pygame.transform.scale2x(image)
-        self.walking_frames_l.append(image)
-        image = sprite_sheet.get_image(356, 976, 52, 57, constants.DARKBLUE)
-        image = pygame.transform.flip(image, True, False)
-        image = pygame.transform.scale2x(image)
-        self.walking_frames_l.append(image)
-        image = sprite_sheet.get_image(300, 976, 52, 57, constants.DARKBLUE)
-        image = pygame.transform.flip(image, True, False)
-        image = pygame.transform.scale2x(image)
-        self.walking_frames_l.append(image)
-        image = sprite_sheet.get_image(238, 976, 52, 57, constants.DARKBLUE)
-        image = pygame.transform.flip(image, True, False)
-        image = pygame.transform.scale2x(image)
-        self.walking_frames_l.append(image)
-        image = sprite_sheet.get_image(181, 976, 52, 57, constants.DARKBLUE)
-        image = pygame.transform.flip(image, True, False)
-        image = pygame.transform.scale2x(image)
-        self.walking_frames_l.append(image)
-        image = sprite_sheet.get_image(128, 976, 52, 57, constants.DARKBLUE)
-        image = pygame.transform.flip(image, True, False)
-        image = pygame.transform.scale2x(image)
-        self.walking_frames_l.append(image)
-        image = sprite_sheet.get_image(71, 976, 52, 57, constants.DARKBLUE)
-        image = pygame.transform.flip(image, True, False)
-        image = pygame.transform.scale2x(image)
-        self.walking_frames_l.append(image)
-        image = sprite_sheet.get_image(10, 976, 52, 57, constants.DARKBLUE)
-        image = pygame.transform.flip(image, True, False)
-        image = pygame.transform.scale2x(image)
-        self.walking_frames_l.append(image)
+        list1 = [[410, 976, 52, 57],
+                 [356, 976, 52, 57],
+                 [300, 976, 52, 57],
+                 [238, 976, 52, 57],
+                 [181, 976, 52, 57],
+                 [128, 976, 52, 57],
+                 [71, 976, 52, 57],
+                 [10, 976, 52, 57]]
+                 
+        self.walking_frames_l = spritesheet_functions.createSprite(sprite_sheet,list1, 1, 1, constants.DARKBLUE)
         
         # Carrega todas as imagens pulando viradas para a direita numa lista
-        image_jump = sprite_sheet.get_image(15, 1064, 41, 52, constants.DARKBLUE)
-        image_jump = pygame.transform.scale2x(image_jump)
-        self.jumping_frames_r.append(image_jump)
-        image_jump = sprite_sheet.get_image(64, 1047, 41, 70, constants.DARKBLUE)
-        image_jump = pygame.transform.scale2x(image_jump)
-        self.jumping_frames_r.append(image_jump)
-        image_jump = sprite_sheet.get_image(108, 1047, 41, 70, constants.DARKBLUE)
-        image_jump = pygame.transform.scale2x(image_jump)
-        self.jumping_frames_r.append(image_jump)
+        list1 = [[15, 1064, 41, 52],
+                 [64, 1047, 41, 70],
+                 [108, 1047, 41, 70]]
+                 
+        self.jumping_frames_r = spritesheet_functions.createSprite(sprite_sheet,list1, 0, 1, constants.DARKBLUE)
         
         # Carrega todas as imagens pulando viradas para a direita e as vira para a esquerda
-        image_jump = sprite_sheet.get_image(15, 1064, 41, 52, constants.DARKBLUE)
-        image_jump = pygame.transform.flip(image_jump, True, False)
-        image_jump = pygame.transform.scale2x(image_jump)
-        self.jumping_frames_l.append(image_jump)
-        image_jump = sprite_sheet.get_image(64, 1047, 41, 70, constants.DARKBLUE)
-        image_jump = pygame.transform.flip(image_jump, True, False)
-        image_jump = pygame.transform.scale2x(image_jump)
-        self.jumping_frames_l.append(image_jump)
-        image_jump = sprite_sheet.get_image(108, 1047, 41, 70, constants.DARKBLUE)
-        image_jump = pygame.transform.flip(image_jump, True, False)
-        image_jump = pygame.transform.scale2x(image_jump)
-        self.jumping_frames_l.append(image_jump)
+        list1 = [[15, 1064, 41, 52],
+                 [64, 1047, 41, 70],
+                 [108, 1047, 41, 70]]
+                 
+        self.jumping_frames_l = spritesheet_functions.createSprite(sprite_sheet,list1, 1, 1, constants.DARKBLUE)        
  
         # Define a sprite que o player começa
-        self.image_wait = self.waiting_frames_r[0]
-        self.image = self.walking_frames_r[0]
-        self.image_jump = self.jumping_frames_r[0]
+        self.image = self.waiting_frames_r[0]
  
         # Define uma referência para o retângulo da sprite
         self.rect = self.image.get_rect()
-        self.rect_jump = self.image_jump.get_rect()
-        self.rect_wait = self.image_wait.get_rect()
   
     def update(self):
         # Move o player
@@ -174,16 +106,16 @@ class Enemy(pygame.sprite.Sprite):
         # Reproduz a animação de espera
         if self.change_x == 0 and self.change_y == 0:
             self.rect.x += self.change_x
-            pos = 120
+            pos = self.rect.x
             if self.direction == "R":
                 frame = (pos // 30) % len(self.waiting_frames_r)
                 self.image = self.waiting_frames_r[frame]
             else:
                 frame = (pos // 30) % len(self.waiting_frames_l)
                 self.image = self.waiting_frames_l[frame]
- 
+        
+        # Move para esquerda/direita e reproduz a animação de corrida 
         elif self.change_x != 0 and self.change_y == 0:
-            # Move para esquerda/direita e reproduz a animação de corrida
             self.rect.x += self.change_x
             pos = self.rect.x + self.level.world_shift
             if self.direction == "R":
@@ -192,32 +124,9 @@ class Enemy(pygame.sprite.Sprite):
             else:
                 frame = (pos // 30) % len(self.walking_frames_l)
                 self.image = self.walking_frames_l[frame]
-                
-        elif self.change_x == 0 and self.change_y != 0:
-            # Reproduz animação de pulo
-            self.rect.y += self.change_y
-            pos = self.rect.y
-            
-            if self.direction == "R":
-                frame = (pos // 30) % len(self.jumping_frames_r)
-                self.image = self.jumping_frames_r[frame]
-            else:
-                frame = (pos // 30) % len(self.jumping_frames_l)
-                self.image = self.jumping_frames_l[frame]
-        elif self.change_x != 0 and self.change_y != 0:
-             self.rect.y += self.change_y
-             self.rect.x += self.change_x
-             pos = self.rect.x + self.level.world_shift
-             
-             if self.direction == "R":
-                frame = (pos // 30) % len(self.jumping_frames_r)
-                self.image = self.jumping_frames_r[frame]
-             else:
-                frame = (pos // 30) % len(self.jumping_frames_l)
-                self.image = self.jumping_frames_l[frame]
  
         # Verifica se existe colisão
-        """block_hit_list = pygame.sprite.spritecollide(self, self.level.platform_list, False)
+        block_hit_list = pygame.sprite.spritecollide(self, self.level.platform_list, False)
         for block in block_hit_list:
             # Se o player está indo para a direita, define o lado direito do player
             # para o lado esquerdo do objeto que o acertou
@@ -225,12 +134,52 @@ class Enemy(pygame.sprite.Sprite):
                 self.rect.right = block.rect.left
             elif self.change_x < 0:
                 # Se o player estiver indo para a esquerda, faz o oposto
-                self.rect.left = block.rect.right"""
+                self.rect.left = block.rect.right
  
         # Move para cima/baixo
-        self.rect.y += self.change_y
+        if self.change_x == 0 and self.change_y != 0:
+            self.rect.y += self.change_y
+            pos = self.rect.y
+            
+            if self.direction == "R":
+                if (-10 <= self.change_y <= -9.9):
+                    self.image = self.jumping_frames_r[0]
+                elif (-9.9 < self.change_y <= 2):
+                    self.image = self.jumping_frames_r[1]
+                elif (2 < self.change_y <= 10):
+                   self.image = self.jumping_frames_r[2]
+                
+            else:
+                if (-10 <= self.change_y <= -9.9):
+                    self.image = self.jumping_frames_l[0]
+                elif (-9.9 < self.change_y <= 2):
+                    self.image = self.jumping_frames_l[1]
+                elif (2 < self.change_y <= 10):
+                   self.image = self.jumping_frames_l[2]
+                
+                
+        elif self.change_x != 0 and self.change_y != 0:
+             self.rect.y += self.change_y
+             self.rect.x += self.change_x
+             pos = self.rect.x + self.level.world_shift
+             
+             if self.direction == "R":
+                if (-10 <= self.change_y <= -9.9):
+                    self.image = self.jumping_frames_r[0]
+                elif (-9.9 < self.change_y <= 2):
+                    self.image = self.jumping_frames_r[1]
+                elif (2 < self.change_y <= 10):
+                   self.image = self.jumping_frames_r[2]
+                
+             else:
+                if (-10 <= self.change_y <= -9.9):
+                    self.image = self.jumping_frames_l[0]
+                elif (-9.9 < self.change_y <= 2):
+                    self.image = self.jumping_frames_l[1]
+                elif (2 < self.change_y <= 10):
+                   self.image = self.jumping_frames_l[2]
  
-        """# Verifica se existe colisão
+        # Verifica se existe colisão
         block_hit_list = pygame.sprite.spritecollide(self, self.level.platform_list, False)
         for block in block_hit_list:
  
@@ -244,7 +193,7 @@ class Enemy(pygame.sprite.Sprite):
             self.change_y = 0
  
             if isinstance(block, MovingPlatform):
-                self.rect.x += block.change_x"""
+                self.rect.x += block.change_x
  
     def calc_grav(self):
         # Calcula o efeito da gravidade
@@ -254,9 +203,9 @@ class Enemy(pygame.sprite.Sprite):
             self.change_y += .35
  
         # Verifica se o player está no chão
-        if self.rect.y >= constants.SCREEN_HEIGHT - self.rect.height and self.change_y >= 0:
+        if self.rect.y >= constants.SCREEN_HEIGHT - self.rect.height-52 and self.change_y >= 0:
             self.change_y = 0
-            self.rect.y = constants.SCREEN_HEIGHT - self.rect.height
+            self.rect.y = constants.SCREEN_HEIGHT - self.rect.height-52
  
     def jump(self):
  
@@ -266,7 +215,7 @@ class Enemy(pygame.sprite.Sprite):
         self.rect.y -= 2
  
         # Se for possível pular, define a velocidade da subida
-        if len(platform_hit_list) > 0 or self.rect.bottom >= constants.SCREEN_HEIGHT:
+        if len(platform_hit_list) > 0 or self.rect.bottom >= constants.SCREEN_HEIGHT-52:
             self.change_y = -10
  
     # Movimentos do player:
@@ -283,3 +232,13 @@ class Enemy(pygame.sprite.Sprite):
     def stop(self):
         # Quando o player não se move
         self.change_x = 0
+        
+def boss_hud(screen):
+    enemy_health = 800
+    boss_name = constants.boss_SF.render("Ganondorf, the Gerudo King", True, constants.WHITE, None)
+    boss_name_rect = boss_name.get_rect()
+    boss_name_rect.x = 50
+    boss_name_rect.y = 515
+    screen.blit(boss_name, boss_name_rect)
+
+    pygame.draw.rect(screen, constants.ORANGE, (50, 530, enemy_health, 10))
