@@ -6,7 +6,7 @@ Created on Thu Aug 18 09:03:06 2016
 """
 
 import pygame, constants, spritesheet_functions
-from platforms import MovingPlatform
+#from platforms import MovingPlatform
  
 class Player(pygame.sprite.Sprite):
  
@@ -342,12 +342,11 @@ class Player(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
  
     def update(self):
-        # Move o player jumping
+        # Move o player
         # Gravidade
         self.calc_grav()
         
         # Reproduz a animação de espera           
-#        if not self.defending and not self.latk and not self.hatk and self.live:
         if self.possible("wait"):
             if self.change_x == 0 and self.change_y == 0:
                 
@@ -377,7 +376,7 @@ class Player(pygame.sprite.Sprite):
 
         # Morte do player        
         if not self.live:
-            self.change_y = 12
+            self.change_y = 10
             if self.direction == "R":
                 self.image = self.dead_frames_r[0]
             else:
@@ -410,17 +409,23 @@ class Player(pygame.sprite.Sprite):
 #                         # Se o player estiver indo para a esquerda, faz o oposto
 #                         self.rect.left = block.rect.right
 #==============================================================================
-                if self.rect.bottom < block.rect.bottom and self.rect.bottom > block.rect.top:
-                    if self.rect.left < block.rect.left and self.rect.right > block.rect.left:
-                        self.rect.right = block.rect.left
-                    if self.rect.right > block.rect.right and self.rect.left < block.rect.right:
-                        self.rect.left = block.rect.right
-                if self.rect.top > block.rect.top and self.rect.top < block.rect.bottom:
-                    if self.rect.left < block.rect.left and self.rect.right > block.rect.left:
-                        self.rect.right = block.rect.left
-                    if self.rect.right > block.rect.right and self.rect.left < block.rect.right:
-                        self.rect.left = block.rect.right
-                if self.rect.top <= block.rect.top and self.rect.bottom >= block.rect.bottom:
+                if not self.jumping:
+                    if self.rect.bottom < block.rect.bottom and self.rect.bottom > block.rect.top:
+                        if self.rect.left < block.rect.left and self.rect.right > block.rect.left:
+                            self.rect.right = block.rect.left
+                        if self.rect.right > block.rect.right and self.rect.left < block.rect.right:
+                            self.rect.left = block.rect.right
+                    if self.rect.top > block.rect.top and self.rect.top < block.rect.bottom:
+                        if self.rect.left < block.rect.left and self.rect.right > block.rect.left:
+                            self.rect.right = block.rect.left
+                        if self.rect.right > block.rect.right and self.rect.left < block.rect.right:
+                            self.rect.left = block.rect.right
+                    if self.rect.top <= block.rect.top and self.rect.bottom >= block.rect.bottom:
+                        if self.rect.left < block.rect.left and self.rect.right > block.rect.left:
+                            self.rect.right = block.rect.left
+                        if self.rect.right > block.rect.right and self.rect.left < block.rect.right:
+                            self.rect.left = block.rect.right
+                if self.rect.top >= block.rect.top and self.rect.bottom <= block.rect.bottom:
                     if self.rect.left < block.rect.left and self.rect.right > block.rect.left:
                         self.rect.right = block.rect.left
                     if self.rect.right > block.rect.right and self.rect.left < block.rect.right:
@@ -473,7 +478,7 @@ class Player(pygame.sprite.Sprite):
                             self.on_ground = True
                             self.jumping = False
                             self.change_y = 0
-                    if self.rect.top < block.rect.bottom and (self.rect.top - 10) > block.rect.bottom:
+                    if self.rect.top < block.rect.bottom and (self.rect.top + 10) > block.rect.bottom:
                         if self.change_y < 0 and not self.on_ground:
                             self.rect.top = block.rect.bottom
                 
@@ -488,6 +493,7 @@ class Player(pygame.sprite.Sprite):
         if self.live:
             self.take_dmg()
             if self.guard and not self.jumping:
+                self.anim_estus()
                 if self.stamina > 0:
                     self.parry()
                     self.riposte()
@@ -536,7 +542,7 @@ class Player(pygame.sprite.Sprite):
      
             # Se for possível pular, define a velocidade da subida
             if len(platform_hit_list) > 0:
-                self.change_y = - 12          
+                self.change_y = - 10
                 self.jumping = True
                 self.on_ground = False
                 
@@ -673,29 +679,13 @@ class Player(pygame.sprite.Sprite):
                     constants.s += 1
             else: 
                 constants.delay += 1
-                    
+
     # Usa item para recuperar a vida do player
     def use_estus(self):
-        if self.recovering:
-            self.change_x = 0
-            if constants.delay > constants.FPS/len(self.estus_frames_r):
-                constants.delay = 0
-                if self.direction == "R":
-                    self.image = self.estus_frames_r[0]
-                else:
-                    self.image = self.estus_frames_l[0]
-                if constants.i >= len(self.estus_frames_l) - 1:
-                    constants.i = 0
-                    self.recovering = False
-                else:
-                    constants.i += 1
-            else:
-                constants.delay += 1
-                
-            if self.estus_rn > 0:
-                self.estus_rn -= 1
-                self.estus_used += 1
-                self.estus_regen += constants.estus_maxregen
+        if self.estus_rn > 0:
+            self.estus_rn -= 1
+            self.estus_used += 1
+            self.estus_regen += constants.estus_maxregen
             
     # Regenera a vida do player
     def life_regen(self, estus_regen):
@@ -715,8 +705,25 @@ class Player(pygame.sprite.Sprite):
             self.health = self.maxhealth
             self.estus_used = 0
             self.estus_regen = 0
-            pygame.time.set_timer(estus_regen, 0)
-            self.recovering = False
+            pygame.time.set_timer(estus_regen, 0)            
+                    
+    # Animação para recuperar a vida do player
+    def anim_estus(self):
+        if self.recovering:
+            self.change_x = 0
+            if constants.delay > constants.FPS/len(self.estus_frames_r):
+                constants.delay = 0
+                if self.direction == "R":
+                    self.image = self.estus_frames_r[constants.s]
+                else:
+                    self.image = self.estus_frames_l[constants.s]
+                if constants.s >= len(self.estus_frames_l) - 1:
+                    constants.s = 0
+                    self.recovering = False
+                else:
+                    constants.s += 1
+            else:
+                constants.delay += 1
 
     # Calcula o dano recebido pelo player
     def calc_damage(self, damage):
@@ -810,7 +817,7 @@ class Player(pygame.sprite.Sprite):
             if self.live and not self.defending and not self.latk and not self.hatk and not self.rolling and not self.recovering and not self.takedmg and not self.parrying and not self.riposting:
                 return True
         elif event == "jump":
-            if self.live and not self.defending and not self.latk and not self.hatk and not self.rolling and not self.recovering and not self.takedmg and not self.parrying and not self.riposting:
+            if self.live and not self.defending and not self.latk and not self.hatk and not self.rolling and not self.recovering and not self.takedmg and not self.parrying and not self.riposting and not self.jumping:
                 return True
         elif event == "defend":
             if self.live and not self.jumping and not self.latk and not self.hatk and not self.rolling and not self.recovering and not self.takedmg and not self.parrying and not self.riposting:
@@ -888,11 +895,11 @@ def dead_screen(screen, player):
                     quit()
                 if event.key == pygame.K_BACKSPACE:
                     player.reborn()
-                if event.key == pygame.K_e:
-                    pass
-                if event.key == pygame.K_r:
-                    pass
-                if event.key == pygame.K_q:
-                    pass
+#                if event.key == pygame.K_e:
+#                    pass
+#                if event.key == pygame.K_r:
+#                    pass
+#                if event.key == pygame.K_q:
+#                    pass
 
     

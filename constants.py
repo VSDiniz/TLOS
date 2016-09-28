@@ -17,7 +17,7 @@ fast_regen = 0.12
 estus_maxregen = 35
 player_roll_frames = 0
 boss_roll_frames = 0
-i = s = c = delay = 0
+i = s = c = k = delay = d1 = 0
  
 # Cores
 BGREEN = (21, 35, 12)

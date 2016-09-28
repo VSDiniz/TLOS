@@ -35,9 +35,9 @@ class Level():
     def draw(self, screen):
         # Desenha tudo num level 
         # Desenha o background
-        screen.fill(constants.GRAY)
+        screen.fill(constants.RED)
         # Faz o world se deslocar mais lentamente que o player
-        screen.blit(self.background, (self.world_shift // 1,5))
+        screen.blit(self.background, (self.world_shift,0))# // 1,5))
  
         # Desenha todas as listas de sprites
         self.platform_list.draw(screen)
@@ -48,7 +48,7 @@ class Level():
         # Mantém controle de quanto o world se desloca
         self.world_shift += shift_x
 #        self.world_shifty += shift_y
- 
+
         # Passa por toda a lista de sprites e altera
         for platform in self.platform_list:
             platform.rect.x += shift_x
@@ -70,20 +70,20 @@ class Level_01(Level):
         self.level_limit = 6400
  
         # Array com o tipo de plataforma e coordenadas (x,y) para localização
-        level = [[platforms.plat1, 928, 555],
-                 [platforms.plat2, 1760, 555],
-                 [platforms.plat3, 2624, 555],
-                 [platforms.plat4, 3616, 555],
-                 [platforms.plat5, 4832, 555],
-                 [platforms.plat2, 5696, 555],
-                 [platforms.plat6, 6500, 555],
+        level = [[platforms.plat1, 928, 550],
+                 [platforms.plat2, 1760, 550],
+                 [platforms.plat3, 2624, 550],
+                 [platforms.plat4, 3616, 550],
+                 [platforms.plat5, 4832, 550],
+                 [platforms.plat2, 5696, 550],
+                 [platforms.plat6, 6500, 550],
                  [platforms.stone_wall, 6705, 0],
-                 [platforms.floatplat, 4450, 395],
-                 [platforms.floatplat, 5442, 395],
-                 [platforms.block2, 4192, 586],
-                 [platforms.block1, 4384, 555],
-                 [platforms.block1, 4608, 555],
-                 [platforms.block2, 4768, 586]]
+                 [platforms.floatplat, 4450, 390],
+                 [platforms.floatplat, 5442, 390],
+                 [platforms.block2, 4192, 581],
+                 [platforms.block1, 4384, 550],
+                 [platforms.block1, 4608, 550],
+                 [platforms.block2, 4768, 581]]
  
         # Passa pelo array e adiciona plataformas
         for platform in level:
@@ -119,7 +119,7 @@ class Level_02(Level):
         self.background = pygame.transform.scale2x(self.background)
         self.level_limit = 3600
  
-        level = [[platforms.plat7, 650, 555],
+        level = [[platforms.plat7, 650, 550],
                  [platforms.stone_wall, 550, 0],
                  [platforms.stone_wall, 2820, 0]]
  

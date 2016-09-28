@@ -46,12 +46,12 @@ def main():
     
     # Define posição inicial do enemy
     boss1.rect.x = 750
-    boss1.rect.y = constants.SCREEN_HEIGHT - boss1.rect.height - 30
+    boss1.rect.y = constants.SCREEN_HEIGHT - (boss1.rect.height + 45)
     active_sprite_list.add(boss1)
     
     # Define posição inicial do player
     player1.rect.x = 6000#1075
-    player1.rect.y = constants.SCREEN_HEIGHT - (player1.rect.height - 45)
+    player1.rect.y = constants.SCREEN_HEIGHT - (player1.rect.height + 45)
     active_sprite_list.add(player1)
      
     #Loop até o usuário fechar o jogo
@@ -70,8 +70,8 @@ def main():
     
     current_position = 0
     
-#    printa = pygame.USEREVENT + 1
-#    pygame.time.set_timer(printa, 500)
+    printa = pygame.USEREVENT + 1
+    pygame.time.set_timer(printa, 100)
     estus_regen = pygame.USEREVENT + 2
     stm_regen = pygame.USEREVENT + 3
     pygame.time.set_timer(stm_regen, 100)
@@ -117,7 +117,8 @@ def main():
                     boss1.jump()
                     
                 # Faz o player recuperar vida
-                if event.key == pygame.K_e:                 
+                if event.key == pygame.K_e:
+                    player1.drinking = True
                     if player1.possible("estus"):
                         player1.recovering = True
                         player1.use_estus()
@@ -160,7 +161,7 @@ def main():
                     if player1.possible("roll"):
                         player1.active_roll()
                         pygame.time.set_timer(player_roll, 1)
-                    if not boss1.jumping:
+                    if boss1.possible("roll"):
                         boss1.active_roll()
                         pygame.time.set_timer(boss_roll, 1)
                     
@@ -168,7 +169,8 @@ def main():
                 if event.key == pygame.K_z:
                     if player1.possible("move"):
                         player1.defend()
-                    boss1.defend()
+                    if player1.possible("move"):                        
+                        boss1.defend()
                 
                 # Abre a tela de instruções
                 if event.key == pygame.K_RETURN or pressed[pygame.K_KP_ENTER]:
@@ -190,9 +192,9 @@ def main():
                 boss1.rolling = True
                        
                         
-            """ -------------------- PRINTA -------------------- """            
-#            if event.type == printa:
-#                print(player1.defending, player1.guard)
+            """ -------------------- PRINTA -------------------- """
+            if event.type == printa:
+                print(player1.recovering)
                     
             if event.type == pygame.KEYUP:
                 
@@ -213,8 +215,10 @@ def main():
                     boss1.defending = False
                     boss1.guard = True
                     
-        if constants.player_roll_frames <= 0:            
+        if constants.player_roll_frames <= 0:
             pygame.time.set_timer(player_roll, 0)
+        if constants.boss_roll_frames <= 0:
+            pygame.time.set_timer(boss_roll, 0)
                     
         # Atualiza o player
         active_sprite_list.update()
@@ -280,7 +284,7 @@ def main():
         if not player1.live:        
             player.dead_screen(screen, player1)
         elif not boss1.live:
-            boss.dead_screen(screen)
+            boss.dead_screen(screen, boss1)
  
         # Atualiza a janela com o que foi desenhado
         pygame.display.update()

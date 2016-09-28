@@ -6,7 +6,7 @@ Created on Sat Aug 20 13:25:12 2016
 """
 
 import pygame, constants, spritesheet_functions
-from platforms import MovingPlatform
+#from platforms import MovingPlatform
 
 class Boss(pygame.sprite.Sprite):
  
@@ -17,11 +17,13 @@ class Boss(pygame.sprite.Sprite):
         # Define variáveis de características do boss
         self.maxhealth = 1000
         self.health = 1000
+        self.stamina = 50
         
         # Define variáveis de estado do boss
         self.live = True
         self.on_ground = True
         self.defending = False
+        self.takedmg = False
         self.jumping = False
         self.guard = True
         self.latk = False
@@ -29,6 +31,10 @@ class Boss(pygame.sprite.Sprite):
         self.rolling = False
         self.parrying = False
         self.riposting = False
+        
+        # Define outras variáveis
+        self.world_shift = 0
+        self.start_clocker = False
         
         # Define o vetor velocidade do boss
         self.change_x = 0
@@ -306,7 +312,7 @@ class Boss(pygame.sprite.Sprite):
         self.calc_grav()
         
         # Reproduz a animação de espera           
-        if not self.defending and not self.latk and not self.hatk and self.live:
+        if self.possible("wait"):
             if self.change_x == 0 and self.change_y == 0:
                 
                 if self.delay > constants.FPS/len(self.waiting_frames_r):
@@ -335,100 +341,172 @@ class Boss(pygame.sprite.Sprite):
 
         # Morte do boss        
         if not self.live:
-            self.change_y = 12
+            self.change_y = 10
             if self.direction == "R":
                 self.image = self.dead_frames_r[0]
             else:
                 self.image = self.dead_frames_l[0]
  
         # Verifica se existe colisão
-        block_hit_list = pygame.sprite.spritecollide(self, self.level.platform_list, False)
+#        block_hit_list = pygame.sprite.spritecollide(self, self.level.platform_list, False)
+#        for block in block_hit_list:
+#            # Se o player está indo para a direita, define o lado direito do boss
+#            # para o lado esquerdo do objeto que o acertou
+#            if self.change_x > 0:
+#                self.rect.right = block.rect.left
+#            elif self.change_x < 0:
+#                # Se o player estiver indo para a esquerda, faz o oposto
+#                self.rect.left = block.rect.right
+                
+        block_hit_list =  self.level.platform_list
         for block in block_hit_list:
-            # Se o player está indo para a direita, define o lado direito do boss
-            # para o lado esquerdo do objeto que o acertou
-            if self.change_x > 0:
-                self.rect.right = block.rect.left
-            elif self.change_x < 0:
-                # Se o player estiver indo para a esquerda, faz o oposto
-                self.rect.left = block.rect.right
+            if pygame.sprite.collide_rect(self, block):                
+                if not self.jumping:
+                    if self.rect.bottom < block.rect.bottom and self.rect.bottom > block.rect.top:
+                        if self.rect.left < block.rect.left and self.rect.right > block.rect.left:
+                            self.rect.right = block.rect.left
+                        if self.rect.right > block.rect.right and self.rect.left < block.rect.right:
+                            self.rect.left = block.rect.right
+                    if self.rect.top > block.rect.top and self.rect.top < block.rect.bottom:
+                        if self.rect.left < block.rect.left and self.rect.right > block.rect.left:
+                            self.rect.right = block.rect.left
+                        if self.rect.right > block.rect.right and self.rect.left < block.rect.right:
+                            self.rect.left = block.rect.right
+                    if self.rect.top <= block.rect.top and self.rect.bottom >= block.rect.bottom:
+                        if self.rect.left < block.rect.left and self.rect.right > block.rect.left:
+                            self.rect.right = block.rect.left
+                        if self.rect.right > block.rect.right and self.rect.left < block.rect.right:
+                            self.rect.left = block.rect.right
+                if self.rect.top >= block.rect.top and self.rect.bottom <= block.rect.bottom:
+                    if self.rect.left < block.rect.left and self.rect.right > block.rect.left:
+                        self.rect.right = block.rect.left
+                    if self.rect.right > block.rect.right and self.rect.left < block.rect.right:
+                        self.rect.left = block.rect.right
  
+#        # Move para cima/baixo
+#        if self.change_x == 0 and self.change_y != 0:
+#            self.rect.y += self.change_y
+#            pos = self.rect.y
+#            
+#            if self.direction == "R":
+#                if (-10 <= self.change_y <= -9.9):
+#                    self.image = self.jumping_frames_r[0]
+#                elif (-9.9 < self.change_y <= 2):
+#                    self.image = self.jumping_frames_r[1]
+#                elif (2 < self.change_y <= 10):
+#                   self.image = self.jumping_frames_r[2]
+#                
+#            else:
+#                if (-10 <= self.change_y <= -9.9):
+#                    self.image = self.jumping_frames_l[0]
+#                elif (-9.9 < self.change_y <= 2):
+#                    self.image = self.jumping_frames_l[1]
+#                elif (2 < self.change_y <= 10):
+#                   self.image = self.jumping_frames_l[2]
+#                
+#                
+#        elif self.change_x != 0 and self.change_y != 0:
+#             self.rect.y += self.change_y
+#             self.rect.x += self.change_x
+#             pos = self.rect.x + self.level.world_shift
+#             
+#             if self.direction == "R":
+#                if (-10 <= self.change_y <= -9.9):
+#                    self.image = self.jumping_frames_r[0]
+#                elif (-9.9 < self.change_y <= 2):
+#                    self.image = self.jumping_frames_r[1]
+#                elif (2 < self.change_y <= 10):
+#                   self.image = self.jumping_frames_r[2]
+#                
+#             else:
+#                if (-10 <= self.change_y <= -9.9):
+#                    self.image = self.jumping_frames_l[0]
+#                elif (-9.9 < self.change_y <= 2):
+#                    self.image = self.jumping_frames_l[1]
+#                elif (2 < self.change_y <= 10):
+#                   self.image = self.jumping_frames_l[2]
+                   
         # Move para cima/baixo
-        if self.change_x == 0 and self.change_y != 0:
+        if self.change_y != 0:
             self.rect.y += self.change_y
-            pos = self.rect.y
-            
-            if self.direction == "R":
+            self.rect.x += self.change_x
+                 
+            if self.direction == "R" and self.jumping == True:
                 if (-10 <= self.change_y <= -9.9):
                     self.image = self.jumping_frames_r[0]
                 elif (-9.9 < self.change_y <= 2):
                     self.image = self.jumping_frames_r[1]
                 elif (2 < self.change_y <= 10):
-                   self.image = self.jumping_frames_r[2]
-                
-            else:
+                    self.image = self.jumping_frames_r[2]
+                    
+            elif self.direction == "L" and self.jumping == True :
                 if (-10 <= self.change_y <= -9.9):
                     self.image = self.jumping_frames_l[0]
                 elif (-9.9 < self.change_y <= 2):
                     self.image = self.jumping_frames_l[1]
                 elif (2 < self.change_y <= 10):
-                   self.image = self.jumping_frames_l[2]
-                
-                
-        elif self.change_x != 0 and self.change_y != 0:
-             self.rect.y += self.change_y
-             self.rect.x += self.change_x
-             pos = self.rect.x + self.level.world_shift
-             
-             if self.direction == "R":
-                if (-10 <= self.change_y <= -9.9):
-                    self.image = self.jumping_frames_r[0]
-                elif (-9.9 < self.change_y <= 2):
-                    self.image = self.jumping_frames_r[1]
-                elif (2 < self.change_y <= 10):
-                   self.image = self.jumping_frames_r[2]
-                
-             else:
-                if (-10 <= self.change_y <= -9.9):
-                    self.image = self.jumping_frames_l[0]
-                elif (-9.9 < self.change_y <= 2):
-                    self.image = self.jumping_frames_l[1]
-                elif (2 < self.change_y <= 10):
-                   self.image = self.jumping_frames_l[2]
+                    self.image = self.jumping_frames_l[2]
  
         # Verifica se existe colisão
-        block_hit_list = pygame.sprite.spritecollide(self, self.level.platform_list, False)
+#        block_hit_list = pygame.sprite.spritecollide(self, self.level.platform_list, False)
+#        for block in block_hit_list:
+# 
+#            # Redefine a posição do player baseada no topo/fundo do objeto
+#            if self.change_y > 0:
+#                self.rect.bottom = block.rect.top
+#            elif self.change_y < 0:
+#                self.rect.top = block.rect.bottom
+# 
+#            # Para o movimento vertical do boss
+#            self.change_y = 0
+# 
+#            if isinstance(block, MovingPlatform):
+#                self.rect.x += block.change_x
+        self.on_ground = False
+        block_hit_list = self.level.platform_list
+        pygame.sprite.spritecollide(self, self.level.platform_list, False)
         for block in block_hit_list:
- 
-            # Redefine a posição do player baseada no topo/fundo do objeto
-            if self.change_y > 0:
-                self.rect.bottom = block.rect.top
-            elif self.change_y < 0:
-                self.rect.top = block.rect.bottom
- 
-            # Para o movimento vertical do boss
-            self.change_y = 0
- 
-            if isinstance(block, MovingPlatform):
-                self.rect.x += block.change_x
+            if pygame.sprite.collide_rect(self,block):
+                if self.rect.right > block.rect.left and self.rect.left < block.rect.right:
+                    if self.rect.bottom > block.rect.top and (self.rect.bottom - 10) < block.rect.top:
+                        if self.change_y > 0 and not self.on_ground:
+                            self.rect.bottom = block.rect.top
+                            self.on_ground = True
+                            self.jumping = False
+                            self.change_y = 0
+                    if self.rect.top < block.rect.bottom and (self.rect.top + 10) > block.rect.bottom:
+                        if self.change_y < 0 and not self.on_ground:
+                            self.rect.top = block.rect.bottom
                 
-        if self.live and self.guard and not self.jumping:
-            self.parry()
-            self.riposte()
-            self.roll()
-            self.light_atk()
-            self.heavy_atk()
- 
+        self.clocker()
+        if self.live:
+            self.take_dmg()
+            if self.guard and not self.jumping:
+                if self.stamina > 0:
+                    self.parry()
+                    self.riposte()
+                    self.roll()
+                    self.light_atk()
+                    self.heavy_atk()
+            
     def calc_grav(self):
         # Calcula o efeito da gravidade
         if self.change_y == 0:
-            self.change_y = 1
+            if self.on_ground:
+                self.change_y = 0
+            else:
+                self.change_y = 1
         else:
+            self.jumping = True
             self.change_y += .35
  
         # Verifica se o boss está no chão
-        if self.rect.y >= constants.SCREEN_HEIGHT - self.rect.height-47 and self.change_y >= 0:
+        if self.rect.y >= constants.SCREEN_HEIGHT - self.rect.height - 47 + (1000) and self.change_y >= 0:
             self.change_y = 0
-            self.rect.y = constants.SCREEN_HEIGHT - self.rect.height-47
+            #self.rect.y = constants.SCREEN_HEIGHT - self.rect.height-45 +(1000)
+            self.live = False
+            self.health = 0
+            self.jumping = False
  
     def jump(self):
  
@@ -438,8 +516,10 @@ class Boss(pygame.sprite.Sprite):
         self.rect.y -= 2
  
         # Se for possível pular, define a velocidade da subida
-        if len(platform_hit_list) > 0 or self.rect.bottom >= constants.SCREEN_HEIGHT-52:
+        if len(platform_hit_list) > 0:
             self.change_y = -10
+            self.jumping = True
+            self.on_ground = False
  
     # Movimentos do boss:
     def go_left(self):
@@ -464,6 +544,7 @@ class Boss(pygame.sprite.Sprite):
     # Coloca o boss em posição de defesa
     def defend(self):
         self.defending = True
+        self.jumping = False
         if self.direction == "R":
             self.image = self.defense_frames_r[0]
             self.jumping = False
@@ -483,43 +564,43 @@ class Boss(pygame.sprite.Sprite):
     def parry(self):
         if self.parrying:
             self.change_x = 0
-            if constants.delay > constants.FPS/len(self.parry_frames_r):
-                constants.delay = 0
+            if constants.d1 > constants.FPS/len(self.parry_frames_r):
+                constants.d1 = 0
                 if self.direction == "R":
-                    self.image = self.parry_frames_r[constants.s]
+                    self.image = self.parry_frames_r[constants.i]
                 else:
-                    self.image = self.parry_frames_l[constants.s]
-                if constants.s >= len(self.parry_frames_r) - 1:
-                    constants.s = 0
+                    self.image = self.parry_frames_l[constants.i]
+                if constants.i >= len(self.parry_frames_r) - 1:
+                    constants.i = 0
                     self.parrying = False
                 else: 
-                    constants.s += 1
+                    constants.i += 1
             else: 
-                constants.delay += 1
+                constants.d1 += 1
     
     # Ataque crítico
     def riposte(self):
         if self.riposting:
             self.change_x = 0
-            if constants.delay > constants.FPS/len(self.riposte_frames_r):
-                constants.delay = 0
+            if constants.d1 > constants.FPS/len(self.riposte_frames_r):
+                constants.d1 = 0
                 if self.direction == "R":
-                    self.image = self.riposte_frames_r[constants.s]
+                    self.image = self.riposte_frames_r[constants.i]
                 else:
-                    self.image = self.riposte_frames_l[constants.s]
-                if constants.s >= len(self.riposte_frames_r) - 1:
-                    constants.s = 0
+                    self.image = self.riposte_frames_l[constants.i]
+                if constants.i >= len(self.riposte_frames_r) - 1:
+                    constants.i = 0
                     self.riposting = False
                 else: 
-                    constants.s += 1
+                    constants.i += 1
             else: 
-                constants.delay += 1
+                constants.d1 += 1
 
     # Faz o boss desviar
     def roll(self):
         rolling_speed = 8
         roll_dt = 4
-        if self.rolling and not self.jumping and constants.boss_roll_frames > 0:
+        if self.rolling and constants.boss_roll_frames > 0:
             if self.direction == "R":
                 self.rect.x += rolling_speed
                 constants.boss_roll_frames -= roll_dt
@@ -538,37 +619,37 @@ class Boss(pygame.sprite.Sprite):
     def light_atk(self):
         if self.latk:
             self.change_x = 0
-            if constants.delay > constants.FPS/len(self.lightatk_frames_r):
-                constants.delay = 0
+            if constants.d1 > constants.FPS/len(self.lightatk_frames_r):
+                constants.d1 = 0
                 if self.direction == "R":
-                    self.image = self.lightatk_frames_r[constants.s]
+                    self.image = self.lightatk_frames_r[constants.i]
                 else:
-                    self.image = self.lightatk_frames_l[constants.s]
-                if constants.s >= len(self.lightatk_frames_r) - 1:
-                    constants.s = 0
+                    self.image = self.lightatk_frames_l[constants.i]
+                if constants.i >= len(self.lightatk_frames_r) - 1:
+                    constants.i = 0
                     self.latk = False
                 else: 
-                    constants.s += 1
+                    constants.i += 1
             else: 
-                constants.delay += 1
+                constants.d1 += 1
     
-    # Ataque forte
+    # Ataque pesado
     def heavy_atk(self):
         if self.hatk:
             self.change_x = 0
-            if constants.delay > constants.FPS/len(self.heavyatk_frames_r):
-                constants.delay = 0
+            if constants.d1 > constants.FPS/len(self.heavyatk_frames_r):
+                constants.d1 = 0
                 if self.direction == "R":
-                    self.image = self.heavyatk_frames_r[constants.s]
+                    self.image = self.heavyatk_frames_r[constants.i]
                 else:
-                    self.image = self.heavyatk_frames_l[constants.s]
-                if constants.s >= len(self.heavyatk_frames_r) - 1:
-                    constants.s = 0
+                    self.image = self.heavyatk_frames_l[constants.i]
+                if constants.i >= len(self.heavyatk_frames_r) - 1:
+                    constants.i = 0
                     self.hatk = False
                 else: 
-                    constants.s += 1
+                    constants.i += 1
             else: 
-                constants.delay += 1
+                constants.d1 += 1
             
     # Calcula o dano recebido pelo boss
     def calc_damage(self, damage):
@@ -594,6 +675,108 @@ class Boss(pygame.sprite.Sprite):
                     
         if self.health <= 0:
             self.live = False
+                
+    def take_dmg(self):
+        self.clocker_rt = 1
+        if not self.defending and self.takedmg:
+#            self.rect.x -= 0.001
+            if constants.delay > constants.FPS/len(self.takedmg_frames_r):
+                constants.delay = 0
+                if self.direction == "R":
+                    self.image = self.takedmg_frames_r[0]
+                else:
+                    self.image = self.takedmg_frames_l[0]
+                if constants.i >= len(self.takedmg_frames_r) - 1:
+                    constants.i = 0
+                    self.takedmg = False
+                    self.guard = True
+                else:
+                    constants.i += 1
+            else:
+                constants.delay += 1
+                
+    # Calcula a stamina gasta pelo boss
+    def calc_stamina(self, stm_cost):
+        if self.stamina > 0:        
+            self.stamina -= stm_cost
+        else:
+            self.stamina = 0
+            
+    # Regenera stamina usada
+    def stamina_regen(self):
+        # Calcula a regeneração de stamina do boss
+        self.clocker_rt = 1
+        if not self.start_clocker:
+            if not self.defending:
+                if self.stamina < self.maxstamina:
+                    self.stamina += 1
+                else:
+                    self.stamina = self.maxstamina
+            else:
+                if self.stamina < self.maxstamina:
+                    self.stamina += 0.1
+                else:
+                    self.stamina = self.maxstamina
+            
+    # Faz o boss voltar a vida
+    def reborn(self):
+        self.live = True
+        self.guard = True
+        self.defending = False
+        self.health = self.maxhealth
+        self.rect.y = 50
+        self.rect.x = 200
+        
+    def clocker(self):
+        if self.start_clocker:
+            if constants.k > constants.FPS:
+                constants.k = 0
+                self.start_clocker = False
+            else:
+                constants.k += self.clocker_rt
+                
+    def shift_world(self, shift_x):
+        # Desloca o world quando o player se move
+        # Mantém controle de quanto o world se desloca
+        self.world_shift += shift_x
+ 
+        # Passa por toda a lista de sprites e altera
+        for platform in self.platform_list:
+            platform.rect.x += shift_x
+ 
+        for enemy in self.enemy_list:
+            enemy.rect.x += shift_x
+                
+    def possible(self, event):
+        if event == "wait":
+            if self.live and not self.jumping and not self.defending and not self.latk and not self.hatk and not self.rolling and not self.takedmg and not self.parrying and not self.riposting:
+                return True
+        elif event == "move":
+            if self.live and not self.defending and not self.latk and not self.hatk and not self.rolling and not self.takedmg and not self.parrying and not self.riposting:
+                return True
+        elif event == "jump":
+            if self.live and not self.defending and not self.latk and not self.hatk and not self.rolling and not self.recovering and not self.takedmg and not self.parrying and not self.riposting and (not self.jumping or self.on_ground):
+                return True
+        elif event == "defend":
+            if self.live and not self.jumping and not self.latk and not self.hatk and not self.rolling and not self.takedmg and not self.parrying and not self.riposting:
+                return True
+        elif event == "latk":
+            if self.live and not self.jumping and not self.defending and not self.hatk and not self.rolling and not self.takedmg and not self.parrying and not self.riposting:
+                return True
+        elif event == "hatk":
+            if self.live and not self.jumping and not self.defending and not self.latk and not self.rolling and not self.takedmg and not self.parrying and not self.riposting:
+                return True
+        elif event == "parry":
+            if self.live and not self.jumping and not self.latk and not self.hatk and not self.rolling and not self.takedmg and not self.riposting:
+                return True
+        elif event == "riposte":
+            if self.live and not self.jumping and not self.defending and not self.latk and not self.hatk and not self.rolling and not self.takedmg and not self.parrying:
+                return True
+        elif event == "roll":
+            if self.live and not self.jumping and not self.latk and not self.hatk and not self.takedmg and not self.parrying and not self.riposting:
+                return True
+        else:
+            return False
         
     def boss_hud(self, screen):
         boss_name = constants.soulsFont_P.render("Ganondorf, the Great King of Evil", True, constants.WHITE, None)
@@ -608,7 +791,7 @@ class Boss(pygame.sprite.Sprite):
             pygame.draw.rect(screen, constants.ORANGE, (850-(0.8*self.health), 580, 0.8*self.health, 10))
         
 # Mostra tela de vitória        
-def dead_screen(screen):
+def dead_screen(screen, boss):
     s = pygame.Surface((constants.SCREEN_WIDTH, constants.SCREEN_HEIGHT), pygame.SRCALPHA)
     s.fill((255, 255, 255, 60))
     screen.blit(s, (0, 0))
@@ -627,3 +810,5 @@ def dead_screen(screen):
                 if ((pressed[pygame.K_LALT] and pressed[pygame.K_F4]) or (pressed[pygame.K_RALT] and pressed[pygame.K_F4])):
                     pygame.quit() # Fecha a janela se o usuário pressionar ALT+F4
                     quit()
+                if event.key == pygame.K_BACKSPACE:
+                    boss.reborn()
