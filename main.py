@@ -133,7 +133,7 @@ def main():
                     if player1.possible("latk"):
                         player1.calc_stamina(15)
                         player1.latk = True
-                    boss1.calc_damage(200)
+#                    boss1.calc_damage(200)
                     
                 if event.key == pygame.K_o:
                     if player1.possible("hatk"):

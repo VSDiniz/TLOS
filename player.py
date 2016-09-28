@@ -234,6 +234,10 @@ class Player(pygame.sprite.Sprite):
 #                 [106, 757, 37, 49]]
         list1 = [[320, 0, 80, 60],
                  [320, 180, 80, 60],
+                 [320, 180, 80, 60],
+                 [320, 180, 80, 60],
+                 [320, 180, 80, 60],
+                 [320, 180, 80, 60],
                  [320, 180, 80, 60]]
                  
         self.parry_frames_r = spritesheet_functions.createSprite(sprite_sheet,list1, 0, 1, constants.BLACK)
@@ -789,7 +793,7 @@ class Player(pygame.sprite.Sprite):
             if self.live and not self.jumping and not self.defending and not self.latk and not self.rolling and not self.recovering and not self.takedmg and not self.parrying and not self.riposting:
                 return True
         elif event == "parry":
-            if self.live and not self.jumping and not self.defending and not self.latk and not self.hatk and not self.rolling and not self.recovering and not self.takedmg and not self.riposting:
+            if self.live and not self.jumping and not self.latk and not self.hatk and not self.rolling and not self.recovering and not self.takedmg and not self.riposting:
                 return True
         elif event == "riposte":
             if self.live and not self.jumping and not self.defending and not self.latk and not self.hatk and not self.rolling and not self.recovering and not self.takedmg and not self.parrying:
@@ -809,7 +813,7 @@ class Player(pygame.sprite.Sprite):
         estus_n_rect = estus_n.get_rect()
         estus_n_rect.x = 37
         estus_n_rect.y = 30
-        image = spritesheet_functions.SpriteSheet("images/link.png")
+        image = spritesheet_functions.SpriteSheet("images/link_1.png")
         
         if self.estus_rn > 0:
             image = image.get_image(219, 1074, 12, 15, constants.BLACK)
