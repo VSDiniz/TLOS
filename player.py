@@ -5,7 +5,7 @@ Created on Thu Aug 18 09:03:06 2016
 @author: vini_
 """
 
-import pygame, constants, spritesheet_functions
+import pygame, constants, spritesheet_functions, sounds
 #from platforms import MovingPlatform
  
 class Player(pygame.sprite.Sprite):
@@ -28,6 +28,7 @@ class Player(pygame.sprite.Sprite):
         self.on_ground = True
         self.recovering = False
         self.takedmg = False
+        self.dealdmg = False
         self.defending = False
         self.jumping = False
         self.guard = True
@@ -102,8 +103,8 @@ class Player(pygame.sprite.Sprite):
         # Lista de sprites que o player pode esbarrar
         self.level = None        
         
-        self.delay = self.i = self.s = 0 
-        sprite_sheet = spritesheet_functions.SpriteSheet("images/link_1.png")
+        self.delay = self.i = self.c = self.s = 0
+        sprite_sheet = spritesheet_functions.SpriteSheet("images/link_2.png")
         
         # Carrega todas as sprites paradas viradas para a direita numa lista
         "Esperar"
@@ -348,6 +349,11 @@ class Player(pygame.sprite.Sprite):
         
         # Reproduz a animação de espera           
         if self.possible("wait"):
+            if self.c > 120:
+                self.c = 0
+                self.guard = True
+            else:
+                self.c += 1
             if self.change_x == 0 and self.change_y == 0:
                 
                 if self.delay > constants.FPS/len(self.waiting_frames_r):
@@ -492,14 +498,17 @@ class Player(pygame.sprite.Sprite):
         self.clocker()
         if self.live:
             self.take_dmg()
-            if self.guard and not self.jumping:
-                self.anim_estus()
-                if self.stamina > 0:
-                    self.parry()
-                    self.riposte()
-                    self.roll()
-                    self.light_atk()
-                    self.heavy_atk()
+            if not self.jumping:
+                if self.guard:
+                    self.anim_estus()
+                    if self.stamina > 0:
+                        self.parry()
+                        self.riposte()
+                        self.roll()
+                        self.light_atk()
+                        self.heavy_atk()
+                else:
+                    self.guard_break()
 #==============================================================================
 #                 if self.rect.bottom >= block.rect.top:
 #                     self.rect.bottom = block.rect.top
@@ -523,7 +532,7 @@ class Player(pygame.sprite.Sprite):
             self.change_y += .35
  
         # Verifica se o player está no chão
-        if self.rect.y >= constants.SCREEN_HEIGHT - self.rect.height - 45 + (1000) and self.change_y >= 0:
+        if self.rect.y >= constants.LEVEL_BOTTOM - self.rect.height and self.change_y >= 0:
             self.change_y = 0
             #self.rect.y = constants.SCREEN_HEIGHT - self.rect.height-45 +(1000)
             self.live = False
@@ -534,17 +543,16 @@ class Player(pygame.sprite.Sprite):
 #   Movimentos do player:
 #==============================================================================
     def jump(self):
-#        if not self.defending:
-            # Move o player 2 pixels para baixo para verificar se existe uma plataforma
-            self.rect.y += 2
-            platform_hit_list = pygame.sprite.spritecollide(self, self.level.platform_list, False)
-            self.rect.y -= 2
-     
-            # Se for possível pular, define a velocidade da subida
-            if len(platform_hit_list) > 0:
-                self.change_y = - 10
-                self.jumping = True
-                self.on_ground = False
+        # Move o player 2 pixels para baixo para verificar se existe uma plataforma
+        self.rect.y += 2
+        platform_hit_list = pygame.sprite.spritecollide(self, self.level.platform_list, False)
+        self.rect.y -= 2
+ 
+        # Se for possível pular, define a velocidade da subida
+        if len(platform_hit_list) > 0:
+            self.change_y = - 10
+            self.jumping = True
+            self.on_ground = False
                 
     def go_left(self):
         # Quando o player vai para a esquerda
@@ -577,11 +585,11 @@ class Player(pygame.sprite.Sprite):
     
     # Quebra a guarda do player
     def guard_break(self):
-        self.guard = False
-        if self.direction == "R":
-            self.image = self.guardbreak_frames_r[0]
-        else:
-            self.image = self.guardbreak_frames_l[0]
+        if not self.guard:
+            if self.direction == "R":
+                self.image = self.guardbreak_frames_r[0]
+            else:
+                self.image = self.guardbreak_frames_l[0]
 
     # Desvia um ataque e quebra guarda do enemy
     def parry(self):
@@ -658,6 +666,10 @@ class Player(pygame.sprite.Sprite):
                     self.latk = False
                 else: 
                     constants.s += 1
+                if constants.s == 2:
+                    self.dealdmg = True
+                else:
+                    self.dealdmg = False
             else: 
                 constants.delay += 1
     
@@ -677,6 +689,10 @@ class Player(pygame.sprite.Sprite):
                     self.hatk = False
                 else: 
                     constants.s += 1
+                if constants.s == 2:
+                    self.dealdmg = True
+                else:
+                    self.dealdmg = False
             else: 
                 constants.delay += 1
 
@@ -731,9 +747,10 @@ class Player(pygame.sprite.Sprite):
         if self.guard:
             if self.defending:
                 self.calc_stamina(damage/2) # Reduz stamina
+                self.rect.x -= 10
                 if self.stamina <= 0:
                     self.stamina = 0
-                    self.guard_break() # Quebra guarda
+                    self.guard = False # Quebra guarda
                                         
             else:
                 if self.direction == "R":
@@ -742,10 +759,12 @@ class Player(pygame.sprite.Sprite):
                     self.image = self.takedmg_frames_l[0]
                 if self.health - damage > 0:
                     self.health -= damage # Reduz vida
+                    self.rect.x -= 20
                 else:
                     self.health = 0
         else:
-            self.health -= damage*2                    
+            self.health -= damage*2
+            self.rect.x -= 30
                     
         if self.health <= 0:
             self.live = False
@@ -768,6 +787,9 @@ class Player(pygame.sprite.Sprite):
                     constants.i += 1
             else:
                 constants.delay += 1
+                
+    def detect_atk(self, enemy, atk):
+        pass
                 
     # Calcula a stamina gasta pelo player
     def calc_stamina(self, stm_cost):
@@ -814,31 +836,31 @@ class Player(pygame.sprite.Sprite):
             if self.live and not self.jumping and not self.defending and not self.latk and not self.hatk and not self.rolling and not self.recovering and not self.takedmg and not self.parrying and not self.riposting:
                 return True
         elif event == "move":
-            if self.live and not self.defending and not self.latk and not self.hatk and not self.rolling and not self.recovering and not self.takedmg and not self.parrying and not self.riposting:
+            if self.live and self.guard and not self.defending and not self.latk and not self.hatk and not self.rolling and not self.recovering and not self.takedmg and not self.parrying and not self.riposting:
                 return True
         elif event == "jump":
-            if self.live and not self.defending and not self.latk and not self.hatk and not self.rolling and not self.recovering and not self.takedmg and not self.parrying and not self.riposting and not self.jumping:
+            if self.live and self.guard and not self.jumping and not self.defending and not self.latk and not self.hatk and not self.rolling and not self.recovering and not self.takedmg and not self.parrying and not self.riposting:
                 return True
         elif event == "defend":
-            if self.live and not self.jumping and not self.latk and not self.hatk and not self.rolling and not self.recovering and not self.takedmg and not self.parrying and not self.riposting:
+            if self.live and self.guard and not self.jumping and not self.latk and not self.hatk and not self.rolling and not self.recovering and not self.takedmg and not self.parrying and not self.riposting:
                 return True
         elif event == "latk":
-            if self.live and not self.jumping and not self.defending and not self.hatk and not self.rolling and not self.recovering and not self.takedmg and not self.parrying and not self.riposting:
+            if self.live and self.guard and not self.jumping and not self.defending and not self.hatk and not self.rolling and not self.recovering and not self.takedmg and not self.parrying and not self.riposting:
                 return True
         elif event == "hatk":
-            if self.live and not self.jumping and not self.defending and not self.latk and not self.rolling and not self.recovering and not self.takedmg and not self.parrying and not self.riposting:
+            if self.live and self.guard and not self.jumping and not self.defending and not self.latk and not self.rolling and not self.recovering and not self.takedmg and not self.parrying and not self.riposting:
                 return True
         elif event == "parry":
-            if self.live and not self.jumping and not self.latk and not self.hatk and not self.rolling and not self.recovering and not self.takedmg and not self.riposting:
+            if self.live and self.guard and not self.jumping and not self.latk and not self.hatk and not self.rolling and not self.recovering and not self.takedmg and not self.riposting:
                 return True
         elif event == "riposte":
-            if self.live and not self.jumping and not self.defending and not self.latk and not self.hatk and not self.rolling and not self.recovering and not self.takedmg and not self.parrying:
+            if self.live and self.guard and not self.jumping and not self.defending and not self.latk and not self.hatk and not self.rolling and not self.recovering and not self.takedmg and not self.parrying:
                 return True
         elif event == "roll":
-            if self.live and not self.jumping and not self.latk and not self.hatk and not self.recovering and not self.takedmg and not self.parrying and not self.riposting:
+            if self.live and self.guard and not self.jumping and not self.latk and not self.hatk and not self.recovering and not self.takedmg and not self.parrying and not self.riposting:
                 return True
         elif event == "estus":
-            if self.live and not self.jumping and not self.defending and not self.latk and not self.hatk and not self.takedmg and not self.rolling and not self.parrying and not self.riposting and self.estus_rn > 0:
+            if self.live and self.guard and not self.jumping and not self.defending and not self.latk and not self.hatk and not self.rolling and not self.takedmg and not self.parrying and not self.riposting and self.estus_rn > 0:
                 return True
         else:
             return False
@@ -849,7 +871,7 @@ class Player(pygame.sprite.Sprite):
         estus_n_rect = estus_n.get_rect()
         estus_n_rect.x = 37
         estus_n_rect.y = 30
-        image = spritesheet_functions.SpriteSheet("images/link_1.png")
+        image = spritesheet_functions.SpriteSheet("images/link_2.png")
         
         if self.estus_rn > 0:
             image = image.get_image(219, 1074, 12, 15, constants.BLACK)
@@ -871,6 +893,8 @@ class Player(pygame.sprite.Sprite):
 
 # Mostra tela de morte        
 def dead_screen(screen, player):
+#    pygame.mixer.music.stop()
+#    sounds.dead.play()
     black_surf = pygame.Surface((constants.SCREEN_WIDTH, constants.SCREEN_HEIGHT), pygame.SRCALPHA)
     black_surf.fill((0, 0, 0, 180))
     screen.blit(black_surf, (0, 0))
@@ -895,11 +919,11 @@ def dead_screen(screen, player):
                     quit()
                 if event.key == pygame.K_BACKSPACE:
                     player.reborn()
-#                if event.key == pygame.K_e:
-#                    pass
-#                if event.key == pygame.K_r:
-#                    pass
-#                if event.key == pygame.K_q:
-#                    pass
+                if event.key == pygame.K_e:
+                    pass
+                if event.key == pygame.K_r:
+                    pass
+                if event.key == pygame.K_q:
+                    pass
 
     

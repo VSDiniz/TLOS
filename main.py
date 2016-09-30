@@ -5,7 +5,7 @@ Created on Thu Aug 18 08:22:09 2016
 @author: vini_
 """
  
-import pygame, constants, levels, os, player, boss
+import pygame, constants, levels, os, player, boss, sounds
   
 def main():
     # Main Program
@@ -42,16 +42,17 @@ def main():
  
     active_sprite_list = pygame.sprite.Group()
     player1.level = current_level
+#    if current_level == 1:
     boss1.level = current_level
-    
+
     # Define posição inicial do enemy
-    boss1.rect.x = 750
-    boss1.rect.y = constants.SCREEN_HEIGHT - (boss1.rect.height + 45)
+    boss1.rect.x = constants.bsp_x
+    boss1.rect.y = constants.bsp_y - boss1.rect.height
     active_sprite_list.add(boss1)
     
     # Define posição inicial do player
-    player1.rect.x = 6000#1075
-    player1.rect.y = constants.SCREEN_HEIGHT - (player1.rect.height + 45)
+    player1.rect.x = constants.psp_x
+    player1.rect.y = constants.psp_y - player1.rect.height
     active_sprite_list.add(player1)
      
     #Loop até o usuário fechar o jogo
@@ -66,12 +67,13 @@ def main():
     # Mostra a tela de instruções
     levels.instructions()
     
+    # Toca música de fundo
     levels.play(current_level_no)
     
     current_position = 0
     
-    printa = pygame.USEREVENT + 1
-    pygame.time.set_timer(printa, 100)
+#    printa = pygame.USEREVENT + 1
+#    pygame.time.set_timer(printa, 100)
     estus_regen = pygame.USEREVENT + 2
     stm_regen = pygame.USEREVENT + 3
     pygame.time.set_timer(stm_regen, 100)
@@ -99,7 +101,8 @@ def main():
                     if player1.possible("move"):
                         player1.go_left()
                 if event.key == pygame.K_LEFT:
-                    boss1.go_left()
+                    if boss1.possible("move"):
+                        boss1.go_left()
                     
                 # Move o player para a direita
                 if event.key == pygame.K_d:
@@ -107,14 +110,16 @@ def main():
                         player1.go_right()
                         
                 if event.key == pygame.K_RIGHT:
-                    boss1.go_right()
+                    if boss1.possible("move"):
+                        boss1.go_right()
                     
                 # Faz o player pular
                 if event.key == pygame.K_w:
                     if player1.possible("jump"):
                         player1.jump()
                 if event.key == pygame.K_UP:
-                    boss1.jump()
+                    if boss1.possible("jump"):
+                        boss1.jump()
                     
                 # Faz o player recuperar vida
                 if event.key == pygame.K_e:
@@ -147,14 +152,17 @@ def main():
                         player1.parrying = True
                     
                 if event.key == pygame.K_l:
-                    boss1.latk = True
+                    if boss1.possible("latk"):
+                        boss1.latk = True
 
                 if event.key == pygame.K_k:
-                    boss1.hatk = True                    
+                    if boss1.possible("hatk"):
+                        boss1.hatk = True                    
                     
                 # Calcula a stamina gasta pelo player
                 if event.key == pygame.K_r:
                     player1.stamina = player1.maxstamina
+                    player1.estus_rn = 5
 #                    boss1.parrying = True
                     
                 if event.key == pygame.K_SPACE:
@@ -193,8 +201,8 @@ def main():
                        
                         
             """ -------------------- PRINTA -------------------- """
-            if event.type == printa:
-                print(player1.recovering)
+#            if event.type == printa:
+#                print(player1.guard)
                     
             if event.type == pygame.KEYUP:
                 
@@ -231,12 +239,14 @@ def main():
             diff = player1.rect.right - 700
             player1.rect.right = 700
             current_level.shift_world(-diff)
+            boss1.rect.right -= diff
   
         # Se o player chegar perto do lado esquerdo, muda o world para a direita (+x)
         if player1.rect.left <= 120:
             diff = 120 - player1.rect.left
             player1.rect.left = 120
             current_level.shift_world(diff)
+            boss1.rect.left += diff
         
 #==============================================================================
 #         # Se o player chegar perto do fundo, muda o world para cima (-y)
@@ -281,8 +291,12 @@ def main():
         # Limita os frames por segundo
         clock.tick(constants.FPS)
         
+        boss1.AI(player1)
+        
         if not player1.live:        
             player.dead_screen(screen, player1)
+            pygame.mixer.music.stop()
+            sounds.dead.play()
         elif not boss1.live:
             boss.dead_screen(screen, boss1)
  

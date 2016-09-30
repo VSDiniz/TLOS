@@ -37,7 +37,7 @@ class Level():
         # Desenha o background
         screen.fill(constants.RED)
         # Faz o world se deslocar mais lentamente que o player
-        screen.blit(self.background, (self.world_shift,0))# // 1,5))
+        screen.blit(self.background, (self.world_shift, 0))
  
         # Desenha todas as listas de sprites
         self.platform_list.draw(screen)
@@ -148,7 +148,7 @@ def start_screen():
     background = pygame.image.load("images/background.png").convert()
     background = pygame.transform.scale(background, (constants.SCREEN_WIDTH, constants.SCREEN_HEIGHT))
     
-    pygame.mixer.music.load("sounds/Main Theme (Classic).wav")
+    pygame.mixer.music.load("sounds/TLOZ/Main Theme (Classic).wav")
     pygame.mixer.music.play(-1)
         
     game_title = constants.soulsFont_M.render("THE LEGEND OF SOULS", True, constants.WHITE, None)
@@ -254,13 +254,24 @@ def instructions():
     
     
 def play(current_level_no):
-        
     if current_level_no == 0:
-        pygame.mixer.music.load("sounds/Bloodborne Soundtrack OST - Cleric Beast.wav")
+        pygame.mixer.music.load("sounds/TLOZ/Gerudo Valley Theme.wav")
         pygame.mixer.music.play(-1)
     elif current_level_no == 1:
-        pygame.mixer.music.load("sounds/Bloodborne Soundtrack OST - Cleric Beast.wav")
+        pygame.mixer.music.load("sounds/DS/Bloodborne Soundtrack OST - Cleric Beast.wav")
         pygame.mixer.music.play(-1)
+#    c = current_level_no
+#    k = current_level_no + 1
+#    if c == 0:
+#        pygame.mixer.music.load("sounds/TLOZ/Gerudo Valley Theme.wav")
+#        pygame.mixer.music.play(-1)
+#        c += 1
+#        return True
+#    if k == 1:
+#        pygame.mixer.music.load("sounds/DS/Bloodborne Soundtrack OST - Cleric Beast.wav")
+#        pygame.mixer.music.play(-1)
+#        k += 1
+    
 
 def msg_player(msge, screen):
     

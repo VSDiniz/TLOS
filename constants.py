@@ -12,11 +12,26 @@ import pygame
 pygame.init()
 
 # Constantes
+
+# Dimensões de janela
+SCREEN_WIDTH  = 900
+SCREEN_HEIGHT = 600
+LEVEL_BOTTOM  = SCREEN_HEIGHT + 1000
+
+# Player
 slow_regen = 0.04
 fast_regen = 0.12
 estus_maxregen = 35
 player_roll_frames = 0
+psp_x = 6000#1075
+psp_y = SCREEN_HEIGHT - 45
+
+# Boss
 boss_roll_frames = 0
+bsp_x = 6050
+bsp_y = SCREEN_HEIGHT - 45
+
+# Gerais
 i = s = c = k = delay = d1 = 0
  
 # Cores
@@ -41,9 +56,5 @@ soulsFont_P = pygame.font.Font("fonts\OptimusPrinceps.ttf",12)
 scrollFont_M = pygame.font.Font("fonts\TravelingTypewriter.ttf",60)
 scrollFont_P = pygame.font.Font("fonts\TravelingTypewriter.ttf",25)
  
-# Dimensões de janela
-SCREEN_WIDTH  = 900
-SCREEN_HEIGHT = 600
-
 # Taxa de quadros da tela
 FPS = 60
