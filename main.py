@@ -5,7 +5,7 @@ Created on Thu Aug 18 08:22:09 2016
 @author: vini_
 """
  
-import pygame, constants, levels, os, player, boss, sounds
+import pygame, constants, levels, os, player, boss, sounds, time, random
   
 def main():
     # Main Program
@@ -72,8 +72,8 @@ def main():
     
     current_position = 0
     
-#    printa = pygame.USEREVENT + 1
-#    pygame.time.set_timer(printa, 100)
+    printa = pygame.USEREVENT + 1
+    pygame.time.set_timer(printa, 300)
     estus_regen = pygame.USEREVENT + 2
     stm_regen = pygame.USEREVENT + 3
     pygame.time.set_timer(stm_regen, 100)
@@ -97,29 +97,18 @@ def main():
                     ingame = False
                     
                 # Move o player para a esquerda
-                if event.key == pygame.K_a:
+                if event.key == pygame.K_a or event.key == pygame.K_LEFT:
                     if player1.possible("move"):
                         player1.go_left()
-                if event.key == pygame.K_LEFT:
-                    if boss1.possible("move"):
-                        boss1.go_left()
                     
                 # Move o player para a direita
-                if event.key == pygame.K_d:
+                if event.key == pygame.K_d or event.key == pygame.K_RIGHT:
                     if player1.possible("move"):
                         player1.go_right()
-                        
-                if event.key == pygame.K_RIGHT:
-                    if boss1.possible("move"):
-                        boss1.go_right()
-                    
                 # Faz o player pular
-                if event.key == pygame.K_w:
+                if event.key == pygame.K_w or event.key == pygame.K_UP:
                     if player1.possible("jump"):
                         player1.jump()
-                if event.key == pygame.K_UP:
-                    if boss1.possible("jump"):
-                        boss1.jump()
                     
                 # Faz o player recuperar vida
                 if event.key == pygame.K_e:
@@ -139,7 +128,6 @@ def main():
                     if player1.possible("latk"):
                         player1.calc_stamina(15)
                         player1.latk = True
-#                    boss1.calc_damage(200)
                     
                 if event.key == pygame.K_o:
                     if player1.possible("hatk"):
@@ -163,22 +151,19 @@ def main():
                 if event.key == pygame.K_r:
                     player1.stamina = player1.maxstamina
                     player1.estus_rn = 5
-#                    boss1.parrying = True
+                    
+                if event.key == pygame.K_t:
+                    boss1.health += 100
                     
                 if event.key == pygame.K_SPACE:
                     if player1.possible("roll"):
                         player1.active_roll()
                         pygame.time.set_timer(player_roll, 1)
-                    if boss1.possible("roll"):
-                        boss1.active_roll()
-                        pygame.time.set_timer(boss_roll, 1)
                     
                 # Coloca o player em posição de defesa
                 if event.key == pygame.K_z:
-                    if player1.possible("move"):
+                    if player1.possible("defend"):
                         player1.defend()
-                    if player1.possible("move"):                        
-                        boss1.defend()
                 
                 # Abre a tela de instruções
                 if event.key == pygame.K_RETURN or pressed[pygame.K_KP_ENTER]:
@@ -201,27 +186,27 @@ def main():
                        
                         
             """ -------------------- PRINTA -------------------- """
-#            if event.type == printa:
-#                print(player1.guard)
+            if event.type == printa:
+#                print(boss1.a,boss1.b,boss1.d,boss1.e)
+                print(clock.get_fps())
                     
             if event.type == pygame.KEYUP:
                 
                 # Para o movimento do player
-                if event.key == pygame.K_a and player1.change_x < 0:
+                if (event.key == pygame.K_a or pygame.K_LEFT) and player1.change_x < 0:
                     player1.stop()
-                if event.key == pygame.K_LEFT and boss1.change_x < 0:
-                    boss1.stop()
-                if event.key == pygame.K_d and player1.change_x > 0:
+                if (event.key == pygame.K_d or pygame.K_RIGHT) and player1.change_x > 0:
                     player1.stop()
-                if event.key == pygame.K_RIGHT and boss1.change_x > 0:
-                    boss1.stop()
                     
                 # Tira o player da posição de defesa
                 if event.key == pygame.K_z:
                     player1.defending = False
 #                    player1.guard = True
-                    boss1.defending = False
-                    boss1.guard = True
+#                    boss1.defending = False
+#                    boss1.guard = True
+                    
+        if boss1.rolling:
+            pygame.time.set_timer(boss_roll, 1)
                     
         if constants.player_roll_frames <= 0:
             pygame.time.set_timer(player_roll, 0)
@@ -267,10 +252,12 @@ def main():
         current_position = player1.rect.x + abs(current_level.world_shift)
         if (current_position > current_level.level_limit) and current_level_no != 1 and pressed[pygame.K_SPACE] and player1.on_ground:
             player1.rect.x = 650
+            pygame.mixer.music.stop()
             if current_level_no < len(level_list)-1:
                 current_level_no += 1
                 current_level = level_list[current_level_no]
                 player1.level = current_level
+                levels.play(current_level_no)
                 
 #        if (player1.rect.x < 180) and current_level_no == 1:
 #            player1.stop()
@@ -279,11 +266,14 @@ def main():
         current_level.draw(screen)
         active_sprite_list.draw(screen)
         if current_level_no == 0:
+#            sounds.level0.play()
             black_surf = pygame.Surface((constants.SCREEN_WIDTH, constants.SCREEN_HEIGHT), pygame.SRCALPHA)
             black_surf.fill((0, 0, 0, 10))
             screen.blit(black_surf, (0, 0))
         player1.player_hud(screen)
         if current_level_no == 1:
+#            sounds.level0.stop()
+#            sounds.level1.play()
             boss1.boss_hud(screen)
         if current_position > current_level.level_limit:
             levels.msg_player("Press SPACE on the fog wall", screen)
@@ -291,12 +281,16 @@ def main():
         # Limita os frames por segundo
         clock.tick(constants.FPS)
         
-        boss1.AI(player1)
+        boss1.a = random.choice([0, 1, 2, 3, 4, 5])
+        boss1.b = random.choice([0, 1])
+        boss1.d = random.uniform(0, 1)
+        boss1.e = random.uniform(0, 1)
+        
+        boss1.AI(player1, clock)
         
         if not player1.live:        
             player.dead_screen(screen, player1)
             pygame.mixer.music.stop()
-            sounds.dead.play()
         elif not boss1.live:
             boss.dead_screen(screen, boss1)
  

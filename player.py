@@ -19,6 +19,7 @@ class Player(pygame.sprite.Sprite):
         self.health = 100
         self.maxstamina = 50
         self.stamina = 50
+        self.dmg = 0
         self.estus_rn = 5
         self.estus_used = 0
         self.estus_regen = 0
@@ -577,7 +578,7 @@ class Player(pygame.sprite.Sprite):
     # Coloca o player em posição de defesa
     def defend(self):
         self.defending = True
-        self.jumping = False
+#        self.jumping = False
         if self.direction == "R":
             self.image = self.defense_frames_r[0]
         else:
@@ -653,6 +654,7 @@ class Player(pygame.sprite.Sprite):
     # Ataque leve
     def light_atk(self):
         if self.latk:
+            self.dmg_d = 1
             self.start_clocker = True
             self.change_x = 0
             if constants.delay > constants.FPS/len(self.lightatk_frames_r):
@@ -664,18 +666,21 @@ class Player(pygame.sprite.Sprite):
                 if constants.s >= len(self.lightatk_frames_r) - 1:
                     constants.s = 0
                     self.latk = False
+                    self.dealdmg = False
                 else: 
                     constants.s += 1
                 if constants.s == 2:
                     self.dealdmg = True
-                else:
-                    self.dealdmg = False
+#                else:
+#                    self.dealdmg = False
             else: 
                 constants.delay += 1
+        self.dmg = 0
     
     # Ataque forte
     def heavy_atk(self):
         if self.hatk:
+            self.dmg_d = 3
             self.start_clocker = True
             self.change_x = 0
             if constants.delay > constants.FPS/len(self.heavyatk_frames_r):
@@ -687,14 +692,16 @@ class Player(pygame.sprite.Sprite):
                 if constants.s >= len(self.heavyatk_frames_r) - 1:
                     constants.s = 0
                     self.hatk = False
+                    self.dealdmg = False
                 else: 
                     constants.s += 1
                 if constants.s == 2:
                     self.dealdmg = True
-                else:
-                    self.dealdmg = False
+#                else:
+#                    self.dealdmg = False
             else: 
                 constants.delay += 1
+        self.dmg = 0
 
     # Usa item para recuperar a vida do player
     def use_estus(self):
@@ -895,6 +902,7 @@ class Player(pygame.sprite.Sprite):
 def dead_screen(screen, player):
 #    pygame.mixer.music.stop()
 #    sounds.dead.play()
+    sounds.dead.play()
     black_surf = pygame.Surface((constants.SCREEN_WIDTH, constants.SCREEN_HEIGHT), pygame.SRCALPHA)
     black_surf.fill((0, 0, 0, 180))
     screen.blit(black_surf, (0, 0))

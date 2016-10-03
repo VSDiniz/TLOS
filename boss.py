@@ -5,7 +5,7 @@ Created on Sat Aug 20 13:25:12 2016
 @author: vini_
 """
 
-import pygame, constants, spritesheet_functions, random
+import pygame, constants, spritesheet_functions, random, time
 #from platforms import MovingPlatform
 
 class Boss(pygame.sprite.Sprite):
@@ -18,6 +18,8 @@ class Boss(pygame.sprite.Sprite):
         self.maxhealth = 1000
         self.health = 1000
         self.stamina = 50
+        self.dmg_r = 0
+        self.dmg_d = 0
         
         # Define variáveis de estado do boss
         self.live = True
@@ -96,6 +98,7 @@ class Boss(pygame.sprite.Sprite):
         self.level = None
  
         self.delay = self.i = self.c = self.s = 0
+        self.a = self.b = self.d = self.e = 0
         sprite_sheet = spritesheet_functions.SpriteSheet("images/ganon7.png")
         
         
@@ -281,12 +284,12 @@ class Boss(pygame.sprite.Sprite):
         
         # Carrega todas as imagens tomando dano viradas para a direita numa lista
         "Tomar dano"
-        list1 = [[121, 2116, 47, 59]]
-#        list1 = [[120, 400, 113, 73]]
+#        list1 = [[121, 2116, 47, 59]]
+        list1 = [[120, 400, 113, 73]]
         
-        self.takedmg_frames_r = spritesheet_functions.createSprite(sprite_sheet,list1, 0, 1, constants.BLACK)
+        self.takedmg_frames_r = spritesheet_functions.createSprite(sprite_sheet,list1, 0, 1, constants.DARKBLUE)
         # Vira todas as imagens para a esquerda
-        self.takedmg_frames_l = spritesheet_functions.createSprite(sprite_sheet,list1, 1, 1, constants.BLACK)
+        self.takedmg_frames_l = spritesheet_functions.createSprite(sprite_sheet,list1, 1, 1, constants.DARKBLUE)
         
         # Carrega todas as imagens morrendo viradas para a direita numa lista
         "Morrer"
@@ -484,11 +487,14 @@ class Boss(pygame.sprite.Sprite):
                         if self.change_y < 0 and not self.on_ground:
                             self.rect.top = block.rect.bottom
                 
-        self.clocker()
+#        self.clocker()
         if self.live:
-            self.take_dmg()      
+            self.take_dmg()
+            self.calc_damage()
             if not self.jumping:
                 if self.guard:
+#                    if self.takedmg:
+#                        self.calc_damage()
                     if self.stamina > 0:
                         self.parry()
                         self.riposte()
@@ -666,22 +672,23 @@ class Boss(pygame.sprite.Sprite):
                 constants.d1 += 1
             
     # Calcula o dano recebido pelo boss
-    def calc_damage(self, damage):
+    def calc_damage(self):
         # Verifica se o boss está defendendo
-        if self.guard:
+        if self.guard and self.takedmg:
             if self.defending:
-                self.calc_stamina(damage/2) # Reduz stamina
-                if self.stamina <= 0:
-                    self.stamina = 0
-                    self.guard_break() # Quebra guarda
+                pass
+#                self.calc_stamina(damage/2) # Reduz stamina
+#                if self.stamina <= 0:
+#                    self.stamina = 0
+#                    self.guard_break() # Quebra guarda
                                         
             else:
                 if self.direction == "R":
                     self.image = self.takedmg_frames_r[0]
                 else:
                     self.image = self.takedmg_frames_l[0]
-                if self.health - damage > 0:
-                    self.health -= damage # Reduz vida
+                if self.health - self.dmg_r > 0:
+                    self.health -= self.dmg_r # Reduz vida
                 else:
                     self.health = 0
 #        else:
@@ -739,7 +746,6 @@ class Boss(pygame.sprite.Sprite):
         self.defending = False
         self.health = self.maxhealth
         self.rect.y = 50
-        self.rect.x = 200
         
     def clocker(self):
         if self.start_clocker:
@@ -749,17 +755,17 @@ class Boss(pygame.sprite.Sprite):
             else:
                 constants.k += self.clocker_rt
                 
-    def shift_world(self, shift_x):
-        # Desloca o world quando o player se move
-        # Mantém controle de quanto o world se desloca
-        self.world_shift += shift_x
- 
-        # Passa por toda a lista de sprites e altera
-        for platform in self.platform_list:
-            platform.rect.x += shift_x
- 
-        for enemy in self.enemy_list:
-            enemy.rect.x += shift_x
+#    def shift_world(self, shift_x):
+#        # Desloca o world quando o player se move
+#        # Mantém controle de quanto o world se desloca
+#        self.world_shift += shift_x
+# 
+#        # Passa por toda a lista de sprites e altera
+#        for platform in self.platform_list:
+#            platform.rect.x += shift_x
+# 
+#        for enemy in self.enemy_list:
+#            enemy.rect.x += shift_x
                 
     def possible(self, event):
         if event == "wait":
@@ -801,31 +807,64 @@ class Boss(pygame.sprite.Sprite):
 
         pygame.draw.rect(screen, constants.WHITE, (49, 579, (0.8*self.maxhealth)+2, 12))
         pygame.draw.rect(screen, constants.GRAY, (50, 580, 0.8*self.maxhealth, 10))
+        if self.health >= self.maxhealth:
+            self.health = self.maxhealth
         if self.health > 0:
             pygame.draw.rect(screen, constants.ORANGE, (850-(0.8*self.health), 580, 0.8*self.health, 10))
             
-    def AI(self, player):
-        if player.rect.centerx > self.rect.centerx:
-            self.direction = "R"
-        else:
-            self.direction = "L"
-        if player.rect.centerx + 100 < self.rect.left:
-            self.go_left()
-        elif player.rect.centerx - 100 > self.rect.right:
-            self.go_right()
-        elif player.rect.centerx > self.rect.left or player.rect.centerx < self.rect.right:
-            self.stop()
-            if player.dealdmg and self.possible("defend"):
-                if self.direction != player.direction:
-                    if random.uniform(0, 1) > 0.982:
-                        self.defend()
-#                    if random.uniform(0, 1) > 0.99:
-#                        self.parrying = True
-#                else:
-#                    self.latk = True
+    # Inteligência artificial do boss
+    def AI(self, player, clock):
+        # Vira o boss na direção do player
+        if self.possible("wait"):
+            if player.rect.centerx > self.rect.centerx:
+                self.direction = "R"
             else:
-                self.defending = False
-                self.parrying = False
+                self.direction = "L"
+            # Persegue o player
+            if player.rect.centerx + 50 < self.rect.left:
+                self.go_left()
+            elif player.rect.centerx - 50 > self.rect.right:
+                self.go_right()
+        if player.rect.left > self.rect.right +200 or player.rect.right < self.rect.left -200:
+              self.stop()
+        elif (player.rect.centerx > self.rect.centerx -80 and player.rect.centerx < self.rect.centerx +80) \
+          or (player.rect.centerx < self.rect.centerx +80 and player.rect.centerx > self.rect.centerx -80):
+            self.stop()
+#            self.a = random.choice([0, 1, 2, 3, 4, 5])
+            if clock.get_fps() >= 60:
+                if self.a == 0 and self.possible("latk"):
+                    self.latk = True
+                elif self.a == 1 and self.possible("hatk"):
+                    self.hatk = True
+                elif self.a == 2 and self.possible("roll"):
+                    self.rolling = True
+                    self.active_roll()
+            elif self.a == 3 or 4 or 5:
+                pass
+#            if self.a == 3:
+#                self.b = random.choice([0, 1])
+#                self.d = random.uniform(0, 1)
+#                self.e = random.uniform(0, 1)
+                if player.dealdmg:
+                    if self.direction != player.direction:
+                        if self.b == 0:
+                            if self.d > 0.4:
+                                 if self.possible("defend"):
+                                   self.defend()
+                            if not self.defending:
+                                self.dmg_r = player.dmg_d
+                                self.takedmg = True
+                        else:
+                            if self.e > 0.1:
+                                 if self.possible("parry"):
+                                     self.parrying = True
+                    else:
+                        if self.possible("latk"):
+                            self.latk = True
+                else:
+                    self.defending = False
+                    self.parrying = False
+                    self.dmg_r = 0
         
 # Mostra tela de vitória        
 def dead_screen(screen, boss):

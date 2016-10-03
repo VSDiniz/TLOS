@@ -10,3 +10,5 @@ import pygame
 pygame.init()
 
 dead = pygame.mixer.Sound("sounds\DS\You Died.wav")
+level0 = pygame.mixer.Sound("sounds/TLOZ/Gerudo Valley Theme.wav")
+level1 = pygame.mixer.Sound("sounds/DS/Bloodborne Soundtrack OST - Cleric Beast.wav")
