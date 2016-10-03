@@ -268,19 +268,19 @@ def main():
                     if current_level_no != 1:
                         levels.instructions()
                 
-                # Calcula a regeneração de vida do player
-                if event.type == estus_regen:
-                    player1.life_regen(estus_regen)
-                        
-                # Calcula a regeneração de stamina do player
-                if event.type == stm_regen:
-                    player1.stamina_regen()
+            # Calcula a regeneração de vida do player
+            if event.type == estus_regen:
+                player1.life_regen(estus_regen)
                     
-                if event.type == player_roll:
-                    player1.rolling = True
-                    
-                if event.type == boss_roll:
-                    boss1.rolling = True
+            # Calcula a regeneração de stamina do player
+            if event.type == stm_regen:
+                player1.stamina_regen()
+                
+            if event.type == player_roll:
+                player1.rolling = True
+                
+            if event.type == boss_roll:
+                boss1.rolling = True
                        
                         
             """ -------------------- PRINTA -------------------- """
