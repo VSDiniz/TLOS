@@ -154,7 +154,7 @@ def start_screen():
     game_title = constants.soulsFont_M.render("THE LEGEND OF SOULS", True, constants.WHITE, None)
     press_start = constants.bitsFont_M.render("Press ENTER", True, constants.WHITE, None)
     not_start = constants.bitsFont_P.render("I said ENTER", True, constants.WHITE, None)
-
+    
     instart = True
 
     while instart:
@@ -190,10 +190,7 @@ def instructions():
     
     background = pygame.image.load("images/scroll.jpg").convert()
     background = pygame.transform.scale(background, (constants.SCREEN_WIDTH, constants.SCREEN_HEIGHT))
-    
-#    pygame.mixer.music.load("sounds/Song of Storms.wav")
-#    pygame.mixer.music.play(-1)
-    
+        
     scroll1 = constants.scrollFont_M.render("INSTRUCTIONS", True, constants.BLACK, None)
     scroll2 = constants.scrollFont_P.render("Press A or LEFT Arrow and D or RIGHT Arrow to move", True, constants.BLACK, None)
     scroll3 = constants.scrollFont_P.render("Press W or UP Arrow to jump", True, constants.BLACK, None)
@@ -203,7 +200,7 @@ def instructions():
     scroll7 = constants.scrollFont_P.render("Press I to parry and light attack to riposte", True, constants.BLACK, None)
     scroll8 = constants.scrollFont_P.render("Press SPACE to roll", True, constants.BLACK, None)
     scroll9 = constants.scrollFont_P.render("Press ENTER to exit the instructions", True, constants.BLACK, None)
-    
+        
     instruct = True
 
     while instruct:
@@ -238,7 +235,7 @@ def instructions():
         scroll9_rect = scroll9.get_rect()
         scroll9_rect.center = (constants.SCREEN_WIDTH / 2, constants.SCREEN_HEIGHT - 50)
         screen1.blit(scroll9, scroll9_rect)
-        
+
         pygame.display.update()
         
         for event in pygame.event.get():

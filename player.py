@@ -852,7 +852,7 @@ class Player(pygame.sprite.Sprite):
             if self.live and self.guard and not self.jumping and not self.latk and not self.hatk and not self.rolling and not self.recovering and not self.takedmg and not self.parrying and not self.riposting:
                 return True
         elif event == "latk":
-            if self.live and self.guard and not self.jumping and not self.defending and not self.hatk and not self.rolling and not self.recovering and not self.takedmg and not self.parrying and not self.riposting:
+            if self.live and self.guard and not self.jumping and not self.defending and not self.latk and not self.hatk and not self.rolling and not self.recovering and not self.takedmg and not self.parrying and not self.riposting:
                 return True
         elif event == "hatk":
             if self.live and self.guard and not self.jumping and not self.defending and not self.latk and not self.rolling and not self.recovering and not self.takedmg and not self.parrying and not self.riposting:

@@ -5,7 +5,7 @@ Created on Thu Aug 18 08:22:09 2016
 @author: vini_
 """
  
-import pygame, constants, levels, os, player, boss, sounds, time, random
+import pygame, constants, levels, os, player, boss, random
   
 def main():
     # Main Program
@@ -61,6 +61,12 @@ def main():
     # Controla quão rápido a janela atualiza
     clock = pygame.time.Clock()
     
+    # Inicializa o joystick
+    pygame.joystick.init()
+    if pygame.joystick.get_count() > 1:
+        joystick = pygame.joystick.Joystick(1)
+        joystick.init()
+    
     # Mostra a tela de início
     levels.start_screen()
     
@@ -72,8 +78,8 @@ def main():
     
     current_position = 0
     
-    printa = pygame.USEREVENT + 1
-    pygame.time.set_timer(printa, 300)
+#    printa = pygame.USEREVENT + 1
+#    pygame.time.set_timer(printa, 300)
     estus_regen = pygame.USEREVENT + 2
     stm_regen = pygame.USEREVENT + 3
     pygame.time.set_timer(stm_regen, 100)
@@ -83,12 +89,103 @@ def main():
     # -------- Main Program Loop -----------
     while ingame:
         
+        if pygame.joystick.get_count() > 1:
+            # Recebe valor real entre (-1) e (1) para o analógico esquerdo no eixo horizontal, onde (0) é parado
+            axis_lh = joystick.get_axis(0)
+            
+            # Recebe valor inteiro de (-1) e (1) para os botões direcionais, onde (0) é parado
+            hat = joystick.get_hat(0)
+            
+            # Mapa de botões, recebem valor booleano quando pressionados
+#            button_square = joystick.get_button(0)
+#            button_x = joystick.get_button(1)
+#            button_circle = joystick.get_button(2)
+            button_triangle = joystick.get_button(3)
+#            button_L1 = joystick.get_button(4)
+#            button_R1 = joystick.get_button(5)
+#            button_L2 = joystick.get_button(6)
+#            button_R2 = joystick.get_button(7)
+#            button_start = joystick.get_button(9)
+        
         for event in pygame.event.get():
             pressed = pygame.key.get_pressed()
             
             # Fecha a janela se o usuário clicar em fechar
             if event.type == pygame.QUIT:
-                ingame = False               
+                ingame = False
+                
+#==============================================================================
+#             Eventos de Joystick
+#==============================================================================
+            if pygame.joystick.get_count() > 1:
+                
+                if (hat == ((-1,0) or (-1,1) or (-1,-1))) or axis_lh <= -0.5:
+                    if player1.possible("move"):
+                        player1.go_left()
+                        
+                if (hat == ((1,0) or (1,1) or (1,-1))) or axis_lh >= 0.5:
+                    if player1.possible("move"):
+                        player1.go_right()
+                        
+                if (hat == ((0,0) or (0,1) or (0,-1))) and (-0.5 < axis_lh < 0.5) and (player1.change_x != 0):
+                    player1.stop()
+                    
+                if event.type == pygame.JOYBUTTONDOWN:
+                        
+#                    if button_x:
+                    if event.button == 1:
+                        if player1.possible("jump"):
+                            player1.jump()
+                            
+#                    if button_circle:
+                    if event.button == 2:
+                        if player1.possible("roll"):
+                            player1.active_roll()
+                            pygame.time.set_timer(player_roll, 1)
+                            
+#                    if button_square:
+                    if event.button == 0:
+                        player1.drinking = True
+                        if player1.possible("estus"):
+                            player1.recovering = True
+                            player1.use_estus()
+                            pygame.time.set_timer(estus_regen, 100)
+                            
+#                    if button_L1:
+                    if event.button == 4:
+                        if player1.possible("defend"):
+                            player1.defend()
+                        
+#                    if button_L2:
+                    if event.button == 6:
+                        if player1.possible("parry"):
+                            player1.calc_stamina(15)
+                            player1.parrying = True
+                            
+#                    if button_R1:
+                    if event.button == 5:
+                        if player1.possible("latk"):
+                            player1.calc_stamina(15)
+                            player1.latk = True
+                            
+#                    if button_R2:
+                    if event.button == 7:
+                        if player1.possible("hatk"):
+                            player1.calc_stamina(25)
+                            player1.hatk = True
+                            
+#                    if button_start:
+                    if event.button == 9:
+                        if current_level_no != 1:
+                            levels.instructions()
+                            
+                if event.type == pygame.JOYBUTTONUP:
+                    if event.button == 4:
+                        player1.defending = False
+                    
+#==============================================================================
+#             Eventos de Teclado
+#==============================================================================
                 
             if event.type == pygame.KEYDOWN:
                 
@@ -96,13 +193,14 @@ def main():
                 if ((pressed[pygame.K_LALT] and pressed[pygame.K_F4]) or (pressed[pygame.K_RALT] and pressed[pygame.K_F4])):
                     ingame = False
                     
+    #                if pygame.joystick.get_count() == 0:
                 # Move o player para a esquerda
-                if event.key == pygame.K_a or event.key == pygame.K_LEFT:
+                if (event.key == pygame.K_a) or (event.key == pygame.K_LEFT):
                     if player1.possible("move"):
                         player1.go_left()
                     
                 # Move o player para a direita
-                if event.key == pygame.K_d or event.key == pygame.K_RIGHT:
+                if (event.key == pygame.K_d) or (event.key == pygame.K_RIGHT):
                     if player1.possible("move"):
                         player1.go_right()
                 # Faz o player pular
@@ -142,7 +240,7 @@ def main():
                 if event.key == pygame.K_l:
                     if boss1.possible("latk"):
                         boss1.latk = True
-
+    
                 if event.key == pygame.K_k:
                     if boss1.possible("hatk"):
                         boss1.hatk = True                    
@@ -164,38 +262,41 @@ def main():
                 if event.key == pygame.K_z:
                     if player1.possible("defend"):
                         player1.defend()
-                
+            
                 # Abre a tela de instruções
                 if event.key == pygame.K_RETURN or pressed[pygame.K_KP_ENTER]:
                     if current_level_no != 1:
                         levels.instructions()
-            
-            # Calcula a regeneração de vida do player
-            if event.type == estus_regen:
-                player1.life_regen(estus_regen)
+                
+                # Calcula a regeneração de vida do player
+                if event.type == estus_regen:
+                    player1.life_regen(estus_regen)
+                        
+                # Calcula a regeneração de stamina do player
+                if event.type == stm_regen:
+                    player1.stamina_regen()
                     
-            # Calcula a regeneração de stamina do player
-            if event.type == stm_regen:
-                player1.stamina_regen()
-                
-            if event.type == player_roll:
-                player1.rolling = True
-                
-            if event.type == boss_roll:
-                boss1.rolling = True
+                if event.type == player_roll:
+                    player1.rolling = True
+                    
+                if event.type == boss_roll:
+                    boss1.rolling = True
                        
                         
             """ -------------------- PRINTA -------------------- """
-            if event.type == printa:
-#                print(boss1.a,boss1.b,boss1.d,boss1.e)
-                print(clock.get_fps())
+#            if event.type == printa:
+#                print(button_triangle)
                     
             if event.type == pygame.KEYUP:
                 
                 # Para o movimento do player
-                if (event.key == pygame.K_a or pygame.K_LEFT) and player1.change_x < 0:
+                if event.key == pygame.K_a and player1.change_x < 0:
                     player1.stop()
-                if (event.key == pygame.K_d or pygame.K_RIGHT) and player1.change_x > 0:
+                if event.key == pygame.K_LEFT and player1.change_x < 0:
+                    player1.stop()
+                if event.key == pygame.K_d and player1.change_x > 0:
+                    player1.stop()
+                if event.key == pygame.K_RIGHT and player1.change_x > 0:
                     player1.stop()
                     
                 # Tira o player da posição de defesa
@@ -205,9 +306,13 @@ def main():
 #                    boss1.defending = False
 #                    boss1.guard = True
                     
+#==============================================================================
+#         Outros Eventos
+#==============================================================================
+                    
         if boss1.rolling:
             pygame.time.set_timer(boss_roll, 1)
-                    
+            
         if constants.player_roll_frames <= 0:
             pygame.time.set_timer(player_roll, 0)
         if constants.boss_roll_frames <= 0:
@@ -250,7 +355,7 @@ def main():
         # Se o player chegar ao fim do level, vai para o próximo level
         pressed = pygame.key.get_pressed()
         current_position = player1.rect.x + abs(current_level.world_shift)
-        if (current_position > current_level.level_limit) and current_level_no != 1 and pressed[pygame.K_SPACE] and player1.on_ground:
+        if (current_position > current_level.level_limit) and current_level_no != 1 and (pressed[pygame.K_SPACE] or button_triangle) and player1.on_ground:
             player1.rect.x = 650
             pygame.mixer.music.stop()
             if current_level_no < len(level_list)-1:
@@ -259,21 +364,15 @@ def main():
                 player1.level = current_level
                 levels.play(current_level_no)
                 
-#        if (player1.rect.x < 180) and current_level_no == 1:
-#            player1.stop()
-
         # Todo código de desenhar
         current_level.draw(screen)
         active_sprite_list.draw(screen)
         if current_level_no == 0:
-#            sounds.level0.play()
             black_surf = pygame.Surface((constants.SCREEN_WIDTH, constants.SCREEN_HEIGHT), pygame.SRCALPHA)
             black_surf.fill((0, 0, 0, 10))
             screen.blit(black_surf, (0, 0))
         player1.player_hud(screen)
         if current_level_no == 1:
-#            sounds.level0.stop()
-#            sounds.level1.play()
             boss1.boss_hud(screen)
         if current_position > current_level.level_limit:
             levels.msg_player("Press SPACE on the fog wall", screen)
