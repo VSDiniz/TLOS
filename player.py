@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
 """
 Created on Thu Aug 18 09:03:06 2016
-
 @author: vini_
 """
 
-import pygame, constants, spritesheet_functions, sounds, os
+import pygame, constants, spritesheet_functions, sounds
 #from platforms import MovingPlatform
  
 class Player(pygame.sprite.Sprite):
@@ -19,8 +18,7 @@ class Player(pygame.sprite.Sprite):
         self.health = 100
         self.maxstamina = 50
         self.stamina = 50
-        self.dmg_r = 0
-        self.dmg_d = 0
+        self.dmg = 0
         self.estus_rn = 5
         self.estus_used = 0
         self.estus_regen = 0
@@ -29,9 +27,9 @@ class Player(pygame.sprite.Sprite):
         self.live = True
         self.on_ground = True
         self.recovering = False
-        self.defending = False
         self.takedmg = False
         self.dealdmg = False
+        self.defending = False
         self.jumping = False
         self.guard = True
         self.latk = False
@@ -42,8 +40,6 @@ class Player(pygame.sprite.Sprite):
         
         # Define outras variáveis
         self.start_clocker = False
-        self.enemies = []
-        self.delay = self.i = self.c = self.s = self.q = 0
  
         # Define o vetor velocidade do player
         self.change_x = 0
@@ -107,6 +103,7 @@ class Player(pygame.sprite.Sprite):
         # Lista de sprites que o player pode esbarrar
         self.level = None        
         
+        self.delay = self.i = self.c = self.s = 0
         sprite_sheet = spritesheet_functions.SpriteSheet("images/link_2.png")
         
         # Carrega todas as sprites paradas viradas para a direita numa lista
@@ -344,9 +341,7 @@ class Player(pygame.sprite.Sprite):
         
         # Define uma referência para o retângulo da sprite
         self.rect = self.image.get_rect()
-#==============================================================================
-#  
-#==============================================================================
+ 
     def update(self):
         # Move o player
         # Gravidade
@@ -387,13 +382,13 @@ class Player(pygame.sprite.Sprite):
 
         # Morte do player        
         if not self.live:
-#            self.change_y = 10
+            self.change_y = 10
             if self.direction == "R":
                 self.image = self.dead_frames_r[0]
             else:
                 self.image = self.dead_frames_l[0]
                 
-#        self.mask = pygame.mask.from_surface(self.image)
+        self.mask = pygame.mask.from_surface(self.image)
         
         # Verifica se existe colisão
         block_hit_list =  self.level.platform_list
@@ -502,8 +497,7 @@ class Player(pygame.sprite.Sprite):
 #                self.heavy_atk()
         self.clocker()
         if self.live:
-            self.detect_atk()
-#            self.take_dmg()
+            self.take_dmg()
             if not self.jumping:
                 if self.guard:
                     self.anim_estus()
@@ -671,13 +665,13 @@ class Player(pygame.sprite.Sprite):
                 if constants.s >= len(self.lightatk_frames_r) - 1:
                     constants.s = 0
                     self.latk = False
-#                    self.dealdmg = False
+                    self.dealdmg = False
                 else: 
                     constants.s += 1
                 if constants.s == 2:
                     self.dealdmg = True
-                else:
-                    self.dealdmg = False
+#                else:
+#                    self.dealdmg = False
             else: 
                 constants.delay += 1
         self.dmg = 0
@@ -697,13 +691,13 @@ class Player(pygame.sprite.Sprite):
                 if constants.s >= len(self.heavyatk_frames_r) - 1:
                     constants.s = 0
                     self.hatk = False
-#                    self.dealdmg = False
+                    self.dealdmg = False
                 else: 
                     constants.s += 1
                 if constants.s == 2:
                     self.dealdmg = True
-                else:
-                    self.dealdmg = False
+#                else:
+#                    self.dealdmg = False
             else: 
                 constants.delay += 1
         self.dmg = 0
@@ -754,11 +748,11 @@ class Player(pygame.sprite.Sprite):
                 constants.delay += 1
 
     # Calcula o dano recebido pelo player
-    def calc_damage(self):
+    def calc_damage(self, damage):
         # Verifica se o player está defendendo
         if self.guard:
             if self.defending:
-                self.calc_stamina(self.dmg_r/2) # Reduz stamina
+                self.calc_stamina(damage/2) # Reduz stamina
                 self.rect.x -= 10
                 if self.stamina <= 0:
                     self.stamina = 0
@@ -769,14 +763,13 @@ class Player(pygame.sprite.Sprite):
                     self.image = self.takedmg_frames_r[0]
                 else:
                     self.image = self.takedmg_frames_l[0]
-                if self.health - self.dmg_r > 0:
-                    self.health -= self.dmg_r # Reduz vida
-                    print("Boss",self.dmg_r,self.q)
+                if self.health - damage > 0:
+                    self.health -= damage # Reduz vida
                     self.rect.x -= 20
                 else:
                     self.health = 0
         else:
-            self.health -= self.dmg_r*2
+            self.health -= damage*2
             self.rect.x -= 30
                     
         if self.health <= 0:
@@ -801,17 +794,8 @@ class Player(pygame.sprite.Sprite):
             else:
                 constants.delay += 1
                 
-    def detect_atk(self):
-        self.clocker_rt = 1
-        for enemy in self.enemies:
-            if (self.rect.centerx > enemy.rect.centerx -80 and self.rect.centerx < enemy.rect.centerx and enemy.direction == 'L') \
-            or (self.rect.centerx < enemy.rect.centerx +80 and self.rect.centerx > enemy.rect.centerx and enemy.direction == 'R'):
-                if enemy.dealdmg and pygame.sprite.collide_rect(self, enemy):
-                    self.dmg_r = enemy.dmg_d
-                    self.calc_damage()
-                    self.take_dmg = True
-                else:
-                    self.dmg_r = 0
+    def detect_atk(self, enemy, atk):
+        pass
                 
     # Calcula a stamina gasta pelo player
     def calc_stamina(self, stm_cost):
@@ -844,7 +828,6 @@ class Player(pygame.sprite.Sprite):
         self.health = self.maxhealth
         self.estus_rn = 5
         self.rect.y = -150
-        os.system('cls')
         
     def clocker(self):
         if self.start_clocker:
@@ -862,7 +845,7 @@ class Player(pygame.sprite.Sprite):
             if self.live and self.guard and not self.defending and not self.latk and not self.hatk and not self.rolling and not self.recovering and not self.takedmg and not self.parrying and not self.riposting:
                 return True
         elif event == "jump":
-            if self.live and self.guard and not self.jumping and not self.defending and not self.latk and not self.hatk and not self.rolling and not self.recovering and not self.takedmg and not self.parrying and not self.riposting and self.stamina > 0.6*self.maxstamina:
+            if self.live and self.guard and not self.jumping and not self.defending and not self.latk and not self.hatk and not self.rolling and not self.recovering and not self.takedmg and not self.parrying and not self.riposting:
                 return True
         elif event == "defend":
             if self.live and self.guard and not self.jumping and not self.latk and not self.hatk and not self.rolling and not self.recovering and not self.takedmg and not self.parrying and not self.riposting:
@@ -909,12 +892,11 @@ class Player(pygame.sprite.Sprite):
         pygame.draw.rect(screen, constants.GRAY, (50, 15, 3*self.maxhealth, 10))
         pygame.draw.rect(screen, constants.WHITE, (49, 29, (3*self.maxstamina)+2, 12))
         pygame.draw.rect(screen, constants.GRAY, (50, 30, 3*self.maxstamina, 10))
-        pygame.draw.rect(screen, constants.WHITE, (50 + 1.8*self.maxstamina, 30, 1, 10))
         if self.health > 0:
             pygame.draw.rect(screen, constants.RED, (50, 15, 3*self.health, 10))
         if self.stamina > 0:
             pygame.draw.rect(screen, constants.GREEN, (50, 30, 3*self.stamina, 10))
-        
+
 # Mostra tela de morte        
 def dead_screen(screen, player):
 #    pygame.mixer.music.stop()
@@ -930,7 +912,8 @@ def dead_screen(screen, player):
     screen.blit(you_died_txt, you_died_rect)
     player.change_x, player.change_y = 0, 0
     player.health = 0
-#    player.stamina = player.maxstamina
+    player.stamina = player.maxstamina
+    player.estus_rn = 0
     
     for event in pygame.event.get():
             pressed = pygame.key.get_pressed()
