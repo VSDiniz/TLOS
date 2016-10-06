@@ -269,6 +269,18 @@ def main():
                 if event.key == pygame.K_RETURN or pressed[pygame.K_KP_ENTER]:
                     if current_level_no != 1:
                         levels.instructions()
+                        
+                if event.key == pygame.K_m:
+                    current_level.shift_world(-player1.look_dist)
+                    boss1.rect.right -= player1.look_dist
+                    player1.rect.right -= player1.look_dist
+                    player1.direction = "R"
+                    
+                if event.key == pygame.K_n:
+                    current_level.shift_world(player1.look_dist)
+                    boss1.rect.right += player1.look_dist
+                    player1.rect.right += player1.look_dist
+                    player1.direction = "L"
                 
             # Calcula a regeneração de vida do player
             if event.type == estus_regen:
@@ -306,6 +318,16 @@ def main():
 #                    player1.guard = True
 #                    boss1.defending = False
 #                    boss1.guard = True
+                    
+                if event.key == pygame.K_n:
+                    current_level.shift_world(-player1.look_dist//2)
+                    boss1.rect.right -= player1.look_dist//2
+                    player1.rect.right -= player1.look_dist//2
+                    
+                if event.key == pygame.K_m:
+                    current_level.shift_world(player1.look_dist//2)
+                    boss1.rect.right += player1.look_dist//2
+                    player1.rect.right += player1.look_dist//2
                     
 #==============================================================================
 #         Outros Eventos

@@ -25,6 +25,7 @@ class Player(pygame.sprite.Sprite):
         self.estus_regen = 0
         self.rolling_speed = 10
         self.roll_dt = 5
+        self.look_dist = 600
         
         # Define variáveis de estado do player
         self.live = True
@@ -485,7 +486,7 @@ class Player(pygame.sprite.Sprite):
         if not self.live:
             self.ani_death()
                 
-        # Verifica se existe colisão
+        # Verifica se existe colisão ao andar
         block_hit_list =  self.level.platform_list
         for block in block_hit_list:
             if pygame.sprite.collide_rect(self, block):
@@ -517,7 +518,7 @@ class Player(pygame.sprite.Sprite):
             self.rect.x += self.change_x
             self.ani_jump()
 
-        # Verifica se existe colisão
+        # Verifica se existe colisão ao pular
         self.on_ground = False
         block_hit_list = self.level.platform_list
         pygame.sprite.spritecollide(self, self.level.platform_list, False)
