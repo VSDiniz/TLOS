@@ -245,7 +245,7 @@ def main():
     
                 if event.key == pygame.K_k:
                     if boss1.possible("hatk"):
-                        boss1.hatk = True                    
+                        boss1.hatk = True
                     
                 # Calcula a stamina gasta pelo player
                 if event.key == pygame.K_r:
@@ -285,8 +285,8 @@ def main():
                 boss1.rolling = True
                 
             """ -------------------- PRINTA -------------------- """
-            if event.type == printa:
-                print(player1.takedmg)
+#            if event.type == printa:
+#                print()
                     
             if event.type == pygame.KEYUP:
                 
@@ -384,12 +384,25 @@ def main():
         # Limita os frames por segundo
         clock.tick(constants.FPS)
         
-#        collide.check_collide(player1, player1.enemies)
         # Constantes auxiliares para AI do boss
-        boss1.l = random.choice([0, 1, 2, 3, 4, 5])
-        boss1.m = random.choice([0, 1])
-        boss1.n = random.uniform(0, 1)
-        boss1.o = random.uniform(0, 1)
+        if constants.a > 60:
+            constants.a = 0
+            boss1.l = random.choice([0, 1, 2, 3, 4])
+            boss1.m = random.choice([0, 1])
+            boss1.n = random.uniform(0, 1)
+            boss1.o = random.uniform(0, 1)
+            print("CHOICE",boss1.l)
+        else:
+            constants.a += 1
+        
+        # Retira a animação de dano do player após 30 frames
+        if player1.takedmg:
+            if constants.b > 30:
+                player1.takedmg = False
+                constants.b = 0
+            else:
+                constants.b += 1
+
         # AI do boss
         boss1.AI(player1, clock)
         

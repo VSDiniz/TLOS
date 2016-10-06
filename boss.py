@@ -72,7 +72,7 @@ class Boss(pygame.sprite.Sprite):
         
         # Armazena todas as imagens da animação de parry para a esquerda/direita
         self.parry_frames_l = []
-        self.parry_frames_r = []        
+        self.parry_frames_r = []
         
         # Armazena todas as imagens da animação de riposte para a esquerda/direita
         self.riposte_frames_l = []
@@ -118,7 +118,7 @@ class Boss(pygame.sprite.Sprite):
                  
         self.waiting_frames_r = spritesheet_functions.createSprite(sprite_sheet,list1, 0, 1, constants.DARKBLUE)
         # Vira todas as imagens para a esquerda
-        self.waiting_frames_l = spritesheet_functions.createSprite(sprite_sheet,list1, 1, 1, constants.DARKBLUE)               
+        self.waiting_frames_l = spritesheet_functions.createSprite(sprite_sheet,list1, 1, 1, constants.DARKBLUE)
         
         # Carrega todas as sprites correndo viradas para a direita numa lista
         "Correr"
@@ -161,7 +161,7 @@ class Boss(pygame.sprite.Sprite):
         
         self.defense_frames_r = spritesheet_functions.createSprite(sprite_sheet,list1, 0, 1, constants.DARKBLUE)
         # Vira as imagens para a esquerda
-        self.defense_frames_l = spritesheet_functions.createSprite(sprite_sheet,list1, 1, 1, constants.DARKBLUE)         
+        self.defense_frames_l = spritesheet_functions.createSprite(sprite_sheet,list1, 1, 1, constants.DARKBLUE)
         
         # Carrega todas as imagens de quebra de guarda viradas para a direita numa lista
         "Quebra de guarda"
@@ -190,7 +190,7 @@ class Boss(pygame.sprite.Sprite):
         # Vira todas as imagens para a esquerda
         self.riposte_frames_l = spritesheet_functions.createSprite(sprite_sheet,list1, 1, 1, constants.BLACK)
         
-        # Carrega todas as imagens de rolar viradas para a direita numa lista        
+        # Carrega todas as imagens de rolar viradas para a direita numa lista
         "Rolar"
         list1 = [[600, 240, 113, 73]]
         
@@ -258,8 +258,8 @@ class Boss(pygame.sprite.Sprite):
         # Define uma referência para o retângulo da sprite
         self.rect = self.image.get_rect()
         
+    # Reproduz a animação de espera
     def ani_wait(self):
-        # Reproduz a animação de espera
         if self.a > 120:
             self.a = 0
             self.guard = True
@@ -280,8 +280,8 @@ class Boss(pygame.sprite.Sprite):
             else:
                self.b += 1
     
+    # Move para esquerda/direita e reproduz a animação de corrida
     def ani_walk(self):
-        # Move para esquerda/direita e reproduz a animação de corrida
         pos = self.rect.x + self.level.world_shift
         if self.direction == "R":
             frame = (pos // 30) % len(self.walking_frames_r)
@@ -290,8 +290,8 @@ class Boss(pygame.sprite.Sprite):
             frame = (pos // 30) % len(self.walking_frames_l)
             self.image = self.walking_frames_l[frame]
     
+    # Reproduz a animação de pulo
     def ani_jump(self):
-        # Reproduz a animação de pulo
         if self.direction == "R" and self.jumping == True:
             if (-12 <= self.change_y <= 0):
                 self.image = self.jumping_frames_r[0]
@@ -308,22 +308,22 @@ class Boss(pygame.sprite.Sprite):
             elif (2 < self.change_y <= 12):
                 self.image = self.jumping_frames_l[2]
     
+    # Reproduz animação de defesa
     def ani_defend(self):
-        # Reproduz animação de defesa
         if self.direction == "R":
             self.image = self.defense_frames_r[0]
         else:
             self.image = self.defense_frames_l[0]
     
+    # Reproduz animação de quebra de guarda
     def ani_guardbreak(self):
-        # Reproduz animação de quebra de guarda
         if self.direction == "R":
             self.image = self.guardbreak_frames_r[0]
         else:
             self.image = self.guardbreak_frames_l[0]
     
+    # Reproduz animação de parry
     def ani_parry(self):
-        # Reproduz animação de parry
         if self.d > constants.FPS/len(self.parry_frames_r):
             self.d = 0
             if self.direction == "R":
@@ -338,8 +338,8 @@ class Boss(pygame.sprite.Sprite):
         else: 
             self.d += 1
     
+    # Reproduz a animação de riposte
     def ani_riposte(self):
-        # Reproduz a animação de riposte
         if self.f > constants.FPS/len(self.riposte_frames_r):
             self.f = 0
             if self.direction == "R":
@@ -354,8 +354,8 @@ class Boss(pygame.sprite.Sprite):
         else: 
             self.f += 1
     
+    # Reproduz animação de roll
     def ani_roll(self):
-        # Reproduz animação de roll
         if self.direction == "R":
             self.rect.x += self.rolling_speed
             constants.player_roll_frames -= self.roll_dt
@@ -366,8 +366,8 @@ class Boss(pygame.sprite.Sprite):
             constants.player_roll_frames -= self.roll_dt
             self.image = self.roll_frames_l[0]
     
+    # Reproduz animação de ataque leve
     def ani_latk(self):
-        # Reproduz animação de ataque leve
         if self.h > constants.FPS/len(self.lightatk_frames_r):
             self.h = 0
             if self.direction == "R":
@@ -377,17 +377,17 @@ class Boss(pygame.sprite.Sprite):
             if self.i >= len(self.lightatk_frames_r) - 1:
                 self.i = 0
                 self.latk = False
-            else: 
+            else:
                 self.i += 1
             if self.i == (7 or 8):
                 self.dealdmg = True
             else:
                 self.dealdmg = False
-        else: 
+        else:
             self.h += 1
     
+    # Reproduz animação de ataque pesado
     def ani_hatk(self):
-        # Reproduz animação de ataque pesado
         if self.j > constants.FPS/len(self.heavyatk_frames_r):
             self.j = 0
             if self.direction == "R":
@@ -397,24 +397,24 @@ class Boss(pygame.sprite.Sprite):
             if self.k >= len(self.heavyatk_frames_r) - 1:
                 self.k = 0
                 self.hatk = False
-            else: 
+            else:
                 self.k += 1
             if self.k == (8 or 9 or 10):
                 self.dealdmg = True
             else:
                 self.dealdmg = False
-        else: 
+        else:
             self.j += 1
     
+    # Reproduz animação de tomar dano
     def ani_damage(self):
-        # Reproduz animação de tomar dano
         if self.direction == "R":
             self.image = self.takedmg_frames_r[0]
         else:
             self.image = self.takedmg_frames_l[0]
     
+    # Reproduz a animação de morte
     def ani_death(self):
-        # Reproduz a animação de morte
         self.change_y = 9
         if self.direction == "R":
             self.image = self.dead_frames_r[0]
@@ -441,7 +441,7 @@ class Boss(pygame.sprite.Sprite):
         # Verifica se existe colisão
         block_hit_list =  self.level.platform_list
         for block in block_hit_list:
-            if pygame.sprite.collide_rect(self, block):                
+            if pygame.sprite.collide_rect(self, block):
                 if not self.jumping:
                     if self.rect.bottom < block.rect.bottom and self.rect.bottom > block.rect.top:
                         if self.rect.left < block.rect.left and self.rect.right > block.rect.left:
@@ -487,22 +487,25 @@ class Boss(pygame.sprite.Sprite):
                         if self.change_y < 0 and not self.on_ground:
                             self.rect.top = block.rect.bottom
                 
+        # Habilita os movimentos do boss
         self.clocker()
         if self.live:
+            self.defend()
             self.detect_atk()
             if not self.jumping:
                 if self.guard:
                     if self.stamina > 0:
                         self.parry()
                         self.riposte()
-                        self.roll()
                         self.light_atk()
                         self.heavy_atk()
+                        if self.possible("roll"):
+                            self.roll()
                 else:
                     self.guard_break()
             
+    # Calcula o efeito da gravidade
     def calc_grav(self):
-        # Calcula o efeito da gravidade
         if self.change_y == 0:
             if self.on_ground:
                 self.change_y = 0
@@ -518,7 +521,10 @@ class Boss(pygame.sprite.Sprite):
             self.live = False
             self.health = 0
             self.jumping = False
- 
+            
+#==============================================================================
+#     Movimentos do boss:
+#==============================================================================
     def jump(self):
         # Move o boss 2 pixels para baixo para verificar se existe uma plataforma
         self.rect.y += 2
@@ -531,19 +537,18 @@ class Boss(pygame.sprite.Sprite):
             self.jumping = True
             self.on_ground = False
  
-    # Movimentos do boss:
+    # Move o boss para a esquerda
     def go_left(self):
-        # Quando o boss vai para a esquerda
         self.change_x = -5
         self.direction = "L"
  
+    # Move o boss para a direita
     def go_right(self):
-        # Quando o boss vai para a direita
         self.change_x = 5
         self.direction = "R"
- 
+        
+    # Impede o movimento do boss
     def stop(self):
-        # Quando o boss não se move
         self.change_x = 0
         
     
@@ -553,8 +558,8 @@ class Boss(pygame.sprite.Sprite):
 
     # Coloca o boss em posição de defesa
     def defend(self):
-        self.defending = True
-        self.ani_defend()
+        if self.defending:
+            self.ani_defend()
         
     # Quebra a guarda do boss
     def guard_break(self):
@@ -582,6 +587,7 @@ class Boss(pygame.sprite.Sprite):
             self.ani_roll()
         self.rolling = False
         
+    # Calcula quantos frames serão usados para rolar
     def active_roll(self):
         constants.boss_roll_frames += 85
     
@@ -601,6 +607,20 @@ class Boss(pygame.sprite.Sprite):
             self.change_x = 0
             self.ani_hatk()
             
+    # Percebe se o boss está tomando um ataque
+    def detect_atk(self):
+        self.clocker_rt = 1
+        for player in self.players:
+            if (self.rect.centerx > player.rect.centerx -80 and self.rect.centerx < player.rect.centerx and player.direction == 'L') \
+            or (self.rect.centerx < player.rect.centerx +80 and self.rect.centerx > player.rect.centerx and player.direction == 'R'):
+                if player.dealdmg and pygame.sprite.collide_rect(self, player):
+                    self.dmg_r = player.dmg_d
+                    self.takedmg = True
+                    self.calc_damage()
+                else:
+                    self.dmg_r = 0
+                    self.takedmg = False
+            
     # Calcula o dano recebido pelo boss
     def calc_damage(self):
         # Verifica se o boss está defendendo
@@ -614,29 +634,15 @@ class Boss(pygame.sprite.Sprite):
                 else:
                     self.health = 0
                 
-    def detect_atk(self):
-        self.clocker_rt = 1
-        for player in self.players:
-            if (self.rect.centerx > player.rect.centerx -800 and self.rect.centerx < player.rect.centerx and player.direction == 'L') \
-            or (self.rect.centerx < player.rect.centerx +800 and self.rect.centerx > player.rect.centerx and player.direction == 'R'):
-                if player.dealdmg and pygame.sprite.collide_rect(self, player):
-                    self.dmg_r = player.dmg_d
-                    self.takedmg = True
-                    self.calc_damage()
-                else:
-                    self.dmg_r = 0
-                    self.takedmg = False
-                
     # Calcula a stamina gasta pelo boss
     def calc_stamina(self, stm_cost):
-        if self.stamina > 0:        
+        if self.stamina > 0:
             self.stamina -= stm_cost
         else:
             self.stamina = 0
             
     # Regenera stamina usada
     def stamina_regen(self):
-        # Calcula a regeneração de stamina do boss
         self.clocker_rt = 1
         if not self.start_clocker:
             if not self.defending:
@@ -658,6 +664,7 @@ class Boss(pygame.sprite.Sprite):
         self.health = self.maxhealth
         self.rect.y = 50
         
+    # Estabelece um delay
     def clocker(self):
         if self.start_clocker:
             if constants.k > constants.FPS:
@@ -666,6 +673,7 @@ class Boss(pygame.sprite.Sprite):
             else:
                 constants.k += self.clocker_rt
                 
+    # Verifica a possibilidade de um evento acontecer
     def possible(self, event):
         if event == "wait":
             if self.live and not self.jumping and not self.defending and not self.latk and not self.hatk and not self.rolling and not self.takedmg and not self.parrying and not self.riposting:
@@ -697,6 +705,7 @@ class Boss(pygame.sprite.Sprite):
         else:
             return False
         
+    # Mostra na tela as informações do boss
     def boss_hud(self, screen):
         boss_name = constants.soulsFont_P.render("Ganondorf, the Great King of Evil", True, constants.WHITE, None)
         boss_name_rect = boss_name.get_rect()
@@ -729,7 +738,7 @@ class Boss(pygame.sprite.Sprite):
         elif (player.rect.centerx > self.rect.centerx -80 and player.rect.centerx < self.rect.centerx) \
           or (player.rect.centerx < self.rect.centerx +80 and player.rect.centerx > self.rect.centerx):
             self.stop()
-#            self.l = random.choice([0, 1, 2, 3, 4, 5])
+#            self.l = random.choice([0, 1, 2, 3, 4])
             if clock.get_fps() > 60:
                 if self.l == 0 and self.possible("latk"):
                     self.latk = True
@@ -738,9 +747,8 @@ class Boss(pygame.sprite.Sprite):
                 elif self.l == 2 and self.possible("roll"):
                     self.rolling = True
                     self.active_roll()
-                elif self.l == 3 or 4 or 5:
+                elif self.l == 3 or 4:
                     pass
-#            if self.l == 3:
 #                self.m = random.choice([0, 1])
 #                self.n = random.uniform(0, 1)
 #                self.o = random.uniform(0, 1)
@@ -762,10 +770,10 @@ class Boss(pygame.sprite.Sprite):
                 else:
                     self.defending = False
                     self.parrying = False
+                    self.rolling = False
                     self.dmg_r = 0
-        self.rolling = False
-        
-# Mostra tela de vitória        
+
+# Mostra tela de vitória
 def dead_screen(screen, boss):
     s = pygame.Surface((constants.SCREEN_WIDTH, constants.SCREEN_HEIGHT), pygame.SRCALPHA)
     s.fill((255, 255, 255, 60))
@@ -775,7 +783,7 @@ def dead_screen(screen, boss):
     you_win_rect.centerx = constants.SCREEN_WIDTH/2
     you_win_rect.centery = constants.SCREEN_HEIGHT/2
     screen.blit(you_win_txt, you_win_rect)
-    
+
     for event in pygame.event.get():
             pressed = pygame.key.get_pressed()
             if event.type == pygame.QUIT:

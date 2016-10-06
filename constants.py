@@ -5,8 +5,6 @@ Created on Thu Aug 18 08:53:08 2016
 @author: vini_
 """
 
-#Constantes globais
-
 import pygame
 
 pygame.init()
@@ -32,7 +30,7 @@ bsp_x = 6050
 bsp_y = SCREEN_HEIGHT - 45
 
 # Gerais
-c = k = 0
+a = b = c = d = k = 0
  
 # Cores
 BGREEN = (21, 35, 12)
