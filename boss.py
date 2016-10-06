@@ -21,6 +21,8 @@ class Boss(pygame.sprite.Sprite):
         self.stamina = 100
         self.dmg_r = 0
         self.dmg_d = 0
+        self.rolling_speed = 8
+        self.roll_dt = 4
         
         # Define variáveis de estado do boss
         self.live = True
@@ -37,8 +39,9 @@ class Boss(pygame.sprite.Sprite):
         self.riposting = False
         
         # Define outras variáveis
-        self.world_shift = 0
         self.start_clocker = False
+        self.players = []
+        self.world_shift = 0
         self.clocker_rt = 0
         self.a = self.b = self.c = self.d = self.e = self.f = self.g = self.h = self.i = \
         self.j = self.k = self.l = self.m = self.n = self.o = 0
@@ -106,12 +109,6 @@ class Boss(pygame.sprite.Sprite):
         
         # Carrega todas as sprites paradas viradas para a direita/esquerda
         "Esperar"
-#        list1 = [[11, 894, 48, 62],
-#                 [65, 894, 48, 62],
-#                 [121, 894, 48, 62],
-#                 [178, 894, 48, 62],
-#                 [121, 894, 48, 62],
-#                 [65, 894, 48, 62]]
         list1 = [[0, 0, 113, 73],
                  [120, 0, 113, 73],
                  [240, 0, 113, 73],
@@ -125,14 +122,6 @@ class Boss(pygame.sprite.Sprite):
         
         # Carrega todas as sprites correndo viradas para a direita numa lista
         "Correr"
-#        list1 = [[10, 976, 52, 62],
-#                 [71, 976, 52, 62],
-#                 [128, 976, 52, 62],
-#                 [181, 976, 52, 62],
-#                 [238, 976, 52, 62],
-#                 [300, 976, 52, 62],
-#                 [356, 976, 52, 62],
-#                 [410, 976, 52, 62]]
         list1 = [[120, 80, 113, 73],
                  [240, 80, 113, 73],
                  [360, 80, 113, 73],
@@ -145,14 +134,6 @@ class Boss(pygame.sprite.Sprite):
         self.walking_frames_r = spritesheet_functions.createSprite(sprite_sheet,list1, 0, 1, constants.DARKBLUE)
  
         # Carrega todas as imagens correndo viradas para a direita e as vira para a esquerda
-#        list1 = [[410, 976, 52, 62],
-#                 [356, 976, 52, 62],
-#                 [300, 976, 52, 62],
-#                 [238, 976, 52, 62],
-#                 [181, 976, 52, 62],
-#                 [128, 976, 52, 62],
-#                 [71, 976, 52, 62],
-#                 [10, 976, 52, 62]]
         list1 = [[240, 160, 113, 73],
                  [120, 160, 113, 73],
                  [0, 160, 113, 73],
@@ -166,9 +147,6 @@ class Boss(pygame.sprite.Sprite):
         
         # Carrega todas as imagens pulando viradas para a direita numa lista
         "Pular"
-#        list1 = [[15, 1068, 41, 52],
-#                 [64, 1051, 41, 70],
-#                 [108, 1051, 41, 70]]
         list1 = [[480, 0, 113, 73],
                  [600, 0, 113, 73],
                  [0, 80, 113, 73]]
@@ -179,7 +157,6 @@ class Boss(pygame.sprite.Sprite):
         
         # Carrega todas as imagens de defesa viradas para a direita numa lista
         "Defender"
-#        list1 = [[537, 1625, 43, 60]]
         list1 = [[0, 320, 113, 73]]
         
         self.defense_frames_r = spritesheet_functions.createSprite(sprite_sheet,list1, 0, 1, constants.DARKBLUE)
@@ -188,8 +165,7 @@ class Boss(pygame.sprite.Sprite):
         
         # Carrega todas as imagens de quebra de guarda viradas para a direita numa lista
         "Quebra de guarda"
-        list1 = [[16, 2113, 45, 62]]
-#        list1 = [[120, 320, 113, 73]]
+        list1 = [[120, 320, 113, 73]]
         
         self.guardbreak_frames_r = spritesheet_functions.createSprite(sprite_sheet,list1, 0, 1, constants.BLACK)
         # vira as imagens para a esquerda
@@ -197,8 +173,6 @@ class Boss(pygame.sprite.Sprite):
         
         # Carrega todas as imagens de parry viradas para a direita numa lista
         "Parry"
-#        list1 = [[418, 1618, 49, 67],
-#                 [479, 1615, 40, 70]]
         list1 = [[240, 320, 113, 73],
                  [360, 320, 113, 73],]
                  
@@ -208,12 +182,9 @@ class Boss(pygame.sprite.Sprite):
         
         # Carrega todas as imagens de riposte viradas para a direita numa lista
         "Riposte"
-        list1 = [[63, 1792, 45, 59],
-                 [108, 1793, 58, 58],
-                 [169, 1778, 58, 73]]
-#        list1 = [[480, 320, 113, 73],
-#                 [600, 320, 113, 73],
-#                 [0, 400, 113, 73]]
+        list1 = [[480, 320, 113, 73],
+                 [600, 320, 113, 73],
+                 [0, 400, 113, 73]]
         
         self.riposte_frames_r = spritesheet_functions.createSprite(sprite_sheet,list1, 0, 1, constants.BLACK)
         # Vira todas as imagens para a esquerda
@@ -221,7 +192,6 @@ class Boss(pygame.sprite.Sprite):
         
         # Carrega todas as imagens de rolar viradas para a direita numa lista        
         "Rolar"
-#        list1 = [[237, 1298, 62, 68]]
         list1 = [[600, 240, 113, 73]]
         
         self.roll_frames_r = spritesheet_functions.createSprite(sprite_sheet,list1, 0, 1, constants.DARKBLUE)
@@ -230,15 +200,6 @@ class Boss(pygame.sprite.Sprite):
         
         # Carrega todas as imagens de ataque leve viradas para a direita numa lista
         "Ataque leve"
-#        list1 = [[12, 1149, 45, 58],
-#                 [70, 1149, 53, 58],
-#                 [140, 1150, 62, 58],
-#                 [217, 1149, 66, 58],
-#                 [217, 1149, 66, 58],
-#                 [367, 1150, 50, 58],
-#                 [423, 1150, 79, 58],
-#                 [12, 1149, 45, 58],
-#                 [70, 1149, 53, 58]]
         list1 = [[360, 160, 113, 73],
                  [480, 160, 113, 73],
                  [600, 160, 113, 73],
@@ -255,15 +216,6 @@ class Boss(pygame.sprite.Sprite):
         
         # Carrega todas as imagens de ataque pesado viradas para a direita numa lista
         "Ataque pesado"
-#        list1 = [[12, 1149, 45, 58],
-#                 [70, 1149, 53, 58],
-#                 [140, 1150, 62, 58],
-#                 [620, 1150, 89, 58],
-#                 [217, 1149, 66, 58],
-#                 [367, 1150, 50, 58],
-#                 [499, 1027, 105, 111],
-#                 [12, 1149, 45, 58],
-#                 [70, 1149, 53, 58]]
         list1 = [[360, 160, 113, 73],
                  [480, 160, 113, 73],
                  [600, 160, 113, 73],
@@ -284,7 +236,6 @@ class Boss(pygame.sprite.Sprite):
         
         # Carrega todas as imagens tomando dano viradas para a direita numa lista
         "Tomar dano"
-#        list1 = [[121, 2116, 47, 59]]
         list1 = [[120, 400, 113, 73]]
         
         self.takedmg_frames_r = spritesheet_functions.createSprite(sprite_sheet,list1, 0, 1, constants.DARKBLUE)
@@ -293,12 +244,9 @@ class Boss(pygame.sprite.Sprite):
         
         # Carrega todas as imagens morrendo viradas para a direita numa lista
         "Morrer"
-        list1 = [[217, 529,  62, 36],
-                 [284, 524, 50, 50],
-                 [338, 570, 64, 16]]
-#        list1 = [[240, 400, 113, 73],
-#                 [360, 400, 113, 73],
-#                 [480, 400, 113, 73]]
+        list1 = [[240, 400, 113, 73],
+                 [360, 400, 113, 73],
+                 [480, 400, 113, 73]]
                  
         self.dead_frames_r = spritesheet_functions.createSprite(sprite_sheet,list1, 0, 1, constants.BLACK)
         # Vira todas as imagens para a esquerda
@@ -309,6 +257,169 @@ class Boss(pygame.sprite.Sprite):
  
         # Define uma referência para o retângulo da sprite
         self.rect = self.image.get_rect()
+        
+    def ani_wait(self):
+        # Reproduz a animação de espera
+        if self.a > 120:
+            self.a = 0
+            self.guard = True
+        else:
+            self.a += 1
+        if self.change_x == 0 and self.change_y == 0:
+            
+            if self.b > constants.FPS/len(self.waiting_frames_r):
+                self.b = 0
+                if self.direction == "R":
+                    self.image = self.waiting_frames_r[self.c]
+                else:
+                    self.image = self.waiting_frames_l[self.c]
+                if self.c >= len(self.waiting_frames_r) - 1:
+                    self.c = 0
+                else:
+                    self.c += 1
+            else:
+               self.b += 1
+    
+    def ani_walk(self):
+        # Move para esquerda/direita e reproduz a animação de corrida
+        pos = self.rect.x + self.level.world_shift
+        if self.direction == "R":
+            frame = (pos // 30) % len(self.walking_frames_r)
+            self.image = self.walking_frames_r[frame]
+        else:
+            frame = (pos // 30) % len(self.walking_frames_l)
+            self.image = self.walking_frames_l[frame]
+    
+    def ani_jump(self):
+        # Reproduz a animação de pulo
+        if self.direction == "R" and self.jumping == True:
+            if (-12 <= self.change_y <= 0):
+                self.image = self.jumping_frames_r[0]
+            elif (0 < self.change_y <= 2):
+                self.image = self.jumping_frames_r[1]
+            elif (2 < self.change_y <= 12):
+                self.image = self.jumping_frames_r[2]
+                
+        elif self.direction == "L" and self.jumping == True :
+            if (-12 <= self.change_y <= 0):
+                self.image = self.jumping_frames_l[0]
+            elif (0 < self.change_y <= 2):
+                self.image = self.jumping_frames_l[1]
+            elif (2 < self.change_y <= 12):
+                self.image = self.jumping_frames_l[2]
+    
+    def ani_defend(self):
+        # Reproduz animação de defesa
+        if self.direction == "R":
+            self.image = self.defense_frames_r[0]
+        else:
+            self.image = self.defense_frames_l[0]
+    
+    def ani_guardbreak(self):
+        # Reproduz animação de quebra de guarda
+        if self.direction == "R":
+            self.image = self.guardbreak_frames_r[0]
+        else:
+            self.image = self.guardbreak_frames_l[0]
+    
+    def ani_parry(self):
+        # Reproduz animação de parry
+        if self.d > constants.FPS/len(self.parry_frames_r):
+            self.d = 0
+            if self.direction == "R":
+                self.image = self.parry_frames_r[self.e]
+            else:
+                self.image = self.parry_frames_l[self.e]
+            if self.e >= len(self.parry_frames_r) - 1:
+                self.e = 0
+                self.parrying = False
+            else: 
+                self.e += 1
+        else: 
+            self.d += 1
+    
+    def ani_riposte(self):
+        # Reproduz a animação de riposte
+        if self.f > constants.FPS/len(self.riposte_frames_r):
+            self.f = 0
+            if self.direction == "R":
+                self.image = self.riposte_frames_r[self.g]
+            else:
+                self.image = self.riposte_frames_l[self.g]
+            if self.g >= len(self.riposte_frames_r) - 1:
+                self.g = 0
+                self.riposting = False
+            else: 
+                self.g += 1
+        else: 
+            self.f += 1
+    
+    def ani_roll(self):
+        # Reproduz animação de roll
+        if self.direction == "R":
+            self.rect.x += self.rolling_speed
+            constants.player_roll_frames -= self.roll_dt
+            self.image = self.roll_frames_r[0]
+            
+        else:
+            self.rect.x -= self.rolling_speed
+            constants.player_roll_frames -= self.roll_dt
+            self.image = self.roll_frames_l[0]
+    
+    def ani_latk(self):
+        # Reproduz animação de ataque leve
+        if self.h > constants.FPS/len(self.lightatk_frames_r):
+            self.h = 0
+            if self.direction == "R":
+                self.image = self.lightatk_frames_r[self.i]
+            else:
+                self.image = self.lightatk_frames_l[self.i]
+            if self.i >= len(self.lightatk_frames_r) - 1:
+                self.i = 0
+                self.latk = False
+            else: 
+                self.i += 1
+            if self.i == (7 or 8):
+                self.dealdmg = True
+            else:
+                self.dealdmg = False
+        else: 
+            self.h += 1
+    
+    def ani_hatk(self):
+        # Reproduz animação de ataque pesado
+        if self.j > constants.FPS/len(self.heavyatk_frames_r):
+            self.j = 0
+            if self.direction == "R":
+                self.image = self.heavyatk_frames_r[self.k]
+            else:
+                self.image = self.heavyatk_frames_l[self.k]
+            if self.k >= len(self.heavyatk_frames_r) - 1:
+                self.k = 0
+                self.hatk = False
+            else: 
+                self.k += 1
+            if self.k == (8 or 9 or 10):
+                self.dealdmg = True
+            else:
+                self.dealdmg = False
+        else: 
+            self.j += 1
+    
+    def ani_damage(self):
+        # Reproduz animação de tomar dano
+        if self.direction == "R":
+            self.image = self.takedmg_frames_r[0]
+        else:
+            self.image = self.takedmg_frames_l[0]
+    
+    def ani_death(self):
+        # Reproduz a animação de morte
+        self.change_y = 9
+        if self.direction == "R":
+            self.image = self.dead_frames_r[0]
+        else:
+            self.image = self.dead_frames_l[0]
 #==============================================================================
 #   
 #==============================================================================
@@ -316,59 +427,18 @@ class Boss(pygame.sprite.Sprite):
         # Move o boss
         # Gravidade
         self.calc_grav()
-        
-        # Reproduz a animação de espera
+        if self.health <= 0:
+            self.live = False
         if self.possible("wait"):
-            if self.a > 120:
-                self.a = 0
-                self.guard = True
-            else:
-                self.a += 1
-            if self.change_x == 0 and self.change_y == 0:
-                
-                if self.b > constants.FPS/len(self.waiting_frames_r):
-                    self.b = 0
-                    if self.direction == "R":
-                        self.image = self.waiting_frames_r[self.c]
-                    else:
-                        self.image = self.waiting_frames_l[self.c]
-                    if self.c >= len(self.waiting_frames_r) - 1:
-                        self.c = 0
-                    else:
-                        self.c += 1            
-                else:
-                   self.b += 1
-
-            # Move para esquerda/direita e reproduz a animação de corrida
-            elif self.change_x != 0 and self.change_y == 0:
+            self.ani_wait()
+        if self.possible("move"):
+            if self.change_x != 0 and self.change_y == 0:
                 self.rect.x += self.change_x
-                pos = self.rect.x + self.level.world_shift
-                if self.direction == "R":
-                    frame = (pos // 30) % len(self.walking_frames_r)
-                    self.image = self.walking_frames_r[frame]
-                else:
-                    frame = (pos // 30) % len(self.walking_frames_l)
-                    self.image = self.walking_frames_l[frame]
-
-        # Morte do boss        
+                self.ani_walk()
         if not self.live:
-#            self.change_y = 10
-            if self.direction == "R":
-                self.image = self.dead_frames_r[0]
-            else:
-                self.image = self.dead_frames_l[0]
+            self.ani_death()
  
         # Verifica se existe colisão
-#        block_hit_list = pygame.sprite.spritecollide(self, self.level.platform_list, False)
-#        for block in block_hit_list:
-#            # Se o player está indo para a direita, define o lado direito do boss
-#            # para o lado esquerdo do objeto que o acertou
-#            if self.change_x > 0:
-#                self.rect.right = block.rect.left
-#            elif self.change_x < 0:
-#                # Se o player estiver indo para a esquerda, faz o oposto
-#                self.rect.left = block.rect.right
-                
         block_hit_list =  self.level.platform_list
         for block in block_hit_list:
             if pygame.sprite.collide_rect(self, block):                
@@ -394,85 +464,13 @@ class Boss(pygame.sprite.Sprite):
                     if self.rect.right > block.rect.right and self.rect.left < block.rect.right:
                         self.rect.left = block.rect.right
  
-#        # Move para cima/baixo
-#        if self.change_x == 0 and self.change_y != 0:
-#            self.rect.y += self.change_y
-#            pos = self.rect.y
-#            
-#            if self.direction == "R":
-#                if (-10 <= self.change_y <= -9.9):
-#                    self.image = self.jumping_frames_r[0]
-#                elif (-9.9 < self.change_y <= 2):
-#                    self.image = self.jumping_frames_r[1]
-#                elif (2 < self.change_y <= 10):
-#                   self.image = self.jumping_frames_r[2]
-#                
-#            else:
-#                if (-10 <= self.change_y <= -9.9):
-#                    self.image = self.jumping_frames_l[0]
-#                elif (-9.9 < self.change_y <= 2):
-#                    self.image = self.jumping_frames_l[1]
-#                elif (2 < self.change_y <= 10):
-#                   self.image = self.jumping_frames_l[2]
-#                
-#                
-#        elif self.change_x != 0 and self.change_y != 0:
-#             self.rect.y += self.change_y
-#             self.rect.x += self.change_x
-#             pos = self.rect.x + self.level.world_shift
-#             
-#             if self.direction == "R":
-#                if (-10 <= self.change_y <= -9.9):
-#                    self.image = self.jumping_frames_r[0]
-#                elif (-9.9 < self.change_y <= 2):
-#                    self.image = self.jumping_frames_r[1]
-#                elif (2 < self.change_y <= 10):
-#                   self.image = self.jumping_frames_r[2]
-#                
-#             else:
-#                if (-10 <= self.change_y <= -9.9):
-#                    self.image = self.jumping_frames_l[0]
-#                elif (-9.9 < self.change_y <= 2):
-#                    self.image = self.jumping_frames_l[1]
-#                elif (2 < self.change_y <= 10):
-#                   self.image = self.jumping_frames_l[2]
-                   
         # Move para cima/baixo
         if self.change_y != 0:
             self.rect.y += self.change_y
             self.rect.x += self.change_x
-                 
-            if self.direction == "R" and self.jumping == True:
-                if (-10 <= self.change_y <= -9.9):
-                    self.image = self.jumping_frames_r[0]
-                elif (-9.9 < self.change_y <= 2):
-                    self.image = self.jumping_frames_r[1]
-                elif (2 < self.change_y <= 10):
-                    self.image = self.jumping_frames_r[2]
-                    
-            elif self.direction == "L" and self.jumping == True :
-                if (-10 <= self.change_y <= -9.9):
-                    self.image = self.jumping_frames_l[0]
-                elif (-9.9 < self.change_y <= 2):
-                    self.image = self.jumping_frames_l[1]
-                elif (2 < self.change_y <= 10):
-                    self.image = self.jumping_frames_l[2]
+            self.ani_jump()
  
         # Verifica se existe colisão
-#        block_hit_list = pygame.sprite.spritecollide(self, self.level.platform_list, False)
-#        for block in block_hit_list:
-# 
-#            # Redefine a posição do player baseada no topo/fundo do objeto
-#            if self.change_y > 0:
-#                self.rect.bottom = block.rect.top
-#            elif self.change_y < 0:
-#                self.rect.top = block.rect.bottom
-# 
-#            # Para o movimento vertical do boss
-#            self.change_y = 0
-# 
-#            if isinstance(block, MovingPlatform):
-#                self.rect.x += block.change_x
         self.on_ground = False
         block_hit_list = self.level.platform_list
         pygame.sprite.spritecollide(self, self.level.platform_list, False)
@@ -491,8 +489,7 @@ class Boss(pygame.sprite.Sprite):
                 
         self.clocker()
         if self.live:
-            self.take_dmg()
-            self.calc_damage()
+            self.detect_atk()
             if not self.jumping:
                 if self.guard:
                     if self.stamina > 0:
@@ -518,7 +515,6 @@ class Boss(pygame.sprite.Sprite):
         # Verifica se o boss está no chão
         if self.rect.y >= constants.LEVEL_BOTTOM - self.rect.height and self.change_y >= 0:
             self.change_y = 0
-            #self.rect.y = constants.SCREEN_HEIGHT - self.rect.height-45 +(1000)
             self.live = False
             self.health = 0
             self.jumping = False
@@ -558,70 +554,32 @@ class Boss(pygame.sprite.Sprite):
     # Coloca o boss em posição de defesa
     def defend(self):
         self.defending = True
-#        self.jumping = False
-        if self.direction == "R":
-            self.image = self.defense_frames_r[0]
-        else:
-            self.image = self.defense_frames_l[0]
-    
+        self.ani_defend()
+        
     # Quebra a guarda do boss
     def guard_break(self):
         if not self.guard:
-            if self.direction == "R":
-                self.image = self.guardbreak_frames_r[0]
-            else:
-                self.image = self.guardbreak_frames_l[0]
-
+            self.ani_guardbreak()
+            
     # Desvia um ataque e quebra guarda do player
     def parry(self):
         if self.parrying:
+            self.start_clocker = True
             self.change_x = 0
-            if self.d > constants.FPS/len(self.parry_frames_r):
-                self.d = 0
-                if self.direction == "R":
-                    self.image = self.parry_frames_r[self.e]
-                else:
-                    self.image = self.parry_frames_l[self.e]
-                if self.e >= len(self.parry_frames_r) - 1:
-                    self.e = 0
-                    self.parrying = False
-                else: 
-                    self.e += 1
-            else: 
-                self.d += 1
+            self.ani_parry()
     
     # Ataque crítico
     def riposte(self):
         if self.riposting:
+            self.start_clocker = True
             self.change_x = 0
-            if self.f > constants.FPS/len(self.riposte_frames_r):
-                self.f = 0
-                if self.direction == "R":
-                    self.image = self.riposte_frames_r[self.g]
-                else:
-                    self.image = self.riposte_frames_l[self.g]
-                if constants.i >= len(self.riposte_frames_r) - 1:
-                    self.g = 0
-                    self.riposting = False
-                else: 
-                    self.g += 1
-            else: 
-                self.f += 1
+            self.ani_riposte()
 
     # Faz o boss desviar
     def roll(self):
-        rolling_speed = 8
-        roll_dt = 4
         if self.rolling and constants.boss_roll_frames > 0:
-            if self.direction == "R":
-                self.rect.x += rolling_speed
-                constants.boss_roll_frames -= roll_dt
-                self.image = self.roll_frames_r[0]
-                
-            else:
-                self.rect.x -= rolling_speed
-                constants.boss_roll_frames -= roll_dt
-                self.image = self.roll_frames_l[0]
+            self.start_clocker = True
+            self.ani_roll()
         self.rolling = False
         
     def active_roll(self):
@@ -630,91 +588,44 @@ class Boss(pygame.sprite.Sprite):
     # Ataque leve
     def light_atk(self):
         if self.latk:
-            self.dmg_d = 3
+            self.dmg_d = 3 # Dano real = dmg_d * 6
             self.start_clocker = True
             self.change_x = 0
-            if self.h > constants.FPS/len(self.lightatk_frames_r):
-                self.h = 0
-                if self.direction == "R":
-                    self.image = self.lightatk_frames_r[self.i]
-                else:
-                    self.image = self.lightatk_frames_l[self.i]
-                if self.i >= len(self.lightatk_frames_r) - 1:
-                    self.i = 0
-                    self.latk = False
-#                    self.dealdmg = False
-                else: 
-                    self.i += 1
-                if self.i == (7 or 8):
-                    self.dealdmg = True
-                else:
-                    self.dealdmg = False
-            else: 
-                self.h += 1
-        self.dmg = 0
+            self.ani_latk()
     
     # Ataque forte
     def heavy_atk(self):
         if self.hatk:
-            self.dmg_d = 7
+            self.dmg_d = 7 # Dano real = dmg_d * 6
             self.start_clocker = True
             self.change_x = 0
-            if self.j > constants.FPS/len(self.heavyatk_frames_r):
-                self.j = 0
-                if self.direction == "R":
-                    self.image = self.heavyatk_frames_r[self.k]
-                else:
-                    self.image = self.heavyatk_frames_l[self.k]
-                if self.k >= len(self.heavyatk_frames_r) - 1:
-                    self.k = 0
-                    self.hatk = False
-#                    self.dealdmg = False
-                else: 
-                    self.k += 1
-                if self.k == (8 or 9 or 10):
-                    self.dealdmg = True
-                else:
-                    self.dealdmg = False
-            else:
-                self.j += 1
-        self.dmg = 0
+            self.ani_hatk()
             
     # Calcula o dano recebido pelo boss
     def calc_damage(self):
         # Verifica se o boss está defendendo
         if self.guard and self.takedmg:
             if self.defending:
-                pass
-#                self.calc_stamina(damage/2) # Reduz stamina
-#                if self.stamina <= 0:
-#                    self.stamina = 0
-#                    self.guard_break() # Quebra guarda
-                                        
+                self.calc_stamina(self.dmg_r/2) # Reduz stamina
             else:
-                if self.direction == "R":
-                    self.image = self.takedmg_frames_r[0]
-                else:
-                    self.image = self.takedmg_frames_l[0]
+                self.ani_damage()
                 if self.health - self.dmg_r > 0:
                     self.health -= self.dmg_r # Reduz vida
-                    print("boss health",self.health)
                 else:
                     self.health = 0
-#        else:
-#            self.health -= damage*2                    
-                    
-        if self.health <= 0:
-            self.live = False
                 
-    def take_dmg(self):
+    def detect_atk(self):
         self.clocker_rt = 1
-        if not self.defending and self.takedmg:
-            if self.direction == "R":
-                self.image = self.takedmg_frames_r[0]
-            else:
-                self.image = self.takedmg_frames_l[0]
-        self.takedmg = False
-        self.guard = True
+        for player in self.players:
+            if (self.rect.centerx > player.rect.centerx -800 and self.rect.centerx < player.rect.centerx and player.direction == 'L') \
+            or (self.rect.centerx < player.rect.centerx +800 and self.rect.centerx > player.rect.centerx and player.direction == 'R'):
+                if player.dealdmg and pygame.sprite.collide_rect(self, player):
+                    self.dmg_r = player.dmg_d
+                    self.takedmg = True
+                    self.calc_damage()
+                else:
+                    self.dmg_r = 0
+                    self.takedmg = False
                 
     # Calcula a stamina gasta pelo boss
     def calc_stamina(self, stm_cost):
@@ -754,18 +665,6 @@ class Boss(pygame.sprite.Sprite):
                 self.start_clocker = False
             else:
                 constants.k += self.clocker_rt
-                
-#    def shift_world(self, shift_x):
-#        # Desloca o world quando o player se move
-#        # Mantém controle de quanto o world se desloca
-#        self.world_shift += shift_x
-# 
-#        # Passa por toda a lista de sprites e altera
-#        for platform in self.platform_list:
-#            platform.rect.x += shift_x
-# 
-#        for enemy in self.enemy_list:
-#            enemy.rect.x += shift_x
                 
     def possible(self, event):
         if event == "wait":
@@ -833,38 +732,38 @@ class Boss(pygame.sprite.Sprite):
 #            self.l = random.choice([0, 1, 2, 3, 4, 5])
             if clock.get_fps() > 60:
                 if self.l == 0 and self.possible("latk"):
-                        self.latk = True
+                    self.latk = True
                 elif self.l == 1 and self.possible("hatk"):
-                        self.hatk = True
+                    self.hatk = True
                 elif self.l == 2 and self.possible("roll"):
-                        self.rolling = True
-                        self.active_roll()
+                    self.rolling = True
+                    self.active_roll()
                 elif self.l == 3 or 4 or 5:
-    #                pass
-    #            if self.l == 3:
-    #                self.m = random.choice([0, 1])
-    #                self.n = random.uniform(0, 1)
-    #                self.o = random.uniform(0, 1)
-                    if player.dealdmg:
-                        if self.direction != player.direction:
-                            if self.m == 0:
-                                if self.n > 0.4:
-                                     if self.possible("defend"):
-                                       self.defend()
-                                if not self.defending:
-                                    self.dmg_r = player.dmg_d
-                                    self.takedmg = True
-                            else:
-                                if self.o > 0.1:
-                                     if self.possible("parry"):
-                                         self.parrying = True
+                    pass
+#            if self.l == 3:
+#                self.m = random.choice([0, 1])
+#                self.n = random.uniform(0, 1)
+#                self.o = random.uniform(0, 1)
+                if player.dealdmg:
+                    if self.direction != player.direction:
+                        if self.m == 0:
+                            if self.n > 0.4:
+                                if self.possible("defend"):
+                                    self.defend()
+                        if not self.defending:
+                            self.dmg_r = player.dmg_d
+                            self.takedmg = True
                         else:
-                            if self.possible("latk"):
-                                self.latk = True
-                    else:
-                        self.defending = False
-                        self.parrying = False
-                        self.dmg_r = 0
+                            if self.o > 0.1:
+                                if self.possible("parry"):
+                                    self.parrying = True
+                                    if self.possible("latk"):
+                                        self.latk = True
+                else:
+                    self.defending = False
+                    self.parrying = False
+                    self.dmg_r = 0
+        self.rolling = False
         
 # Mostra tela de vitória        
 def dead_screen(screen, boss):

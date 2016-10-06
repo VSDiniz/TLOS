@@ -7,7 +7,7 @@ Created on Thu Aug 18 08:53:08 2016
 
 #Constantes globais
 
-import pygame, random
+import pygame
 
 pygame.init()
 
@@ -30,13 +30,9 @@ psp_y = SCREEN_HEIGHT - 45
 boss_roll_frames = 0
 bsp_x = 6050
 bsp_y = SCREEN_HEIGHT - 45
-brdm_choice1 = random.choice([0, 1])
-brdm_choice3 = random.choice([0, 1, 2, 3])
-brdm_die1 = random.uniform(0, 1)
-brdm_die2 = random.uniform(0, 1)
 
 # Gerais
-i = s = c = k = delay = d1 = 0
+c = k = 0
  
 # Cores
 BGREEN = (21, 35, 12)

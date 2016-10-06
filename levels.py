@@ -77,7 +77,7 @@ class Level_01(Level):
                  [platforms.plat5, 4832, 550],
                  [platforms.plat2, 5696, 550],
                  [platforms.plat6, 6500, 550],
-                 [platforms.stone_wall, 6705, 0],
+                 [platforms.stone_wall, 6750, 0],
                  [platforms.floatplat, 4450, 390],
                  [platforms.floatplat, 5442, 390],
                  [platforms.block2, 4192, 581],
@@ -115,13 +115,13 @@ class Level_02(Level):
  
         Level.__init__(self, player, enemy, screen)
  
-        self.background = pygame.image.load("images/map3.png").convert()
+        self.background = pygame.image.load("images/map4.png").convert()
         self.background = pygame.transform.scale2x(self.background)
         self.level_limit = 3600
  
-        level = [[platforms.plat7, 650, 550],
-                 [platforms.stone_wall, 550, 0],
-                 [platforms.stone_wall, 2820, 0]]
+        level = [[platforms.plat7, 0, 550],
+                 [platforms.stone_wall, 65, 0],
+                 [platforms.stone_wall, 1150, 0]]
  
  
         for platform in level:
@@ -145,6 +145,12 @@ class Level_02(Level):
         
 def start_screen():
     
+    # Inicializa o joystick
+    pygame.joystick.init()
+    if pygame.joystick.get_count() > 1:
+        joystick = pygame.joystick.Joystick(1)
+        joystick.init()
+        
     background = pygame.image.load("images/background.png").convert()
     background = pygame.transform.scale(background, (constants.SCREEN_WIDTH, constants.SCREEN_HEIGHT))
     
@@ -176,7 +182,7 @@ def start_screen():
                 if ((pressed[pygame.K_LALT] and pressed[pygame.K_F4]) or (pressed[pygame.K_RALT] and pressed[pygame.K_F4])):
                     sys.exit()#pygame.quit() # Fecha a janela se o usuário pressionar ALT+F4
                     
-                elif pressed[pygame.K_RETURN] or pressed[pygame.K_KP_ENTER]:
+                elif pressed[pygame.K_RETURN] or pressed[pygame.K_KP_ENTER] or event.button == 9:
                     instart = False # Sai da tela de início
                 else:
                     not_start_rect = not_start.get_rect() # Zoa o usuário
@@ -188,18 +194,35 @@ def start_screen():
                     
 def instructions():
     
+    # Inicializa o joystick
+    pygame.joystick.init()
+    if pygame.joystick.get_count() > 1:
+        joystick = pygame.joystick.Joystick(1)
+        joystick.init()
+    
     background = pygame.image.load("images/scroll.jpg").convert()
     background = pygame.transform.scale(background, (constants.SCREEN_WIDTH, constants.SCREEN_HEIGHT))
         
-    scroll1 = constants.scrollFont_M.render("INSTRUCTIONS", True, constants.BLACK, None)
-    scroll2 = constants.scrollFont_P.render("Press A or LEFT Arrow and D or RIGHT Arrow to move", True, constants.BLACK, None)
-    scroll3 = constants.scrollFont_P.render("Press W or UP Arrow to jump", True, constants.BLACK, None)
-    scroll4 = constants.scrollFont_P.render("Press E to recover HP", True, constants.BLACK, None)
-    scroll5 = constants.scrollFont_P.render("Press P to light attack and O to heavy attack", True, constants.BLACK, None)
-    scroll6 = constants.scrollFont_P.render("Press Z to defend", True, constants.BLACK, None)
-    scroll7 = constants.scrollFont_P.render("Press I to parry and light attack to riposte", True, constants.BLACK, None)
-    scroll8 = constants.scrollFont_P.render("Press SPACE to roll", True, constants.BLACK, None)
-    scroll9 = constants.scrollFont_P.render("Press ENTER to exit the instructions", True, constants.BLACK, None)
+    if pygame.joystick.get_count() <= 1:
+        scroll1 = constants.scrollFont_M.render("INSTRUCTIONS", True, constants.BLACK, None)
+        scroll2 = constants.scrollFont_P.render("Press A or LEFT Arrow and D or RIGHT Arrow to move", True, constants.BLACK, None)
+        scroll3 = constants.scrollFont_P.render("Press W or UP Arrow to jump", True, constants.BLACK, None)
+        scroll4 = constants.scrollFont_P.render("Press E to recover HP", True, constants.BLACK, None)
+        scroll5 = constants.scrollFont_P.render("Press P to light attack and O to heavy attack", True, constants.BLACK, None)
+        scroll6 = constants.scrollFont_P.render("Press Z to defend", True, constants.BLACK, None)
+        scroll7 = constants.scrollFont_P.render("Press I to parry and light attack to riposte", True, constants.BLACK, None)
+        scroll8 = constants.scrollFont_P.render("Press SPACE to roll", True, constants.BLACK, None)
+        scroll9 = constants.scrollFont_P.render("Press ENTER to exit the instructions", True, constants.BLACK, None)
+    else:
+        scroll1 = constants.scrollFont_M.render("INSTRUCTIONS", True, constants.BLACK, None)
+        scroll2 = constants.scrollFont_P.render("Press the D Pad or LEFT Analog to move", True, constants.BLACK, None)
+        scroll3 = constants.scrollFont_P.render("Press X to jump", True, constants.BLACK, None)
+        scroll4 = constants.scrollFont_P.render("Press SQUARE to recover HP", True, constants.BLACK, None)
+        scroll5 = constants.scrollFont_P.render("Press R1 attack and R2 to heavy attack", True, constants.BLACK, None)
+        scroll6 = constants.scrollFont_P.render("Press L1 to defend", True, constants.BLACK, None)
+        scroll7 = constants.scrollFont_P.render("Press L2 to parry and light attack to riposte", True, constants.BLACK, None)
+        scroll8 = constants.scrollFont_P.render("Press CIRCLE to roll", True, constants.BLACK, None)
+        scroll9 = constants.scrollFont_P.render("Press ENTER to exit the instructions", True, constants.BLACK, None)
         
     instruct = True
 
@@ -246,7 +269,7 @@ def instructions():
                 if ((pressed[pygame.K_LALT] and pressed[pygame.K_F4]) or (pressed[pygame.K_RALT] and pressed[pygame.K_F4])):
                     sys.exit()#pygame.quit() # Fecha a janela se o usuário pressionar ALT+F4
                     
-                elif pressed[pygame.K_RETURN] or pressed[pygame.K_KP_ENTER]:
+                elif pressed[pygame.K_RETURN] or pressed[pygame.K_KP_ENTER] or event.button == 9:
                     instruct = False # Sai da tela de instruções
     
     

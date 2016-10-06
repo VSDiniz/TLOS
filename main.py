@@ -30,6 +30,8 @@ def main():
     
     # Cria o player
     player1 = player.Player()
+    player1.enemies.append(boss1)
+    boss1.players.append(player1)
  
     # Cria todos os levels
     level_list = []
@@ -66,6 +68,7 @@ def main():
     if pygame.joystick.get_count() > 1:
         joystick = pygame.joystick.Joystick(1)
         joystick.init()
+    button_triangle = False
     
     # Mostra a tela de início
     levels.start_screen()
@@ -78,8 +81,8 @@ def main():
     
     current_position = 0
     
-#    printa = pygame.USEREVENT + 1
-#    pygame.time.set_timer(printa, 300)
+    printa = pygame.USEREVENT + 1
+    pygame.time.set_timer(printa, 100)
     estus_regen = pygame.USEREVENT + 2
     stm_regen = pygame.USEREVENT + 3
     pygame.time.set_timer(stm_regen, 100)
@@ -218,9 +221,8 @@ def main():
                     
                 # Calcula o dano recebido pelo player
                 if event.key == pygame.K_q:
-                    if not player1.defending:
-                        player1.takedmg = True
-                    player1.calc_damage(20)
+#                        player1.health -= 10
+                        boss1.health -= 100
                     
                 if event.key == pygame.K_p:
                     if player1.possible("latk"):
@@ -261,7 +263,7 @@ def main():
                 # Coloca o player em posição de defesa
                 if event.key == pygame.K_z:
                     if player1.possible("defend"):
-                        player1.defend()
+                        player1.defending = True
             
                 # Abre a tela de instruções
                 if event.key == pygame.K_RETURN or pressed[pygame.K_KP_ENTER]:
@@ -281,11 +283,10 @@ def main():
                 
             if event.type == boss_roll:
                 boss1.rolling = True
-                       
-                        
+                
             """ -------------------- PRINTA -------------------- """
-#            if event.type == printa:
-#                print(button_triangle)
+            if event.type == printa:
+                print(player1.takedmg)
                     
             if event.type == pygame.KEYUP:
                 
@@ -309,7 +310,8 @@ def main():
 #==============================================================================
 #         Outros Eventos
 #==============================================================================
-                    
+        
+        # Habilita/impede o roll do player/boss
         if boss1.rolling:
             pygame.time.set_timer(boss_roll, 1)
             
@@ -324,19 +326,22 @@ def main():
         # Atualiza os itens no level
         current_level.update()
  
-        # Se o player chegar perto do lado direito, muda o world para a esquerda (-x)
-        if player1.rect.right >= 700:
-            diff = player1.rect.right - 700
-            player1.rect.right = 700
-            current_level.shift_world(-diff)
-            boss1.rect.right -= diff
-  
-        # Se o player chegar perto do lado esquerdo, muda o world para a direita (+x)
-        if player1.rect.left <= 120:
-            diff = 120 - player1.rect.left
-            player1.rect.left = 120
-            current_level.shift_world(diff)
-            boss1.rect.left += diff
+        current_position = player1.rect.x + abs(current_level.world_shift)
+        if (current_position > 900 and current_position < 6400 and current_level_no != 1) \
+        or (current_position > 40 and current_position < 840 and current_level_no == 1):
+            # Se o player chegar perto do lado direito, muda o world para a esquerda (-x)
+            if player1.rect.right >= 700:
+                diff = player1.rect.right - 700
+                player1.rect.right = 700
+                current_level.shift_world(-diff)
+                boss1.rect.right -= diff
+      
+            # Se o player chegar perto do lado esquerdo, muda o world para a direita (+x)
+            if player1.rect.left <= 120:
+                diff = 120 - player1.rect.left
+                player1.rect.left = 120
+                current_level.shift_world(diff)
+                boss1.rect.left += diff
         
 #==============================================================================
 #         # Se o player chegar perto do fundo, muda o world para cima (-y)
@@ -354,9 +359,8 @@ def main():
  
         # Se o player chegar ao fim do level, vai para o próximo level
         pressed = pygame.key.get_pressed()
-        current_position = player1.rect.x + abs(current_level.world_shift)
         if (current_position > current_level.level_limit) and current_level_no != 1 and (pressed[pygame.K_SPACE] or button_triangle) and player1.on_ground:
-            player1.rect.x = 650
+            player1.rect.x = 150
             pygame.mixer.music.stop()
             if current_level_no < len(level_list)-1:
                 current_level_no += 1
@@ -380,13 +384,16 @@ def main():
         # Limita os frames por segundo
         clock.tick(constants.FPS)
         
-        boss1.a = random.choice([0, 1, 2, 3, 4, 5])
-        boss1.b = random.choice([0, 1])
-        boss1.d = random.uniform(0, 1)
-        boss1.e = random.uniform(0, 1)
-        
+#        collide.check_collide(player1, player1.enemies)
+        # Constantes auxiliares para AI do boss
+        boss1.l = random.choice([0, 1, 2, 3, 4, 5])
+        boss1.m = random.choice([0, 1])
+        boss1.n = random.uniform(0, 1)
+        boss1.o = random.uniform(0, 1)
+        # AI do boss
         boss1.AI(player1, clock)
         
+        # Mostra tela de morte/vitória
         if not player1.live:        
             player.dead_screen(screen, player1)
             pygame.mixer.music.stop()
