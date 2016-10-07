@@ -21,16 +21,16 @@ slow_regen = 0.04
 fast_regen = 0.12
 estus_maxregen = 35
 player_roll_frames = 0
-psp_x = 6000#1075
-psp_y = SCREEN_HEIGHT - 45
+psp_x = 8500#620
+psp_y = SCREEN_HEIGHT - 370
 
 # Boss
 boss_roll_frames = 0
-bsp_x = 6050
+bsp_x = 864
 bsp_y = SCREEN_HEIGHT - 45
 
 # Gerais
-a = b = c = d = k = 0
+a = b = c = d = k = e = f = 0
  
 # Cores
 BGREEN = (21, 35, 12)

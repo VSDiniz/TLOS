@@ -248,9 +248,9 @@ class Boss(pygame.sprite.Sprite):
                  [360, 400, 113, 73],
                  [480, 400, 113, 73]]
                  
-        self.dead_frames_r = spritesheet_functions.createSprite(sprite_sheet,list1, 0, 1, constants.BLACK)
+        self.dead_frames_r = spritesheet_functions.createSprite(sprite_sheet,list1, 0, 1, constants.DARKBLUE)
         # Vira todas as imagens para a esquerda
-        self.dead_frames_l = spritesheet_functions.createSprite(sprite_sheet,list1, 1, 1, constants.BLACK)
+        self.dead_frames_l = spritesheet_functions.createSprite(sprite_sheet,list1, 1, 1, constants.DARKBLUE)
 
         # Define a sprite que o boss começa
         self.image = self.waiting_frames_l[0]
@@ -379,7 +379,7 @@ class Boss(pygame.sprite.Sprite):
                 self.latk = False
             else:
                 self.i += 1
-            if self.i == (7 or 8):
+            if self.i == 7:
                 self.dealdmg = True
             else:
                 self.dealdmg = False
@@ -399,7 +399,7 @@ class Boss(pygame.sprite.Sprite):
                 self.hatk = False
             else:
                 self.k += 1
-            if self.k == (8 or 9 or 10):
+            if self.k == 8:
                 self.dealdmg = True
             else:
                 self.dealdmg = False
@@ -417,9 +417,9 @@ class Boss(pygame.sprite.Sprite):
     def ani_death(self):
         self.change_y = 9
         if self.direction == "R":
-            self.image = self.dead_frames_r[0]
+            self.image = self.dead_frames_r[2]
         else:
-            self.image = self.dead_frames_l[0]
+            self.image = self.dead_frames_l[2]
 #==============================================================================
 #   
 #==============================================================================
@@ -440,29 +440,31 @@ class Boss(pygame.sprite.Sprite):
  
         # Verifica se existe colisão ao andar
         block_hit_list =  self.level.platform_list
+        self.right = self.rect.centerx + 15
+        self.left = self.rect.centerx - 15
         for block in block_hit_list:
             if pygame.sprite.collide_rect(self, block):
                 if not self.jumping:
                     if self.rect.bottom < block.rect.bottom and self.rect.bottom > block.rect.top:
-                        if self.rect.left < block.rect.left and self.rect.right > block.rect.left:
-                            self.rect.right = block.rect.left
-                        if self.rect.right > block.rect.right and self.rect.left < block.rect.right:
-                            self.rect.left = block.rect.right
+                        if self.left < block.rect.left and self.right > block.rect.left:
+                            self.rect.centerx = block.rect.left - 15
+                        if self.right > block.rect.right and self.left < block.rect.right:
+                            self.rect.centerx = block.rect.right + 15
                     if self.rect.top > block.rect.top and self.rect.top < block.rect.bottom:
-                        if self.rect.left < block.rect.left and self.rect.right > block.rect.left:
-                            self.rect.right = block.rect.left
-                        if self.rect.right > block.rect.right and self.rect.left < block.rect.right:
-                            self.rect.left = block.rect.right
+                        if self.left < block.rect.left and self.right > block.rect.left:
+                            self.rect.centerx = block.rect.left - 15
+                        if self.right > block.rect.right and self.left < block.rect.right:
+                            self.rect.centerx = block.rect.right + 15
                     if self.rect.top <= block.rect.top and self.rect.bottom >= block.rect.bottom:
-                        if self.rect.left < block.rect.left and self.rect.right > block.rect.left:
-                            self.rect.right = block.rect.left
-                        if self.rect.right > block.rect.right and self.rect.left < block.rect.right:
-                            self.rect.left = block.rect.right
+                        if self.left < block.rect.left and self.right > block.rect.left:
+                            self.rect.centerx = block.rect.left - 15
+                        if self.right > block.rect.right and self.left < block.rect.right:
+                            self.rect.centerx = block.rect.right + 15
                 if self.rect.top >= block.rect.top and self.rect.bottom <= block.rect.bottom:
-                    if self.rect.left < block.rect.left and self.rect.right > block.rect.left:
-                        self.rect.right = block.rect.left
-                    if self.rect.right > block.rect.right and self.rect.left < block.rect.right:
-                        self.rect.left = block.rect.right
+                    if self.left < block.rect.left and self.right > block.rect.left:
+                        self.rect.centerx = block.rect.left - 15
+                    if self.right > block.rect.right and self.left < block.rect.right:
+                        self.rect.centerx = block.rect.right + 15
  
         # Move para cima/baixo
         if self.change_y != 0:
@@ -476,7 +478,7 @@ class Boss(pygame.sprite.Sprite):
         pygame.sprite.spritecollide(self, self.level.platform_list, False)
         for block in block_hit_list:
             if pygame.sprite.collide_rect(self,block):
-                if self.rect.right > block.rect.left and self.rect.left < block.rect.right:
+                if self.right > block.rect.left and self.left < block.rect.right:
                     if self.rect.bottom > block.rect.top and (self.rect.bottom - 10) < block.rect.top:
                         if self.change_y > 0 and not self.on_ground:
                             self.rect.bottom = block.rect.top
@@ -594,7 +596,7 @@ class Boss(pygame.sprite.Sprite):
     # Ataque leve
     def light_atk(self):
         if self.latk:
-            self.dmg_d = 3 # Dano real = dmg_d * 6
+            self.dmg_d = 3 # Dano real = dmg_d * 8
             self.start_clocker = True
             self.change_x = 0
             self.ani_latk()
@@ -657,12 +659,13 @@ class Boss(pygame.sprite.Sprite):
                     self.stamina = self.maxstamina
             
     # Faz o boss voltar a vida
-    def reborn(self):
+    def reborn(self, cp):
         self.live = True
         self.guard = True
         self.defending = False
         self.health = self.maxhealth
         self.rect.y = 50
+#        self.rect.x = constants.bsp_x - cp
         
     # Estabelece um delay
     def clocker(self):
@@ -770,11 +773,11 @@ class Boss(pygame.sprite.Sprite):
                 else:
                     self.defending = False
                     self.parrying = False
-                    self.rolling = False
                     self.dmg_r = 0
+        self.rolling = False
 
 # Mostra tela de vitória
-def dead_screen(screen, boss):
+def dead_screen(screen, boss, cp):
     s = pygame.Surface((constants.SCREEN_WIDTH, constants.SCREEN_HEIGHT), pygame.SRCALPHA)
     s.fill((255, 255, 255, 60))
     screen.blit(s, (0, 0))
@@ -783,6 +786,7 @@ def dead_screen(screen, boss):
     you_win_rect.centerx = constants.SCREEN_WIDTH/2
     you_win_rect.centery = constants.SCREEN_HEIGHT/2
     screen.blit(you_win_txt, you_win_rect)
+#    constants.bsp_x = 8288
 
     for event in pygame.event.get():
             pressed = pygame.key.get_pressed()
@@ -794,4 +798,4 @@ def dead_screen(screen, boss):
                     pygame.quit() # Fecha a janela se o usuário pressionar ALT+F4
                     quit()
                 if event.key == pygame.K_BACKSPACE:
-                    boss.reborn()
+                    boss.reborn(cp)

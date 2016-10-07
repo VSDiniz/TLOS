@@ -65,25 +65,39 @@ class Level_01(Level):
  
         Level.__init__(self, player, enemy, screen)
  
-        self.background = pygame.image.load("images/map2.png").convert()
+        self.background = pygame.image.load("images/map1(1).png").convert()
         self.background = pygame.transform.scale2x(self.background)
-        self.level_limit = 6400
+        self.level_limit = 9150
  
         # Array com o tipo de plataforma e coordenadas (x,y) para localização
-        level = [[platforms.plat1, 928, 550],
-                 [platforms.plat2, 1760, 550],
-                 [platforms.plat3, 2624, 550],
-                 [platforms.plat4, 3616, 550],
-                 [platforms.plat5, 4832, 550],
-                 [platforms.plat2, 5696, 550],
-                 [platforms.plat6, 6500, 550],
-                 [platforms.stone_wall, 6750, 0],
-                 [platforms.floatplat, 4450, 390],
-                 [platforms.floatplat, 5442, 390],
-                 [platforms.block2, 4192, 581],
-                 [platforms.block1, 4384, 550],
-                 [platforms.block1, 4608, 550],
-                 [platforms.block2, 4768, 581]]
+#        level = [[platforms.plat1, 928, 550],
+#                 [platforms.plat2, 1760, 550],
+#                 [platforms.plat3, 2624, 550],
+#                 [platforms.plat4, 3616, 550],
+#                 [platforms.plat5, 4832, 550],
+#                 [platforms.plat2, 5696, 550],
+#                 [platforms.plat6, 6500, 550],
+#                 [platforms.stone_wall, 6750, 0],
+#                 [platforms.floatplat, 4450, 390],
+#                 [platforms.floatplat, 5442, 390],
+#                 [platforms.block2, 4192, 581],
+#                 [platforms.block1, 4384, 550],
+#                 [platforms.block1, 4608, 550],
+#                 [platforms.block2, 4768, 581]]
+        level = [[platforms.plat1, 864, 548],
+                 [platforms.plat1, 1920, 548],
+                 [platforms.plat1, 2976, 548],
+                 [platforms.plat1, 4032, 548],
+                 [platforms.plat1, 5440, 548],
+                 [platforms.plat1, 6496, 548],
+                 [platforms.plat1, 8032, 548],
+                 [platforms.plat1, 9056, 548],
+                 [platforms.plat3, 7232, 548],
+                 [platforms.plat3, 7776, 548],
+                 [platforms.floatplat3, 642, 228],
+#                 [platforms.floatplat3, 7584, 358],
+                 [platforms.floatplat4, 5056, 452],
+                 [platforms.stone_wall, 9248, 0],]
  
         # Passa pelo array e adiciona plataformas
         for platform in level:
@@ -115,13 +129,13 @@ class Level_02(Level):
  
         Level.__init__(self, player, enemy, screen)
  
-        self.background = pygame.image.load("images/map4.png").convert()
+        self.background = pygame.image.load("images/map2(1).png").convert()
         self.background = pygame.transform.scale2x(self.background)
         self.level_limit = 3600
  
-        level = [[platforms.plat7, 0, 550],
-                 [platforms.stone_wall, 65, 0],
-                 [platforms.stone_wall, 1150, 0]]
+        level = [[platforms.plat2, 0, 550],
+                 [platforms.stone_wall, 129, 0],
+                 [platforms.stone_wall, 1086, 0]]
  
  
         for platform in level:
@@ -158,8 +172,12 @@ def start_screen():
     pygame.mixer.music.play(-1)
         
     game_title = constants.soulsFont_M.render("THE LEGEND OF SOULS", True, constants.WHITE, None)
-    press_start = constants.bitsFont_M.render("Press ENTER", True, constants.WHITE, None)
-    not_start = constants.bitsFont_P.render("I said ENTER", True, constants.WHITE, None)
+    if pygame.joystick.get_count() > 1:
+        press_start = constants.bitsFont_M.render("Press OPTIONS", True, constants.WHITE, None)
+        not_start = constants.bitsFont_P.render("I said OPTIONS", True, constants.WHITE, None)
+    else:
+        press_start = constants.bitsFont_M.render("Press ENTER", True, constants.WHITE, None)
+        not_start = constants.bitsFont_P.render("I said ENTER", True, constants.WHITE, None)
     
     instart = True
 
@@ -175,21 +193,34 @@ def start_screen():
         pygame.display.update()
         
         for event in pygame.event.get():
-            pressed = pygame.key.get_pressed()
-            if event.type == pygame.QUIT:
-                sys.exit()#pygame.quit() # Fecha a janela se o usuário clicar em fechar
-            if event.type == pygame.KEYDOWN:
-                if ((pressed[pygame.K_LALT] and pressed[pygame.K_F4]) or (pressed[pygame.K_RALT] and pressed[pygame.K_F4])):
-                    sys.exit()#pygame.quit() # Fecha a janela se o usuário pressionar ALT+F4
-                    
-                elif pressed[pygame.K_RETURN] or pressed[pygame.K_KP_ENTER] or event.button == 9:
-                    instart = False # Sai da tela de início
-                else:
-                    not_start_rect = not_start.get_rect() # Zoa o usuário
-                    not_start_rect.center = (constants.SCREEN_WIDTH / 2, constants.SCREEN_HEIGHT - 75)
-                    screen1.blit(not_start, not_start_rect)
-                    pygame.display.update()
-                    pygame.event.wait()
+            if pygame.joystick.get_count() > 1:
+                if event.type == pygame.QUIT:
+                    sys.exit()#pygame.quit() # Fecha a janela se o usuário clicar em fechar
+                if event.type == pygame.JOYBUTTONDOWN:
+                    if event.button == 9:
+                        instart = False
+                    else:
+                        not_start_rect = not_start.get_rect() # Zoa o usuário
+                        not_start_rect.center = (constants.SCREEN_WIDTH / 2, constants.SCREEN_HEIGHT - 75)
+                        screen1.blit(not_start, not_start_rect)
+                        pygame.display.update()
+                        pygame.event.wait()
+            else:
+                pressed = pygame.key.get_pressed()
+                if event.type == pygame.QUIT:
+                    sys.exit()#pygame.quit() # Fecha a janela se o usuário clicar em fechar
+                if event.type == pygame.KEYDOWN:
+                    if ((pressed[pygame.K_LALT] and pressed[pygame.K_F4]) or (pressed[pygame.K_RALT] and pressed[pygame.K_F4])):
+                        sys.exit()#pygame.quit() # Fecha a janela se o usuário pressionar ALT+F4
+                        
+                    elif pressed[pygame.K_RETURN] or pressed[pygame.K_KP_ENTER]:# or event.button == 9:
+                        instart = False # Sai da tela de início
+                    else:
+                        not_start_rect = not_start.get_rect() # Zoa o usuário
+                        not_start_rect.center = (constants.SCREEN_WIDTH / 2, constants.SCREEN_HEIGHT - 75)
+                        screen1.blit(not_start, not_start_rect)
+                        pygame.display.update()
+                        pygame.event.wait()
                                         
                     
 def instructions():
@@ -262,15 +293,22 @@ def instructions():
         pygame.display.update()
         
         for event in pygame.event.get():
-            pressed = pygame.key.get_pressed()
-            if event.type == pygame.QUIT:
-                sys.exit()#pygame.quit() # Fecha a janela se o usuário clicar em fechar
-            if event.type == pygame.KEYDOWN:
-                if ((pressed[pygame.K_LALT] and pressed[pygame.K_F4]) or (pressed[pygame.K_RALT] and pressed[pygame.K_F4])):
-                    sys.exit()#pygame.quit() # Fecha a janela se o usuário pressionar ALT+F4
-                    
-                elif pressed[pygame.K_RETURN] or pressed[pygame.K_KP_ENTER] or event.button == 9:
-                    instruct = False # Sai da tela de instruções
+            if pygame.joystick.get_count() > 1:
+                if event.type == pygame.QUIT:
+                    sys.exit()#pygame.quit() # Fecha a janela se o usuário clicar em fechar
+                if event.type == pygame.JOYBUTTONDOWN:
+                    if event.button == 9:
+                        instruct = False
+            else:            
+                pressed = pygame.key.get_pressed()
+                if event.type == pygame.QUIT:
+                    sys.exit()#pygame.quit() # Fecha a janela se o usuário clicar em fechar
+                if event.type == pygame.KEYDOWN:
+                    if ((pressed[pygame.K_LALT] and pressed[pygame.K_F4]) or (pressed[pygame.K_RALT] and pressed[pygame.K_F4])):
+                        sys.exit()#pygame.quit() # Fecha a janela se o usuário pressionar ALT+F4
+                        
+                    elif pressed[pygame.K_RETURN] or pressed[pygame.K_KP_ENTER]:
+                        instruct = False # Sai da tela de instruções
     
     
 def play(current_level_no):
@@ -295,9 +333,9 @@ def play(current_level_no):
 
 def msg_player(msge, screen):
     
-    msg = constants.bitsFont_P.render(msge, True, constants.WHITE, None)
+    msg = constants.bitsFont_P.render(msge, True, constants.YELLOW, None)
     msg_rect = msg.get_rect()
     msg_rect.centerx = (constants.SCREEN_WIDTH / 2)
-    msg_rect.y = 25
-    screen.blit(msg, (msg_rect.centerx, msg_rect.y))
+    msg_rect.y = constants.SCREEN_HEIGHT / 2 - 200
+    screen.blit(msg, (msg_rect.x, msg_rect.y))
     

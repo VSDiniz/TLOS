@@ -82,7 +82,7 @@ def main():
     current_position = 0
     
     printa = pygame.USEREVENT + 1
-    pygame.time.set_timer(printa, 100)
+    pygame.time.set_timer(printa, 1)
     estus_regen = pygame.USEREVENT + 2
     stm_regen = pygame.USEREVENT + 3
     pygame.time.set_timer(stm_regen, 100)
@@ -349,8 +349,8 @@ def main():
         current_level.update()
  
         current_position = player1.rect.x + abs(current_level.world_shift)
-        if (current_position > 900 and current_position < 6400 and current_level_no != 1) \
-        or (current_position > 40 and current_position < 840 and current_level_no == 1):
+        if (current_position > 600 and current_position < 9000 and current_level_no != 1) \
+        or (current_position > 150 and current_position < 840 and current_level_no == 1):
             # Se o player chegar perto do lado direito, muda o world para a esquerda (-x)
             if player1.rect.right >= 700:
                 diff = player1.rect.right - 700
@@ -401,7 +401,10 @@ def main():
         if current_level_no == 1:
             boss1.boss_hud(screen)
         if current_position > current_level.level_limit:
-            levels.msg_player("Press SPACE on the fog wall", screen)
+            if pygame.joystick.get_count() > 1:
+                levels.msg_player("Press TRIANGLE on the fog wall", screen)
+            else:
+                levels.msg_player("Press SPACE on the fog wall", screen)
         
         # Limita os frames por segundo
         clock.tick(constants.FPS)
@@ -413,7 +416,7 @@ def main():
             boss1.m = random.choice([0, 1])
             boss1.n = random.uniform(0, 1)
             boss1.o = random.uniform(0, 1)
-            print("CHOICE",boss1.l)
+#            print("-----CHOICE-----",boss1.l)
         else:
             constants.a += 1
         
@@ -430,10 +433,12 @@ def main():
         
         # Mostra tela de morte/vitória
         if not player1.live:        
-            player.dead_screen(screen, player1)
+            player.dead_screen(screen, player1, current_position)
             pygame.mixer.music.stop()
         elif not boss1.live:
-            boss.dead_screen(screen, boss1)
+            boss.dead_screen(screen, boss1, current_position)
+            pygame.mixer.music.stop()
+            player1.stop()
  
         # Atualiza a janela com o que foi desenhado
         pygame.display.update()

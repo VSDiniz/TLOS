@@ -411,7 +411,7 @@ class Player(pygame.sprite.Sprite):
                 self.latk = False
             else:
                 self.i += 1
-            if self.i == (2 or 3 or 4):
+            if self.i == 2:
                 self.dealdmg = True
             else:
                 self.dealdmg = False
@@ -431,7 +431,7 @@ class Player(pygame.sprite.Sprite):
                 self.hatk = False
             else:
                 self.k += 1
-            if self.k == (3 or 4 or 5):
+            if self.k == 3:
                 self.dealdmg = True
             else:
                 self.dealdmg = False
@@ -488,29 +488,39 @@ class Player(pygame.sprite.Sprite):
                 
         # Verifica se existe colisão ao andar
         block_hit_list =  self.level.platform_list
+        self.right = self.rect.centerx + 15
+        self.left = self.rect.centerx - 15
         for block in block_hit_list:
             if pygame.sprite.collide_rect(self, block):
                 if not self.jumping:
                     if self.rect.bottom < block.rect.bottom and self.rect.bottom > block.rect.top:
-                        if self.rect.left < block.rect.left and self.rect.right > block.rect.left:
-                            self.rect.right = block.rect.left
-                        if self.rect.right > block.rect.right and self.rect.left < block.rect.right:
-                            self.rect.left = block.rect.right
+                        if self.left < block.rect.left and self.right > block.rect.left:
+#                            self.rect.right = block.rect.left
+                            self.rect.centerx = block.rect.left - 15
+                        if self.right > block.rect.right and self.left < block.rect.right:
+#                            self.rect.left = block.rect.right
+                            self.rect.centerx = block.rect.right + 15
                     if self.rect.top > block.rect.top and self.rect.top < block.rect.bottom:
-                        if self.rect.left < block.rect.left and self.rect.right > block.rect.left:
-                            self.rect.right = block.rect.left
-                        if self.rect.right > block.rect.right and self.rect.left < block.rect.right:
-                            self.rect.left = block.rect.right
+                        if self.left < block.rect.left and self.right > block.rect.left:
+#                            self.rect.right = block.rect.left
+                            self.rect.centerx = block.rect.left - 15
+                        if self.right > block.rect.right and self.left < block.rect.right:
+#                            self.rect.left = block.rect.right
+                            self.rect.centerx = block.rect.right + 15
                     if self.rect.top <= block.rect.top and self.rect.bottom >= block.rect.bottom:
-                        if self.rect.left < block.rect.left and self.rect.right > block.rect.left:
-                            self.rect.right = block.rect.left
-                        if self.rect.right > block.rect.right and self.rect.left < block.rect.right:
-                            self.rect.left = block.rect.right
+                        if self.left < block.rect.left and self.right > block.rect.left:
+#                            self.rect.right = block.rect.left
+                            self.rect.centerx = block.rect.left - 15
+                        if self.right > block.rect.right and self.left < block.rect.right:
+#                            self.rect.left = block.rect.right
+                            self.rect.centerx = block.rect.right + 15
                 if self.rect.top >= block.rect.top and self.rect.bottom <= block.rect.bottom:
-                    if self.rect.left < block.rect.left and self.rect.right > block.rect.left:
-                        self.rect.right = block.rect.left
-                    if self.rect.right > block.rect.right and self.rect.left < block.rect.right:
-                        self.rect.left = block.rect.right
+                    if self.left < block.rect.left and self.right > block.rect.left:
+#                        self.rect.right = block.rect.left
+                        self.rect.centerx = block.rect.left - 15
+                    if self.right > block.rect.right and self.left < block.rect.right:
+#                        self.rect.left = block.rect.right
+                        self.rect.centerx = block.rect.right + 15
 
         # Move para cima/baixo
         if self.change_y != 0:
@@ -525,8 +535,8 @@ class Player(pygame.sprite.Sprite):
         for block in block_hit_list:
             if pygame.sprite.collide_rect(self,block):
             # Redefine a posição do player baseada no topo/fundo do objeto
-                if self.rect.right > block.rect.left and self.rect.left < block.rect.right:
-                    if self.rect.bottom > block.rect.top and (self.rect.bottom - 10) < block.rect.top:
+                if self.right > block.rect.left and self.left < block.rect.right:
+                    if self.rect.bottom > block.rect.top and (self.rect.bottom - 20) < block.rect.top:
                         if self.change_y > 0 and not self.on_ground:
                             self.rect.bottom = block.rect.top
                             self.on_ground = True
@@ -699,10 +709,7 @@ class Player(pygame.sprite.Sprite):
                     self.dmg_r = enemy.dmg_d
                     self.takedmg = True
                     self.calc_damage()
-                    if enemy.direction == 'R':
-                        self.rect.x += 10
-                    else:
-                        self.rect.x -= 10
+                    print("PLAYER", self.dmg_r)
                     self.dmg_r = 0
 #                    self.takedmg = False
 
@@ -719,8 +726,7 @@ class Player(pygame.sprite.Sprite):
             else:
                 self.ani_damage()
                 if self.health - self.dmg_r > 0:
-                    pass
-#                    self.health -= self.dmg_r # Reduz vida
+                    self.health -= self.dmg_r # Reduz vida
                 else:
                     self.health = 0
         else:
@@ -749,13 +755,14 @@ class Player(pygame.sprite.Sprite):
                     self.stamina = self.maxstamina
                 
     # Faz o player voltar a vida
-    def reborn(self):
+    def reborn(self, cp):
         self.live = True
         self.guard = True
         self.defending = False
         self.health = self.maxhealth
         self.estus_rn = 5
         self.rect.y = -150
+#        self.rect.x = constants.psp_x - cp
         os.system('cls') # Limpa o console
         
     # Estabelece um delay
@@ -830,7 +837,7 @@ class Player(pygame.sprite.Sprite):
             pygame.draw.rect(screen, constants.GREEN, (50, 30, 3*self.stamina, 10))
 
 # Mostra tela de morte
-def dead_screen(screen, player):
+def dead_screen(screen, player, cp):
     sounds.dead.play()
     black_surf = pygame.Surface((constants.SCREEN_WIDTH, constants.SCREEN_HEIGHT), pygame.SRCALPHA)
     black_surf.fill((0, 0, 0, 180))
@@ -842,6 +849,7 @@ def dead_screen(screen, player):
     screen.blit(you_died_txt, you_died_rect)
     player.change_x, player.change_y = 0, 0
     player.health, player.stamina = 0, 0
+#    constants.psp_x = 640
     
     for event in pygame.event.get():
             pressed = pygame.key.get_pressed()
@@ -853,7 +861,7 @@ def dead_screen(screen, player):
                     pygame.quit() # Fecha a janela se o usuário pressionar ALT+F4
                     quit()
                 if event.key == pygame.K_BACKSPACE:
-                    player.reborn()
+                    player.reborn(cp)
                 if event.key == pygame.K_e:
                     pass
                 if event.key == pygame.K_r:
