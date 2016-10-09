@@ -13,14 +13,17 @@ class Enemy1(pygame.sprite.Sprite):
  
         super().__init__()
         
-        # Define variáveis de características do inimigo
-        self.maxhealth = 250
-        self.health = 250
-        self.stamina = 50
+        # Define variáveis de características do enemy
+        self.maxhealth = 200
+        self.health = 200
+        self.maxstamina = 100
+        self.stamina = 100
         self.dmg_r = 0
         self.dmg_d = 0
+        self.rolling_speed = 8
+        self.roll_dt = 4
         
-        # Define variáveis de estado do inimigo
+        # Define variáveis de estado do enemy
         self.live = True
         self.on_ground = True
         self.defending = False
@@ -42,17 +45,21 @@ class Enemy1(pygame.sprite.Sprite):
         self.a = self.b = self.c = self.d = self.e = self.f = self.g = self.h = self.i = \
         self.j = self.k = self.l = self.m = self.n = self.o = 0
         
-        # Define o vetor velocidade do inimigo
+        # Define o vetor velocidade do enemy
         self.change_x = 0
         self.change_y = 0
         
-        # Armazena todas as imagens da animação de descanço esquerda/direita do inimigo
+        # Armazena todas as imagens da animação de descanço esquerda/direita do enemy
         self.waiting_frames_l = []
         self.waiting_frames_r = []
         
-        # Armazena todas as imagens da animação de andar para esquerda/direita do inimigo
+        # Armazena todas as imagens da animação de andar para esquerda/direita do enemy
         self.walking_frames_l = []
         self.walking_frames_r = []
+        
+        # Armazena todas as imagens da animação de pular para a esquerda/direita do enemy
+        self.jumping_frames_l = []
+        self.jumping_frames_r = []
         
         # Armazena todas as imagens da animação de defesa para a esquerda/direita
         self.defense_frames_l = []
@@ -64,11 +71,15 @@ class Enemy1(pygame.sprite.Sprite):
         
         # Armazena todas as imagens da animação de parry para a esquerda/direita
         self.parry_frames_l = []
-        self.parry_frames_r = []        
+        self.parry_frames_r = []
         
         # Armazena todas as imagens da animação de riposte para a esquerda/direita
         self.riposte_frames_l = []
         self.riposte_frames_r = []
+        
+        # Armazena todas as imagens da animação de rolar para a esquerda/direita
+        self.roll_frames_l = []
+        self.roll_frames_r = []
         
         # Armazena todas as imagens da animação de ataque leve para a esquerda/direita
         self.lightatk_frames_l = []
@@ -86,14 +97,12 @@ class Enemy1(pygame.sprite.Sprite):
         self.dead_frames_l = []
         self.dead_frames_r = []
  
-        # Direção que o inimigo está virado
+        # Direção que o enemy está virado
         self.direction = "L"
  
-        # Lista de sprites que o inimigo pode esbarrar
+        # Lista de sprites que o enemy pode esbarrar
         self.level = None
- 
-        self.delay = self.i = self.c = self.s = 0
-        self.a = self.b = self.d = self.e = 0
+
         sprite_sheet = spritesheet_functions.SpriteSheet("images/enemy_1.png")
         
         
@@ -101,46 +110,53 @@ class Enemy1(pygame.sprite.Sprite):
         "Esperar"
         list1 = [[0, 0, 100, 84]]
                  
-        self.waiting_frames_r = spritesheet_functions.createSprite(sprite_sheet,list1, 0, 1, constants.DARKBLUE)
+        self.waiting_frames_r = spritesheet_functions.createSprite(sprite_sheet,list1, 1, 1, constants.DARKBLUE)
         # Vira todas as imagens para a esquerda
-        self.waiting_frames_l = spritesheet_functions.createSprite(sprite_sheet,list1, 1, 1, constants.DARKBLUE)               
+        self.waiting_frames_l = spritesheet_functions.createSprite(sprite_sheet,list1, 0, 1, constants.DARKBLUE)               
         
         # Carrega todas as sprites correndo viradas para a direita numa lista
         "Correr"
         list1 = [[100, 0, 100, 84],
-                 [200, 0, 100, 84]]
+                 [700, 90, 100, 84],
+                 [200, 0, 100, 84],
+                 [700, 90, 100, 84]]
                  
-        self.walking_frames_r = spritesheet_functions.createSprite(sprite_sheet,list1, 0, 1, constants.DARKBLUE)
+        self.walking_frames_r = spritesheet_functions.createSprite(sprite_sheet,list1, 1, 1, constants.DARKBLUE)
         # Vira todas as imagens para a esquerda
-        self.walking_frames_l = spritesheet_functions.createSprite(sprite_sheet,list1, 1, 1, constants.DARKBLUE)
+        self.walking_frames_l = spritesheet_functions.createSprite(sprite_sheet,list1, 0, 1, constants.DARKBLUE)
+        
+        # Carrega todas as imagens pulando viradas para a direita numa lista
+        "Pular"
+        list1 = [[400, 0, 100, 84]]
+                 
+        self.jumping_frames_r = spritesheet_functions.createSprite(sprite_sheet,list1, 1, 1, constants.DARKBLUE)
+        # Vira todas as imagens para a esquerda
+        self.jumping_frames_l = spritesheet_functions.createSprite(sprite_sheet,list1, 0, 1, constants.DARKBLUE)
  
-#==============================================================================
-#         
-#==============================================================================
         # Carrega todas as imagens de defesa viradas para a direita numa lista
         "Defender"
         list1 = [[300, 0, 100, 84]]
         
-        self.defense_frames_r = spritesheet_functions.createSprite(sprite_sheet,list1, 0, 1, constants.DARKBLUE)
+        self.defense_frames_r = spritesheet_functions.createSprite(sprite_sheet,list1, 1, 1, constants.DARKBLUE)
         # Vira as imagens para a esquerda
-        self.defense_frames_l = spritesheet_functions.createSprite(sprite_sheet,list1, 1, 1, constants.DARKBLUE)         
+        self.defense_frames_l = spritesheet_functions.createSprite(sprite_sheet,list1, 0, 1, constants.DARKBLUE)         
         
         # Carrega todas as imagens de quebra de guarda viradas para a direita numa lista
         "Quebra de guarda"
         list1 = [[400, 0, 100, 84]]
         
-        self.guardbreak_frames_r = spritesheet_functions.createSprite(sprite_sheet,list1, 0, 1, constants.DARKBLUE)
+        self.guardbreak_frames_r = spritesheet_functions.createSprite(sprite_sheet,list1, 1, 1, constants.DARKBLUE)
         # vira as imagens para a esquerda
-        self.guardbreak_frames_l = spritesheet_functions.createSprite(sprite_sheet,list1, 1, 1, constants.DARKBLUE)
+        self.guardbreak_frames_l = spritesheet_functions.createSprite(sprite_sheet,list1, 0, 1, constants.DARKBLUE)
         
         # Carrega todas as imagens de parry viradas para a direita numa lista
         "Parry"
         list1 = [[500, 0, 100, 84],
                  [400, 0, 100, 84]]
                  
-        self.parry_frames_r = spritesheet_functions.createSprite(sprite_sheet,list1, 0, 1, constants.DARKBLUE)
+        self.parry_frames_r = spritesheet_functions.createSprite(sprite_sheet,list1, 1, 1, constants.DARKBLUE)
         # Vira as imagens para a esquerda
-        self.parry_frames_l = spritesheet_functions.createSprite(sprite_sheet,list1, 1, 1, constants.DARKBLUE)
+        self.parry_frames_l = spritesheet_functions.createSprite(sprite_sheet,list1, 0, 1, constants.DARKBLUE)
         
         # Carrega todas as imagens de riposte viradas para a direita numa lista
         "Riposte"
@@ -150,9 +166,17 @@ class Enemy1(pygame.sprite.Sprite):
                  [300, 90, 100, 84],
                  [400, 90, 100, 84]]
         
-        self.riposte_frames_r = spritesheet_functions.createSprite(sprite_sheet,list1, 0, 1, constants.DARKBLUE)
+        self.riposte_frames_r = spritesheet_functions.createSprite(sprite_sheet,list1, 1, 1, constants.DARKBLUE)
         # Vira todas as imagens para a esquerda
-        self.riposte_frames_l = spritesheet_functions.createSprite(sprite_sheet,list1, 1, 1, constants.DARKBLUE)
+        self.riposte_frames_l = spritesheet_functions.createSprite(sprite_sheet,list1, 0, 1, constants.DARKBLUE)
+        
+        # Carrega todas as imagens de rolar viradas para a direita numa lista
+        "Rolar"
+        list1 = [[500, 90, 100, 84]]
+        
+        self.roll_frames_r = spritesheet_functions.createSprite(sprite_sheet,list1, 1, 1, constants.DARKBLUE)
+        # Vira todas as imagens para a esquerda
+        self.roll_frames_l = spritesheet_functions.createSprite(sprite_sheet,list1, 0, 1, constants.DARKBLUE)
         
         # Carrega todas as imagens de ataque leve viradas para a direita numa lista
         "Ataque leve"
@@ -160,9 +184,9 @@ class Enemy1(pygame.sprite.Sprite):
                  [600, 0, 100, 84],
                  [700, 0, 100, 84]]
                  
-        self.lightatk_frames_r = spritesheet_functions.createSprite(sprite_sheet,list1, 0, 1, constants.DARKBLUE)
+        self.lightatk_frames_r = spritesheet_functions.createSprite(sprite_sheet,list1, 1, 1, constants.DARKBLUE)
         # Vira as imagens para a esquerda
-        self.lightatk_frames_l = spritesheet_functions.createSprite(sprite_sheet,list1, 1, 1, constants.DARKBLUE)
+        self.lightatk_frames_l = spritesheet_functions.createSprite(sprite_sheet,list1, 0, 1, constants.DARKBLUE)
         
         # Carrega todas as imagens de ataque pesado viradas para a direita numa lista
         "Ataque pesado"
@@ -172,25 +196,25 @@ class Enemy1(pygame.sprite.Sprite):
                  [300, 90, 100, 84],
                  [400, 90, 100, 84]]
                  
-        self.heavyatk_frames_r = spritesheet_functions.createSprite(sprite_sheet,list1, 0, 1, constants.DARKBLUE)
+        self.heavyatk_frames_r = spritesheet_functions.createSprite(sprite_sheet,list1, 1, 1, constants.DARKBLUE)
         # Vira as imagens para a esquerda
-        self.heavyatk_frames_l = spritesheet_functions.createSprite(sprite_sheet,list1, 1, 1, constants.DARKBLUE)
+        self.heavyatk_frames_l = spritesheet_functions.createSprite(sprite_sheet,list1, 0, 1, constants.DARKBLUE)
         
         # Carrega todas as imagens tomando dano viradas para a direita numa lista
         "Tomar dano"
         list1 = [[500, 90, 100, 84]]
         
-        self.takedmg_frames_r = spritesheet_functions.createSprite(sprite_sheet,list1, 0, 1, constants.DARKBLUE)
+        self.takedmg_frames_r = spritesheet_functions.createSprite(sprite_sheet,list1, 1, 1, constants.DARKBLUE)
         # Vira todas as imagens para a esquerda
-        self.takedmg_frames_l = spritesheet_functions.createSprite(sprite_sheet,list1, 1, 1, constants.DARKBLUE)
+        self.takedmg_frames_l = spritesheet_functions.createSprite(sprite_sheet,list1, 0, 1, constants.DARKBLUE)
         
         # Carrega todas as imagens morrendo viradas para a direita numa lista
         "Morrer"
         list1 = [[600, 90, 100, 84]]
                  
-        self.dead_frames_r = spritesheet_functions.createSprite(sprite_sheet,list1, 0, 1, constants.DARKBLUE)
+        self.dead_frames_r = spritesheet_functions.createSprite(sprite_sheet,list1, 1, 1, constants.DARKBLUE)
         # Vira todas as imagens para a esquerda
-        self.dead_frames_l = spritesheet_functions.createSprite(sprite_sheet,list1, 1, 1, constants.DARKBLUE)
+        self.dead_frames_l = spritesheet_functions.createSprite(sprite_sheet,list1, 0, 1, constants.DARKBLUE)
 
         # Define a sprite que o inimigo começa
         self.image = self.waiting_frames_l[0]
@@ -198,7 +222,7 @@ class Enemy1(pygame.sprite.Sprite):
         # Define uma referência para o retângulo da sprite
         self.rect = self.image.get_rect()
   
-        # Reproduz a animação de espera
+    # Reproduz a animação de espera
     def ani_wait(self):
         if self.a > 120:
             self.a = 0
@@ -229,6 +253,13 @@ class Enemy1(pygame.sprite.Sprite):
         else:
             frame = (pos // 30) % len(self.walking_frames_l)
             self.image = self.walking_frames_l[frame]
+            
+    # Reproduz a animação de pulo
+    def ani_jump(self):
+        if self.direction == "R" and self.jumping == True:
+            self.image = self.jumping_frames_r[0]
+        elif self.direction == "L" and self.jumping == True :
+            self.image = self.jumping_frames_l[0]
     
     # Reproduz animação de defesa
     def ani_defend(self):
@@ -301,7 +332,7 @@ class Enemy1(pygame.sprite.Sprite):
                 self.latk = False
             else:
                 self.i += 1
-            if self.i == 7:
+            if self.i == 2:
                 self.dealdmg = True
             else:
                 self.dealdmg = False
@@ -321,7 +352,7 @@ class Enemy1(pygame.sprite.Sprite):
                 self.hatk = False
             else:
                 self.k += 1
-            if self.k == 8:
+            if self.k == 2:
                 self.dealdmg = True
             else:
                 self.dealdmg = False
@@ -392,7 +423,7 @@ class Enemy1(pygame.sprite.Sprite):
         if self.change_y != 0:
             self.rect.y += self.change_y
             self.rect.x += self.change_x
-#            self.ani_jump()
+            self.ani_jump()
  
         # Verifica se existe colisão ao pular
         self.on_ground = False
@@ -442,19 +473,33 @@ class Enemy1(pygame.sprite.Sprite):
             self.health = 0
             self.jumping = False
  
-    # Movimentos do inimigo:
+#==============================================================================
+#     Movimentos do inimigo:
+#==============================================================================
+    def jump(self):
+        # Move o enemy 2 pixels para baixo para verificar se existe uma plataforma
+        self.rect.y += 2
+        platform_hit_list = pygame.sprite.spritecollide(self, self.level.platform_list, False)
+        self.rect.y -= 2
+ 
+        # Se for possível pular, define a velocidade da subida
+        if len(platform_hit_list) > 0:
+            self.change_y = - 10
+            self.jumping = True
+            self.on_ground = False
+            
+    # Move o enemy para a esquerda
     def go_left(self):
-        # Quando o inimigo vai para a esquerda
-        self.change_x = -4
+        self.change_x = -5
         self.direction = "L"
  
+    # Move o enemy para a direita
     def go_right(self):
-        # Quando o inimigo vai para a direita
-        self.change_x = 4
+        self.change_x = 5
         self.direction = "R"
- 
+        
+    # Impede o movimento do enemy
     def stop(self):
-        # Quando o inimigo não se move
         self.change_x = 0
         
     
@@ -464,102 +509,56 @@ class Enemy1(pygame.sprite.Sprite):
 
     # Coloca o inimigo em posição de defesa
     def defend(self):
-        self.defending = True
-        self.jumping = False
-        if self.direction == "R":
-            self.image = self.defense_frames_r[0]
-        else:
-            self.image = self.defense_frames_l[0]
+        if self.defending:
+            self.ani_defend()
     
     # Quebra a guarda do inimigo
     def guard_break(self):
         if not self.guard:
-            if self.direction == "R":
-                self.image = self.guardbreak_frames_r[0]
-            else:
-                self.image = self.guardbreak_frames_l[0]
+            self.ani_guardbreak()
 
     # Desvia um ataque e quebra guarda do player
     def parry(self):
         if self.parrying:
+            self.start_clocker = True
             self.change_x = 0
-            if constants.d1 > constants.FPS/len(self.parry_frames_r):
-                constants.d1 = 0
-                if self.direction == "R":
-                    self.image = self.parry_frames_r[constants.i]
-                else:
-                    self.image = self.parry_frames_l[constants.i]
-                if constants.i >= len(self.parry_frames_r) - 1:
-                    constants.i = 0
-                    self.parrying = False
-                else: 
-                    constants.i += 1
-            else: 
-                constants.d1 += 1
+            self.ani_parry()
     
     # Ataque crítico
     def riposte(self):
         if self.riposting:
+            self.start_clocker = True
             self.change_x = 0
-            if constants.d1 > constants.FPS/len(self.riposte_frames_r):
-                constants.d1 = 0
-                if self.direction == "R":
-                    self.image = self.riposte_frames_r[constants.i]
-                else:
-                    self.image = self.riposte_frames_l[constants.i]
-                if constants.i >= len(self.riposte_frames_r) - 1:
-                    constants.i = 0
-                    self.riposting = False
-                else: 
-                    constants.i += 1
-            else: 
-                constants.d1 += 1
+            self.ani_riposte()
+            
+    # Faz o enemy desviar
+    def roll(self):
+        if self.rolling and constants.boss_roll_frames > 0:
+            self.start_clocker = True
+            self.ani_roll()
+        self.rolling = False
+        
+    # Calcula quantos frames serão usados para rolar
+    def active_roll(self):
+        constants.boss_roll_frames += 85
 
     # Ataque leve
     def light_atk(self):
         if self.latk:
+            self.dmg_d = 3 # Dano real = dmg_d * 8
+            self.start_clocker = True
             self.change_x = 0
-            if constants.d1 > constants.FPS/len(self.lightatk_frames_r):
-                constants.d1 = 0
-                if self.direction == "R":
-                    self.image = self.lightatk_frames_r[constants.i]
-                else:
-                    self.image = self.lightatk_frames_l[constants.i]
-                if constants.i >= len(self.lightatk_frames_r) - 1:
-                    constants.i = 0
-                    self.latk = False
-                else: 
-                    constants.i += 1
-                if constants.i == (7 or 8):
-                    self.dealdmg = True
-                else:
-                    self.dealdmg = False
-            else: 
-                constants.d1 += 1
+            self.ani_latk()
     
     # Ataque forte
     def heavy_atk(self):
         if self.hatk:
+            self.dmg_d = 7 # Dano real = dmg_d * 6
+            self.start_clocker = True
             self.change_x = 0
-            if constants.d1 > constants.FPS/len(self.heavyatk_frames_r):
-                constants.d1 = 0
-                if self.direction == "R":
-                    self.image = self.heavyatk_frames_r[constants.i]
-                else:
-                    self.image = self.heavyatk_frames_l[constants.i]
-                if constants.i >= len(self.heavyatk_frames_r) - 1:
-                    constants.i = 0
-                    self.hatk = False
-                else: 
-                    constants.i += 1
-                if constants.i == (8 or 9 or 10):
-                    self.dealdmg = True
-                else:
-                    self.dealdmg = False
-            else: 
-                constants.d1 += 1
+            self.ani_hatk()
                 
-    # Percebe se o boss está tomando um ataque
+    # Percebe se o enemy está tomando um ataque
     def detect_atk(self):
         self.clocker_rt = 1
         for player in self.players:
@@ -575,40 +574,16 @@ class Enemy1(pygame.sprite.Sprite):
             
     # Calcula o dano recebido pelo inimigo
     def calc_damage(self):
-        # Verifica se o inimigo está defendendo
+        # Verifica se o boss está defendendo
         if self.guard and self.takedmg:
             if self.defending:
-                pass
-                                        
+                self.calc_stamina(self.dmg_r/2) # Reduz stamina
             else:
-                if self.direction == "R":
-                    self.image = self.takedmg_frames_r[0]
-                else:
-                    self.image = self.takedmg_frames_l[0]
+                self.ani_damage()
                 if self.health - self.dmg_r > 0:
                     self.health -= self.dmg_r # Reduz vida
                 else:
-                    self.health = 0                    
-        if self.health <= 0:
-            self.live = False
-                
-    def take_dmg(self):
-        self.clocker_rt = 1
-        if not self.defending and self.takedmg:
-            if constants.delay > constants.FPS/len(self.takedmg_frames_r):
-                constants.delay = 0
-                if self.direction == "R":
-                    self.image = self.takedmg_frames_r[0]
-                else:
-                    self.image = self.takedmg_frames_l[0]
-                if constants.i >= len(self.takedmg_frames_r) - 1:
-                    constants.i = 0
-                    self.takedmg = False
-                    self.guard = True
-                else:
-                    constants.i += 1
-            else:
-                constants.delay += 1
+                    self.health = 0
                 
     # Calcula a stamina gasta pelo inimigo
     def calc_stamina(self, stm_cost):
@@ -619,7 +594,6 @@ class Enemy1(pygame.sprite.Sprite):
             
     # Regenera stamina usada
     def stamina_regen(self):
-        # Calcula a regeneração de stamina do inimigo
         self.clocker_rt = 1
         if not self.start_clocker:
             if not self.defending:
@@ -639,8 +613,11 @@ class Enemy1(pygame.sprite.Sprite):
         self.guard = True
         self.defending = False
         self.health = self.maxhealth
-        self.rect.y = 50
+        self.stamina = self.maxstamina
+        self.rect.x = constants.er1_x
+        self.direction = "L"
         
+    # Estabelece um delay
     def clocker(self):
         if self.start_clocker:
             if constants.k > constants.FPS:
@@ -649,6 +626,7 @@ class Enemy1(pygame.sprite.Sprite):
             else:
                 constants.k += self.clocker_rt
                                 
+    # Verifica a possibilidade de um evento acontecer
     def possible(self, event):
         if event == "wait":
             if self.live and not self.jumping and not self.defending and not self.latk and not self.hatk and not self.rolling and not self.takedmg and not self.parrying and not self.riposting:
@@ -688,55 +666,55 @@ class Enemy1(pygame.sprite.Sprite):
         if self.health > 0:
             pygame.draw.rect(screen, constants.ORANGE, self.rect.top-10, self.rect.left, self.health, 5)
             
-    # Inteligência artificial do inimigo
+    # Inteligência artificial do enemy
     def AI(self, player, clock):
-        # Vira o inimigo na direção do player
+        # Vira o boss na direção do player
         if self.possible("wait"):
             if player.rect.centerx > self.rect.centerx:
                 self.direction = "R"
             else:
                 self.direction = "L"
             # Persegue o player
-            if player.rect.centerx + 50 < self.rect.left:
+            if player.rect.centerx + 15 < self.rect.centerx - 15:
                 self.go_left()
-            elif player.rect.centerx - 50 > self.rect.right:
+            elif player.rect.centerx - 15 > self.rect.right + 15:
                 self.go_right()
-        if player.rect.left > self.rect.right +200 or player.rect.right < self.rect.left -200:
+        if player.rect.left > self.rect.right +400 or player.rect.right < self.rect.left -400:
               self.stop()
-        elif (player.rect.centerx > self.rect.centerx -80 and player.rect.centerx < self.rect.centerx +80) \
-          or (player.rect.centerx < self.rect.centerx +80 and player.rect.centerx > self.rect.centerx -80):
+        elif (player.rect.centerx > self.rect.centerx -80 and player.rect.centerx < self.rect.centerx) \
+          or (player.rect.centerx < self.rect.centerx +80 and player.rect.centerx > self.rect.centerx):
             self.stop()
-#            self.a = random.choice([0, 1, 2, 3, 4, 5])
-            if clock.get_fps() >= 60:
-                if self.a == 0 and self.possible("latk"):
+#            self.l = random.choice(["latk", "hatk", "roll", "wait"])
+            if clock.get_fps() > 60:
+                if self.l == "latk" and self.possible("latk"):
                     self.latk = True
-                elif self.a == 1 and self.possible("hatk"):
+                elif self.l == "hatk" and self.possible("hatk"):
                     self.hatk = True
-                elif self.a == 2 and self.possible("roll"):
+                elif self.l == "roll" and self.possible("roll"):
                     self.rolling = True
                     self.active_roll()
-            elif self.a == 3 or 4 or 5:
-                pass
-#                self.b = random.choice([0, 1])
-#                self.d = random.uniform(0, 1)
-#                self.e = random.uniform(0, 1)
+                elif self.l == "wait":
+                    pass
+#                self.m = random.choice(["def", "wait"])
+#                self.n = random.uniform(0, 1)
+#                self.o = random.uniform(0, 1)
                 if player.dealdmg:
                     if self.direction != player.direction:
-                        if self.b == 0:
-                            if self.d > 0.4:
-                                 if self.possible("defend"):
-                                   self.defend()
-                            if not self.defending:
-                                self.dmg_r = player.dmg_d
-                                self.takedmg = True
+                        if self.m == "def":
+                            if self.n > 0.4:
+                                if self.possible("defend"):
+                                    self.defend()
+                        if not self.defending:
+                            self.dmg_r = player.dmg_d
+                            self.takedmg = True
                         else:
-                            if self.e > 0.1:
-                                 if self.possible("parry"):
-                                     self.parrying = True
-                    else:
-                        if self.possible("latk"):
-                            self.latk = True
+                            if self.o > 0.1:
+                                if self.possible("parry"):
+                                    self.parrying = True
+                                    if self.possible("latk"):
+                                        self.latk = True
                 else:
                     self.defending = False
                     self.parrying = False
                     self.dmg_r = 0
+        self.rolling = False

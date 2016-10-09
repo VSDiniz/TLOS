@@ -98,9 +98,9 @@ class Level_01(Level):
 #                 [platforms.floatplat3, 7584, 358],
                  [platforms.floatplat4, 5056, 452],
                  [platforms.stone_wall, 9248, 0],
-                 [platforms.plat2, 9440, 550],
-                 [platforms.stone_wall, 9440, 0],
-                 [platforms.stone_wall, 10397, 0],]
+                 [platforms.plat2, 9952, 548],
+                 [platforms.stone_wall, 9952, 0],
+                 [platforms.stone_wall, 10909, 0],]
  
         # Passa pelo array e adiciona plataformas
         for platform in level:

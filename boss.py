@@ -6,7 +6,6 @@ Created on Sat Aug 20 13:25:12 2016
 """
 
 import pygame, constants, spritesheet_functions
-#from platforms import MovingPlatform
 
 class Boss(pygame.sprite.Sprite):
  
@@ -541,12 +540,12 @@ class Boss(pygame.sprite.Sprite):
  
     # Move o boss para a esquerda
     def go_left(self):
-        self.change_x = -5
+        self.change_x = -7
         self.direction = "L"
  
     # Move o boss para a direita
     def go_right(self):
-        self.change_x = 5
+        self.change_x = 7
         self.direction = "R"
         
     # Impede o movimento do boss
@@ -659,13 +658,14 @@ class Boss(pygame.sprite.Sprite):
                     self.stamina = self.maxstamina
             
     # Faz o boss voltar a vida
-    def reborn(self, cp):
+    def reborn(self):
         self.live = True
         self.guard = True
         self.defending = False
         self.health = self.maxhealth
-        self.rect.y = 50
-#        self.rect.x = constants.bsp_x - cp
+        self.stamina = self.maxstamina
+        self.rect.x = constants.bsp_x
+        self.direction = "L"
         
     # Estabelece um delay
     def clocker(self):
@@ -741,23 +741,23 @@ class Boss(pygame.sprite.Sprite):
         elif (player.rect.centerx > self.rect.centerx -80 and player.rect.centerx < self.rect.centerx) \
           or (player.rect.centerx < self.rect.centerx +80 and player.rect.centerx > self.rect.centerx):
             self.stop()
-#            self.l = random.choice([0, 1, 2, 3, 4])
+#            self.l = random.choice(["latk", "hatk", "roll", "wait"])
             if clock.get_fps() > 60:
-                if self.l == 0 and self.possible("latk"):
+                if self.l == "latk" and self.possible("latk"):
                     self.latk = True
-                elif self.l == 1 and self.possible("hatk"):
+                elif self.l == "hatk" and self.possible("hatk"):
                     self.hatk = True
-                elif self.l == 2 and self.possible("roll"):
+                elif self.l == "roll" and self.possible("roll"):
                     self.rolling = True
                     self.active_roll()
-                elif self.l == 3 or 4:
+                elif self.l == "wait":
                     pass
-#                self.m = random.choice([0, 1])
+#                self.m = random.choice(["def", "wait"])
 #                self.n = random.uniform(0, 1)
 #                self.o = random.uniform(0, 1)
                 if player.dealdmg:
                     if self.direction != player.direction:
-                        if self.m == 0:
+                        if self.m == "def":
                             if self.n > 0.4:
                                 if self.possible("defend"):
                                     self.defend()

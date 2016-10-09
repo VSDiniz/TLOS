@@ -5,7 +5,7 @@ Created on Wed Oct  5 09:49:19 2016
 @author: vini_
 """
 
-import pygame, constants, spritesheet_functions, sounds, os
+import pygame, constants, spritesheet_functions, sounds, collide
  
 class Player(pygame.sprite.Sprite):
  
@@ -521,6 +521,8 @@ class Player(pygame.sprite.Sprite):
                     if self.right > block.rect.right and self.left < block.rect.right:
 #                        self.rect.left = block.rect.right
                         self.rect.centerx = block.rect.right + 15
+                        
+        collide.check_collide(self, self.enemies)
 
         # Move para cima/baixo
         if self.change_y != 0:
