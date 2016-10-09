@@ -21,13 +21,17 @@ slow_regen = 0.04
 fast_regen = 0.12
 estus_maxregen = 35
 player_roll_frames = 0
-psp_x = 8500#620
+psp_x = 620#620,8500
 psp_y = SCREEN_HEIGHT - 370
 
 # Boss
 boss_roll_frames = 0
-bsp_x = 864
+bsp_x = 400
 bsp_y = SCREEN_HEIGHT - 45
+
+# Inimigos
+er1_x = 850
+er1_y = SCREEN_HEIGHT - 45
 
 # Gerais
 a = b = c = d = k = e = f = 0
@@ -50,6 +54,7 @@ bitsFont_M = pygame.font.Font("fonts\8-BIT_WONDER.TTF",20)
 bitsFont_P = pygame.font.Font("fonts\8-BIT_WONDER.TTF",10)
 soulsFont_G = pygame.font.Font("fonts\OptimusPrinceps.ttf",120)
 soulsFont_M = pygame.font.Font("fonts\OptimusPrinceps.ttf",72)
+soulsFont_MP = pygame.font.Font("fonts\OptimusPrinceps.ttf",30)
 soulsFont_P = pygame.font.Font("fonts\OptimusPrinceps.ttf",12)
 scrollFont_M = pygame.font.Font("fonts\TravelingTypewriter.ttf",60)
 scrollFont_P = pygame.font.Font("fonts\TravelingTypewriter.ttf",25)

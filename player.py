@@ -709,7 +709,7 @@ class Player(pygame.sprite.Sprite):
                     self.dmg_r = enemy.dmg_d
                     self.takedmg = True
                     self.calc_damage()
-                    print("PLAYER", self.dmg_r)
+#                    print("PLAYER", self.dmg_r)
                     self.dmg_r = 0
 #                    self.takedmg = False
 
@@ -760,10 +760,13 @@ class Player(pygame.sprite.Sprite):
         self.guard = True
         self.defending = False
         self.health = self.maxhealth
+        self.stamina = self.maxstamina
         self.estus_rn = 5
         self.rect.y = -150
-#        self.rect.x = constants.psp_x - cp
-        os.system('cls') # Limpa o console
+        self.rect.x -= cp - constants.psp_x
+        self.direction = "R"
+        if self.possible("wait"):
+            self.rect.x += 1
         
     # Estabelece um delay
     def clocker(self):
@@ -839,17 +842,22 @@ class Player(pygame.sprite.Sprite):
 # Mostra tela de morte
 def dead_screen(screen, player, cp):
     sounds.dead.play()
+    
     black_surf = pygame.Surface((constants.SCREEN_WIDTH, constants.SCREEN_HEIGHT), pygame.SRCALPHA)
     black_surf.fill((0, 0, 0, 180))
     screen.blit(black_surf, (0, 0))
+    
     you_died_txt = constants.soulsFont_G.render("YOU   DIED", True, constants.RED, None)
     you_died_rect = you_died_txt.get_rect()
-    you_died_rect.centerx = constants.SCREEN_WIDTH/2
-    you_died_rect.centery = constants.SCREEN_HEIGHT/2
+    you_died_rect.center = ((constants.SCREEN_WIDTH/2),(constants.SCREEN_HEIGHT/2))
     screen.blit(you_died_txt, you_died_rect)
+    continue_txt = constants.soulsFont_MP.render("PRESS ENTER TO TRY AGAIN", True, constants.WHITE, None)
+    continue_rect = you_died_txt.get_rect()
+    continue_rect.center = ((130+constants.SCREEN_WIDTH/2),(250+constants.SCREEN_HEIGHT/2))
+    screen.blit(continue_txt, continue_rect)
+    
     player.change_x, player.change_y = 0, 0
     player.health, player.stamina = 0, 0
-#    constants.psp_x = 640
     
     for event in pygame.event.get():
             pressed = pygame.key.get_pressed()
@@ -860,11 +868,11 @@ def dead_screen(screen, player, cp):
                 if ((pressed[pygame.K_LALT] and pressed[pygame.K_F4]) or (pressed[pygame.K_RALT] and pressed[pygame.K_F4])):
                     pygame.quit() # Fecha a janela se o usuário pressionar ALT+F4
                     quit()
-                if event.key == pygame.K_BACKSPACE:
+                if event.key == pygame.K_RETURN:
                     player.reborn(cp)
-                if event.key == pygame.K_e:
-                    pass
-                if event.key == pygame.K_r:
-                    pass
-                if event.key == pygame.K_q:
-                    pass
+#                if event.key == pygame.K_e:
+#                    pass
+#                if event.key == pygame.K_r:
+#                    pass
+#                if event.key == pygame.K_q:
+#                    pass

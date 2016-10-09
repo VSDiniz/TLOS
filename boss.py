@@ -479,7 +479,7 @@ class Boss(pygame.sprite.Sprite):
         for block in block_hit_list:
             if pygame.sprite.collide_rect(self,block):
                 if self.right > block.rect.left and self.left < block.rect.right:
-                    if self.rect.bottom > block.rect.top and (self.rect.bottom - 10) < block.rect.top:
+                    if self.rect.bottom > block.rect.top and (self.rect.bottom - 20) < block.rect.top:
                         if self.change_y > 0 and not self.on_ground:
                             self.rect.bottom = block.rect.top
                             self.on_ground = True

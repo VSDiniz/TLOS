@@ -65,7 +65,7 @@ class Level_01(Level):
  
         Level.__init__(self, player, enemy, screen)
  
-        self.background = pygame.image.load("images/map1(1).png").convert()
+        self.background = pygame.image.load("images/map1(2).png").convert()
         self.background = pygame.transform.scale2x(self.background)
         self.level_limit = 9150
  
@@ -97,7 +97,10 @@ class Level_01(Level):
                  [platforms.floatplat3, 642, 228],
 #                 [platforms.floatplat3, 7584, 358],
                  [platforms.floatplat4, 5056, 452],
-                 [platforms.stone_wall, 9248, 0],]
+                 [platforms.stone_wall, 9248, 0],
+                 [platforms.plat2, 9440, 550],
+                 [platforms.stone_wall, 9440, 0],
+                 [platforms.stone_wall, 10397, 0],]
  
         # Passa pelo array e adiciona plataformas
         for platform in level:
@@ -244,6 +247,7 @@ def instructions():
         scroll7 = constants.scrollFont_P.render("Press I to parry and light attack to riposte", True, constants.BLACK, None)
         scroll8 = constants.scrollFont_P.render("Press SPACE to roll", True, constants.BLACK, None)
         scroll9 = constants.scrollFont_P.render("Press ENTER to exit the instructions", True, constants.BLACK, None)
+        scroll10 = constants.scrollFont_P.render("Press M or N to look around", True, constants.BLACK, None)
     else:
         scroll1 = constants.scrollFont_M.render("INSTRUCTIONS", True, constants.BLACK, None)
         scroll2 = constants.scrollFont_P.render("Press the D Pad or LEFT Analog to move", True, constants.BLACK, None)
@@ -254,6 +258,7 @@ def instructions():
         scroll7 = constants.scrollFont_P.render("Press L2 to parry and light attack to riposte", True, constants.BLACK, None)
         scroll8 = constants.scrollFont_P.render("Press CIRCLE to roll", True, constants.BLACK, None)
         scroll9 = constants.scrollFont_P.render("Press ENTER to exit the instructions", True, constants.BLACK, None)
+        scroll10 = constants.scrollFont_P.render("Move the RIGHT Analog to look around", True, constants.BLACK, None)
         
     instruct = True
 
@@ -289,6 +294,9 @@ def instructions():
         scroll9_rect = scroll9.get_rect()
         scroll9_rect.center = (constants.SCREEN_WIDTH / 2, constants.SCREEN_HEIGHT - 50)
         screen1.blit(scroll9, scroll9_rect)
+        scroll10_rect = scroll10.get_rect()
+        scroll10_rect.center = (constants.SCREEN_WIDTH / 2, constants.SCREEN_HEIGHT - 240)
+        screen1.blit(scroll10, scroll10_rect)
 
         pygame.display.update()
         

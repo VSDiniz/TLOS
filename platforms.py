@@ -54,7 +54,7 @@ class Platform(pygame.sprite.Sprite):
                                             sprite_sheet_data[3])
         
         # Deixa as plataformas transparentes                                            
-        self.image.set_colorkey(constants.WHITE)
+#        self.image.set_colorkey(constants.WHITE)
  
         self.rect = self.image.get_rect()
         
