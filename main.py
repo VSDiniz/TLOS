@@ -5,7 +5,7 @@ Created on Thu Aug 18 08:22:09 2016
 @author: vini_
 """
  
-import pygame, constants, levels, os, player, boss, random, enemy1
+import pygame, constants, levels, os, player, boss, enemy1, bonfire
   
 def main():
     # Main Program
@@ -35,11 +35,13 @@ def main():
     player1.enemies.append(enemyr1)
     boss1.players.append(player1)
     enemyr1.players.append(player1)
+    
+    bonfire1 = bonfire.Bonfire(player1, screen)
  
     # Cria todos os levels
     level_list = []
-    level_list.append(levels.Level_01(player1, enemyr1, screen))
-    level_list.append(levels.Level_02(player1, boss1, screen))
+    level_list.append(levels.Level_01(player1, enemyr1, screen, bonfire1))
+    level_list.append(levels.Level_02(player1, boss1, screen, bonfire1))
     
  
     # Define o level atual
@@ -58,12 +60,16 @@ def main():
     
     enemyr1.rect.x = constants.er1_x
     enemyr1.rect.y = constants.er1_y - enemyr1.rect.height
-    active_sprite_list.add(enemyr1)    
+    active_sprite_list.add(enemyr1)
     
     # Define posição inicial do player
     player1.rect.x = constants.psp_x
     player1.rect.y = constants.psp_y - player1.rect.height
     active_sprite_list.add(player1)
+    
+    bonfire1.rect.x = 661
+    bonfire1.rect.y = 160
+    active_sprite_list.add(bonfire1)
      
     #Loop até o usuário fechar o jogo
     ingame = True
@@ -148,21 +154,29 @@ def main():
                     current_level.shift_world(-round(player1.look_dist * axis_dh))
                     player1.rect.right -= round(player1.look_dist * axis_dh)
                     player1.direction = "R"
-                    boss1.rect.right -= round(player1.look_dist * axis_dh)
+                    bonfire1.rect.right -= round(player1.look_dist * axis_dh)
+                    for enemy in player1.enemies:
+                        enemy.rect.right -= round(player1.look_dist * axis_dh)
                 elif 0.2 < axis_dh < 0.5:
                     current_level.shift_world(round(player1.look_dist * axis_dh/2))
                     player1.rect.right += round(player1.look_dist * axis_dh/2)
-                    boss1.rect.right += round(player1.look_dist * axis_dh/2)
+                    bonfire1.rect.right += round(player1.look_dist * axis_dh/2)
+                    for enemy in player1.enemies:
+                        enemy.rect.right += round(player1.look_dist * axis_dh/2)
                     
                 if axis_dh <= -0.5:
                     current_level.shift_world(-round(player1.look_dist * axis_dh))
                     player1.rect.right -= round(player1.look_dist * axis_dh)
                     player1.direction = "L"
-                    boss1.rect.right -= round(player1.look_dist * axis_dh)
+                    bonfire1.rect.right -= round(player1.look_dist * axis_dh)
+                    for enemy in player1.enemies:
+                        enemy.rect.right -= round(player1.look_dist * axis_dh)
                 elif -0.5 < axis_dh < -0.2:
                     current_level.shift_world(round(player1.look_dist * axis_dh/2))
                     player1.rect.right += round(player1.look_dist * axis_dh/2)
-                    boss1.rect.right += round(player1.look_dist * axis_dh/2)
+                    bonfire1.rect.right += round(player1.look_dist * axis_dh/2)
+                    for enemy in player1.enemies:
+                        enemy.rect.right += round(player1.look_dist * axis_dh/2)
                     
                 if event.type == pygame.JOYBUTTONDOWN:
                         
@@ -305,13 +319,16 @@ def main():
                     current_level.shift_world(-player1.look_dist)
                     player1.rect.right -= player1.look_dist
                     player1.direction = "R"
+                    bonfire1.rect.right -= player1.look_dist
                     boss1.rect.right -= player1.look_dist
                     
                 if event.key == pygame.K_n:
                     current_level.shift_world(player1.look_dist)
                     player1.rect.right += player1.look_dist
                     player1.direction = "L"
-                    boss1.rect.right += player1.look_dist
+                    bonfire1.rect.right += player1.look_dist
+                    for enemy in player1.enemies:
+                        enemy.rect.right += player1.look_dist
                 
             # Calcula a regeneração de vida do player
             if event.type == estus_regen:
@@ -353,12 +370,16 @@ def main():
                 if event.key == pygame.K_m:
                     current_level.shift_world(player1.look_dist//2)
                     player1.rect.right += player1.look_dist//2
-                    boss1.rect.right += player1.look_dist//2
+                    bonfire1.rect.right += player1.look_dist//2
+                    for enemy in player1.enemies:
+                        enemy.rect.right += player1.look_dist//2
                     
                 if event.key == pygame.K_n:
                     current_level.shift_world(-player1.look_dist//2)
                     player1.rect.right -= player1.look_dist//2
-                    boss1.rect.right -= player1.look_dist//2
+                    bonfire1.rect.right -= player1.look_dist//2
+                    for enemy in player1.enemies:
+                        enemy.rect.right -= player1.look_dist//2
                     
 #==============================================================================
 #         Outros Eventos
@@ -386,16 +407,18 @@ def main():
                 diff = player1.rect.right - 700
                 player1.rect.right = 700
                 current_level.shift_world(-diff)
-                enemyr1.rect.right -= diff
-                boss1.rect.right -= diff
+                bonfire1.rect.left -= diff
+                for enemy in player1.enemies:
+                    enemy.rect.right -= diff
       
             # Se o player chegar perto do lado esquerdo, muda o world para a direita (+x)
             if player1.rect.left <= 120:
                 diff = 120 - player1.rect.left
                 player1.rect.left = 120
                 current_level.shift_world(diff)
-                enemyr1.rect.left += diff
-                boss1.rect.left += diff
+                bonfire1.rect.left += diff
+                for enemy in player1.enemies:
+                    enemy.rect.left += diff
         
 #==============================================================================
 #         # Se o player chegar perto do fundo, muda o world para cima (-y)
@@ -414,7 +437,7 @@ def main():
         # Se o player chegar ao fim do level, vai para o próximo level
         pressed = pygame.key.get_pressed()
         if (current_level.level_limit + 10 > current_position > current_level.level_limit) and current_level_no != 1 \
-        and (pressed[pygame.K_v] or button_triangle) and player1.on_ground:
+        and (pressed[pygame.K_c] or button_triangle) and player1.on_ground:
             player1.rect.x = 150
             pygame.mixer.music.stop()
             if current_level_no < len(level_list)-1:
@@ -438,7 +461,7 @@ def main():
             if pygame.joystick.get_count() > 1:
                 levels.msg_player("Press TRIANGLE on the fog wall", screen)
             else:
-                levels.msg_player("Press SPACE on the fog wall", screen)
+                levels.msg_player("Press C on the fog wall", screen)
         
         # Limita os frames por segundo
         clock.tick(constants.FPS)
@@ -446,10 +469,8 @@ def main():
         # Constantes auxiliares para AI do boss
         if constants.a > 60:
             constants.a = 0
-            boss1.l = random.choice(["latk", "hatk", "roll", "wait"])
-            boss1.m = random.choice(["def", "wait"])
-            boss1.n = random.uniform(0, 1)
-            boss1.o = random.uniform(0, 1)
+            for enemy in player1.enemies:
+                enemy.randomize()
 #            print("-----CHOICE-----",boss1.l)
         else:
             constants.a += 1
@@ -462,9 +483,11 @@ def main():
             else:
                 constants.b += 1
 
-        # AI do boss
-        boss1.AI(player1, clock)
-        enemyr1.AI(player1, clock)
+        # AI dos enemies
+        for enemy in player1.enemies:
+            enemy.AI(player1, clock)
+            
+        bonfire1.lit_bonfire(player1, screen, pygame.joystick.get_count(), button_triangle, pressed)
         
         # Mostra tela de morte/vitória
         if not player1.live:        

@@ -5,7 +5,7 @@ Created on Mon Oct  3 10:55:17 2016
 @author: vini_
 """
 
-import pygame, constants, spritesheet_functions
+import pygame, constants, spritesheet_functions, random
 
 class Enemy1(pygame.sprite.Sprite):
  
@@ -14,10 +14,10 @@ class Enemy1(pygame.sprite.Sprite):
         super().__init__()
         
         # Define variáveis de características do enemy
-        self.maxhealth = 200
-        self.health = 200
-        self.maxstamina = 100
-        self.stamina = 100
+        self.maxhealth = 85
+        self.health = 85
+        self.maxstamina = 50
+        self.stamina = 50
         self.dmg_r = 0
         self.dmg_d = 0
         self.rolling_speed = 8
@@ -181,7 +181,10 @@ class Enemy1(pygame.sprite.Sprite):
         # Carrega todas as imagens de ataque leve viradas para a direita numa lista
         "Ataque leve"
         list1 = [[400, 0, 100, 84],
+                 [400, 0, 100, 84],
                  [600, 0, 100, 84],
+                 [600, 0, 100, 84],
+                 [700, 0, 100, 84],
                  [700, 0, 100, 84]]
                  
         self.lightatk_frames_r = spritesheet_functions.createSprite(sprite_sheet,list1, 1, 1, constants.DARKBLUE)
@@ -192,6 +195,8 @@ class Enemy1(pygame.sprite.Sprite):
         "Ataque pesado"
         list1 = [[0, 90, 100, 84],
                  [100, 90, 100, 84],
+                 [100, 90, 100, 84],
+                 [200, 90, 100, 84],
                  [200, 90, 100, 84],
                  [300, 90, 100, 84],
                  [400, 90, 100, 84]]
@@ -332,7 +337,7 @@ class Enemy1(pygame.sprite.Sprite):
                 self.latk = False
             else:
                 self.i += 1
-            if self.i == 2:
+            if self.i == 5:
                 self.dealdmg = True
             else:
                 self.dealdmg = False
@@ -352,7 +357,7 @@ class Enemy1(pygame.sprite.Sprite):
                 self.hatk = False
             else:
                 self.k += 1
-            if self.k == 2:
+            if self.k == 4:
                 self.dealdmg = True
             else:
                 self.dealdmg = False
@@ -369,10 +374,14 @@ class Enemy1(pygame.sprite.Sprite):
     # Reproduz a animação de morte
     def ani_death(self):
         self.change_y = 9
+        self.dealdmg = False
+        self.latk = False
+        self.hatk = False
         if self.direction == "R":
             self.image = self.dead_frames_r[0]
         else:
             self.image = self.dead_frames_l[0]
+
 #==============================================================================
 #   
 #==============================================================================
@@ -545,17 +554,17 @@ class Enemy1(pygame.sprite.Sprite):
     # Ataque leve
     def light_atk(self):
         if self.latk:
-            self.dmg_d = 3 # Dano real = dmg_d * 8
-            self.start_clocker = True
             self.change_x = 0
+            self.dmg_d = 0.5 # Dano real = dmg_d * 12
+            self.start_clocker = True
             self.ani_latk()
     
     # Ataque forte
     def heavy_atk(self):
         if self.hatk:
-            self.dmg_d = 7 # Dano real = dmg_d * 6
-            self.start_clocker = True
             self.change_x = 0
+            self.dmg_d = 1 # Dano real = dmg_d * 10
+            self.start_clocker = True
             self.ani_hatk()
                 
     # Percebe se o enemy está tomando um ataque
@@ -614,7 +623,7 @@ class Enemy1(pygame.sprite.Sprite):
         self.defending = False
         self.health = self.maxhealth
         self.stamina = self.maxstamina
-        self.rect.x = constants.er1_x
+        self.image = self.waiting_frames_l[0]
         self.direction = "L"
         
     # Estabelece um delay
@@ -625,6 +634,12 @@ class Enemy1(pygame.sprite.Sprite):
                 self.start_clocker = False
             else:
                 constants.k += self.clocker_rt
+                
+    def randomize(self):
+        self.l = random.choice(["latk", "hatk", "roll", "wait"])
+        self.m = random.choice(["def", "wait"])
+        self.n = random.uniform(0, 1)
+        self.o = random.uniform(0, 1)
                                 
     # Verifica a possibilidade de um evento acontecer
     def possible(self, event):
@@ -668,24 +683,40 @@ class Enemy1(pygame.sprite.Sprite):
             
     # Inteligência artificial do enemy
     def AI(self, player, clock):
+        if self.direction == "R":
+            self.right = self.rect.centerx
+            self.left = self.rect.centerx - 30
+            self.center = self.rect.centerx - 15
+        else:
+            self.right = self.rect.centerx + 30
+            self.left = self.rect.centerx
+            self.center = self.rect.centerx + 15
         # Vira o boss na direção do player
         if self.possible("wait"):
-            if player.rect.centerx > self.rect.centerx:
+            if player.rect.centerx > self.center:
                 self.direction = "R"
             else:
                 self.direction = "L"
+            block_hit_list =  self.level.platform_list
+            for block in block_hit_list:
+                if pygame.sprite.collide_rect(self, block):
+                    if block.rect.left <= self.left <= block.rect.left + 10:
+                        self.stop()
+                    elif block.rect.right >= self.right >= block.rect.right - 10:
+                        self.stop()
+                    else:
+                        self.go_right()
             # Persegue o player
-            if player.rect.centerx + 15 < self.rect.centerx - 15:
+            if player.rect.centerx + 15 < self.left:
                 self.go_left()
-            elif player.rect.centerx - 15 > self.rect.right + 15:
+            elif player.rect.centerx - 15 > self.right:
                 self.go_right()
-        if player.rect.left > self.rect.right +400 or player.rect.right < self.rect.left -400:
-              self.stop()
-        elif (player.rect.centerx > self.rect.centerx -80 and player.rect.centerx < self.rect.centerx) \
-          or (player.rect.centerx < self.rect.centerx +80 and player.rect.centerx > self.rect.centerx):
-            self.stop()
-#            self.l = random.choice(["latk", "hatk", "roll", "wait"])
-            if clock.get_fps() > 60:
+            if player.rect.left > self.right +400 or player.rect.right < self.left -400:
+                  self.stop()
+            elif (player.rect.centerx > self.center -55 and player.rect.centerx < self.center) \
+              or (player.rect.centerx < self.center +55 and player.rect.centerx > self.center):
+                self.stop()
+    #            self.l = random.choice(["latk", "hatk", "roll", "wait"])
                 if self.l == "latk" and self.possible("latk"):
                     self.latk = True
                 elif self.l == "hatk" and self.possible("hatk"):
@@ -695,15 +726,15 @@ class Enemy1(pygame.sprite.Sprite):
                     self.active_roll()
                 elif self.l == "wait":
                     pass
-#                self.m = random.choice(["def", "wait"])
-#                self.n = random.uniform(0, 1)
-#                self.o = random.uniform(0, 1)
+    #                self.m = random.choice(["def", "wait"])
+    #                self.n = random.uniform(0, 1)
+    #                self.o = random.uniform(0, 1)
                 if player.dealdmg:
                     if self.direction != player.direction:
                         if self.m == "def":
                             if self.n > 0.4:
                                 if self.possible("defend"):
-                                    self.defend()
+                                    self.defending = True
                         if not self.defending:
                             self.dmg_r = player.dmg_d
                             self.takedmg = True

@@ -10,10 +10,11 @@ import pygame, constants, platforms, sys
 class Level():
     # Classe genérica para definir um level
  
-    def __init__(self, player, enemy, screen):
+    def __init__(self, player, enemy, screen, bonfire):
         # Lista de sprites usadas em todos os levels
         self.platform_list = None
         self.enemy_list = None
+        self.bonfire_list = None
  
         # Imagem de background
         self.background = None
@@ -24,13 +25,16 @@ class Level():
         self.level_limit = -900
         self.platform_list = pygame.sprite.Group()
         self.enemy_list = pygame.sprite.Group()
+        self.bonfire_list = pygame.sprite.Group()
         self.player = player
         self.enemy = enemy
+        self.bonfire = bonfire
  
     # Atualiza tudo num level
     def update(self):
         self.platform_list.update()
         self.enemy_list.update()
+        self.bonfire_list.update()
  
     def draw(self, screen):
         # Desenha tudo num level 
@@ -42,6 +46,7 @@ class Level():
         # Desenha todas as listas de sprites
         self.platform_list.draw(screen)
         self.enemy_list.draw(screen)
+        self.bonfire_list.draw(screen)
          
     def shift_world(self, shift_x):
         # Desloca o world quando o player se move
@@ -57,13 +62,13 @@ class Level():
         for enemy in self.enemy_list:
             enemy.rect.x += shift_x
 #            enemy.rect.y += shift_y
- 
+            
 # Cria as plataformas para o level
 class Level_01(Level):
  
-    def __init__(self, player, enemy, screen):
+    def __init__(self, player, enemy, screen, bonfire):
  
-        Level.__init__(self, player, enemy, screen)
+        Level.__init__(self, player, enemy, screen, bonfire)
  
         self.background = pygame.image.load("images/map1(2).png").convert()
         self.background = pygame.transform.scale2x(self.background)
@@ -96,6 +101,9 @@ class Level_01(Level):
                  [platforms.plat3, 7776, 548],
                  [platforms.floatplat3, 642, 228],
 #                 [platforms.floatplat3, 7584, 358],
+                 [platforms.floatplat3, 482, 356],
+                 [platforms.floatplat3, 642, 451],
+                 
                  [platforms.floatplat4, 5056, 452],
                  [platforms.stone_wall, 9248, 0],
                  [platforms.plat2, 9952, 548],
@@ -128,9 +136,9 @@ class Level_01(Level):
  
 class Level_02(Level):
  
-    def __init__(self, player, enemy, screen):
+    def __init__(self, player, enemy, screen, bonfire):
  
-        Level.__init__(self, player, enemy, screen)
+        Level.__init__(self, player, enemy, screen, bonfire)
  
         self.background = pygame.image.load("images/map2(1).png").convert()
         self.background = pygame.transform.scale2x(self.background)

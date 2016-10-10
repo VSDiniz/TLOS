@@ -5,7 +5,7 @@ Created on Sat Aug 20 13:25:12 2016
 @author: vini_
 """
 
-import pygame, constants, spritesheet_functions
+import pygame, constants, spritesheet_functions, random
 
 class Boss(pygame.sprite.Sprite):
  
@@ -664,7 +664,6 @@ class Boss(pygame.sprite.Sprite):
         self.defending = False
         self.health = self.maxhealth
         self.stamina = self.maxstamina
-        self.rect.x = constants.bsp_x
         self.direction = "L"
         
     # Estabelece um delay
@@ -675,6 +674,12 @@ class Boss(pygame.sprite.Sprite):
                 self.start_clocker = False
             else:
                 constants.k += self.clocker_rt
+                
+    def randomize(self):
+        self.l = random.choice(["latk", "hatk", "roll", "wait"])
+        self.m = random.choice(["def", "wait"])
+        self.n = random.uniform(0, 1)
+        self.o = random.uniform(0, 1)
                 
     # Verifica a possibilidade de um evento acontecer
     def possible(self, event):
@@ -760,7 +765,7 @@ class Boss(pygame.sprite.Sprite):
                         if self.m == "def":
                             if self.n > 0.4:
                                 if self.possible("defend"):
-                                    self.defend()
+                                    self.defending = True
                         if not self.defending:
                             self.dmg_r = player.dmg_d
                             self.takedmg = True
@@ -798,4 +803,4 @@ def dead_screen(screen, boss, cp):
                     pygame.quit() # Fecha a janela se o usuário pressionar ALT+F4
                     quit()
                 if event.key == pygame.K_BACKSPACE:
-                    boss.reborn(cp)
+                    boss.reborn()
