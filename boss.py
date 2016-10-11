@@ -42,6 +42,8 @@ class Boss(pygame.sprite.Sprite):
         self.players = []
         self.world_shift = 0
         self.clocker_rt = 0
+        self.DEATH = 1
+        self.DMG_TAKEN = 0
         self.a = self.b = self.c = self.d = self.e = self.f = self.g = self.h = self.i = \
         self.j = self.k = self.l = self.m = self.n = self.o = 0
         
@@ -632,6 +634,7 @@ class Boss(pygame.sprite.Sprite):
                 self.ani_damage()
                 if self.health - self.dmg_r > 0:
                     self.health -= self.dmg_r # Reduz vida
+                    self.DMG_TAKEN += self.dmg_r
                 else:
                     self.health = 0
                 
@@ -664,6 +667,7 @@ class Boss(pygame.sprite.Sprite):
         self.defending = False
         self.health = self.maxhealth
         self.stamina = self.maxstamina
+        self.DEATH = 1
         self.direction = "L"
         
     # Estabelece um delay

@@ -30,7 +30,7 @@ bsp_x = 10600
 bsp_y = SCREEN_HEIGHT - 45
 
 # Inimigos
-er1_x = 1400
+er1_x = 1300
 er1_y = SCREEN_HEIGHT - 45
 
 # Gerais

@@ -36,7 +36,7 @@ class Bonfire(pygame.sprite.Sprite):
         
     def ani_bonfire(self):
         if self.lit:
-            self.image = self.lit_frames[1]
+            self.image = self.lit_frames[0]
         else:
             self.image = self.notlit_frames[1]
             
@@ -48,8 +48,8 @@ class Bonfire(pygame.sprite.Sprite):
                     if b_triang and player.on_ground:
                         self.lit = True
                 else:
-                    levels.msg_player("PRESS C TO LIT", screen)
-                    if pressed[pygame.K_c] and player.on_ground:
+                    levels.msg_player("PRESS U TO LIT", screen)
+                    if pressed[pygame.K_u] and player.on_ground:
                         self.lit = True
             else:
                     if joy_count > 1:
@@ -57,8 +57,8 @@ class Bonfire(pygame.sprite.Sprite):
                         if b_triang and player.on_ground:
                             self.lit = True
                     else:
-                        levels.msg_player("PRESS C TO REST", self.screen)
-                        if pressed[pygame.K_c] and player.on_ground:
+                        levels.msg_player("PRESS U TO REST", self.screen)
+                        if pressed[pygame.K_u] and player.on_ground:
                             player.reborn()
                             for enemy in player.enemies:
                                 enemy.reborn()

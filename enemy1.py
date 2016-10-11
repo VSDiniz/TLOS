@@ -42,6 +42,8 @@ class Enemy1(pygame.sprite.Sprite):
         self.players = []
         self.world_shift = 0
         self.clocker_rt = 0
+        self.DEATH = 1
+        self.DMG_TAKEN = 0
         self.a = self.b = self.c = self.d = self.e = self.f = self.g = self.h = self.i = \
         self.j = self.k = self.l = self.m = self.n = self.o = 0
         
@@ -591,6 +593,7 @@ class Enemy1(pygame.sprite.Sprite):
                 self.ani_damage()
                 if self.health - self.dmg_r > 0:
                     self.health -= self.dmg_r # Reduz vida
+                    self.DMG_TAKEN += self.dmg_r
                 else:
                     self.health = 0
                 
@@ -623,6 +626,7 @@ class Enemy1(pygame.sprite.Sprite):
         self.defending = False
         self.health = self.maxhealth
         self.stamina = self.maxstamina
+        self.DEATH = 1
         self.image = self.waiting_frames_l[0]
         self.direction = "L"
         
@@ -699,53 +703,50 @@ class Enemy1(pygame.sprite.Sprite):
                 self.direction = "L"
             block_hit_list =  self.level.platform_list
             for block in block_hit_list:
-                if pygame.sprite.collide_rect(self, block):
-                    if block.rect.left <= self.left <= block.rect.left + 10:
-                        self.stop()
-                    elif block.rect.right >= self.right >= block.rect.right - 10:
-                        self.stop()
-                    else:
+#                if pygame.sprite.collide_rect(self, block):
+                if block.rect.left <= self.rect.left and block.rect.right >= self.rect.right:
+                    # Persegue o player
+                    if player.rect.centerx + 15 < self.left:
+                        self.go_left()
+                    elif player.rect.centerx - 15 > self.right:
                         self.go_right()
-            # Persegue o player
-            if player.rect.centerx + 15 < self.left:
-                self.go_left()
-            elif player.rect.centerx - 15 > self.right:
-                self.go_right()
-            if player.rect.left > self.right +400 or player.rect.right < self.left -400:
-                  self.stop()
-            elif (player.rect.centerx > self.center -55 and player.rect.centerx < self.center) \
-              or (player.rect.centerx < self.center +55 and player.rect.centerx > self.center):
-                self.stop()
-    #            self.l = random.choice(["latk", "hatk", "roll", "wait"])
-                if self.l == "latk" and self.possible("latk"):
-                    self.latk = True
-                elif self.l == "hatk" and self.possible("hatk"):
-                    self.hatk = True
-                elif self.l == "roll" and self.possible("roll"):
-                    self.rolling = True
-                    self.active_roll()
-                elif self.l == "wait":
-                    pass
-    #                self.m = random.choice(["def", "wait"])
-    #                self.n = random.uniform(0, 1)
-    #                self.o = random.uniform(0, 1)
-                if player.dealdmg:
-                    if self.direction != player.direction:
-                        if self.m == "def":
-                            if self.n > 0.4:
-                                if self.possible("defend"):
-                                    self.defending = True
-                        if not self.defending:
-                            self.dmg_r = player.dmg_d
-                            self.takedmg = True
+                    if player.rect.left > self.right +400 or player.rect.right < self.left -400:
+                          self.stop()
+                    elif (player.rect.centerx > self.center -55 and player.rect.centerx < self.center) \
+                      or (player.rect.centerx < self.center +55 and player.rect.centerx > self.center):
+                        self.stop()
+#                            self.l = random.choice(["latk", "hatk", "roll", "wait"])
+                        if self.l == "latk" and self.possible("latk"):
+                            self.latk = True
+                        elif self.l == "hatk" and self.possible("hatk"):
+                            self.hatk = True
+                        elif self.l == "roll" and self.possible("roll"):
+                            self.rolling = True
+                            self.active_roll()
+                        elif self.l == "wait":
+                            pass
+#                                self.m = random.choice(["def", "wait"])
+#                                self.n = random.uniform(0, 1)
+#                                self.o = random.uniform(0, 1)
+                        if player.dealdmg:
+                            if self.direction != player.direction:
+                                if self.m == "def":
+                                    if self.n > 0.4:
+                                        if self.possible("defend"):
+                                            self.defending = True
+                                if not self.defending:
+                                    self.dmg_r = player.dmg_d
+                                    self.takedmg = True
+                                else:
+                                    if self.o > 0.1:
+                                        if self.possible("parry"):
+                                            self.parrying = True
+                                            if self.possible("latk"):
+                                                self.latk = True
                         else:
-                            if self.o > 0.1:
-                                if self.possible("parry"):
-                                    self.parrying = True
-                                    if self.possible("latk"):
-                                        self.latk = True
+                            self.defending = False
+                            self.parrying = False
+                            self.dmg_r = 0
+                        self.rolling = False
                 else:
-                    self.defending = False
-                    self.parrying = False
-                    self.dmg_r = 0
-        self.rolling = False
+                    self.stop()

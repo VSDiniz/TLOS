@@ -6,6 +6,12 @@ Created on Wed Oct  5 09:49:19 2016
 """
 
 import pygame, constants, spritesheet_functions, sounds, collide
+
+global DEATH, KILL, DMG_TAKEN, DMG_DEALT
+DEATH = 0
+KILL = 0
+DMG_TAKEN = 0
+DMG_DEALT = 0
  
 class Player(pygame.sprite.Sprite):
  
@@ -45,6 +51,7 @@ class Player(pygame.sprite.Sprite):
         # Define outras variáveis
         self.start_clocker = False
         self.enemies = []
+        self.DEATH = self.KILL = self.DMG_TAKEN = self.DMG_DEALT = 0
         self.a = self.b = self.c = self.d = self.e = self.f = self.g = self.h = self.i = \
         self.j = self.k = self.l = self.m = 0
  
@@ -563,6 +570,13 @@ class Player(pygame.sprite.Sprite):
                     self.heavy_atk()
                 else:
                     self.guard_break()
+                    
+        for enemy in self.enemies:
+            self.DMG_DEALT += enemy.DMG_TAKEN
+            enemy.DMG_TAKEN = 0
+            if not enemy.live:
+                self.KILL += enemy.DEATH
+                enemy.DEATH = 0
                 
     # Calcula o efeito da gravidade
     def calc_grav(self):
@@ -727,10 +741,12 @@ class Player(pygame.sprite.Sprite):
                 self.ani_damage()
                 if self.health - self.dmg_r > 0:
                     self.health -= self.dmg_r # Reduz vida
+                    self.DMG_TAKEN += self.dmg_r
                 else:
                     self.health = 0
         else:
             self.health -= self.dmg_r*2
+            self.DMG_TAKEN += self.dmg_r*2
                 
     # Calcula a stamina gasta pelo player
     def calc_stamina(self, stm_cost):
@@ -745,12 +761,12 @@ class Player(pygame.sprite.Sprite):
         if not self.start_clocker:
             if not self.defending:
                 if self.stamina < self.maxstamina:
-                    self.stamina += 1
+                    self.stamina += 2
                 else:
                     self.stamina = self.maxstamina
             else:
                 if self.stamina < self.maxstamina:
-                    self.stamina += 0.1
+                    self.stamina += 0.5
                 else:
                     self.stamina = self.maxstamina
                 
@@ -766,8 +782,8 @@ class Player(pygame.sprite.Sprite):
             self.rect.y = constants.psp_y - self.rect.height
             self.rect.x -= cp - constants.psp_x
             self.direction = "R"
-        if self.possible("wait"):
-            self.rect.x += 1
+#            if self.possible("wait"):
+#                self.rect.x += 1
         
     # Estabelece um delay
     def clocker(self):
@@ -871,6 +887,7 @@ def dead_screen(screen, player, cp):
                     quit()
                 if event.key == pygame.K_RETURN:
                     player.reborn(cp)
+                    player.DEATH += 1
                     for enemy in player.enemies:
                         enemy.reborn()
 #                if event.key == pygame.K_e:

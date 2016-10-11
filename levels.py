@@ -103,7 +103,6 @@ class Level_01(Level):
 #                 [platforms.floatplat3, 7584, 358],
                  [platforms.floatplat3, 482, 356],
                  [platforms.floatplat3, 642, 451],
-                 
                  [platforms.floatplat4, 5056, 452],
                  [platforms.stone_wall, 9248, 0],
                  [platforms.plat2, 9952, 548],
@@ -234,7 +233,7 @@ def start_screen():
                         pygame.event.wait()
                                         
                     
-def instructions():
+def instructions(player):
     
     # Inicializa o joystick
     pygame.joystick.init()
@@ -245,19 +244,20 @@ def instructions():
     background = pygame.image.load("images/scroll.jpg").convert()
     background = pygame.transform.scale(background, (constants.SCREEN_WIDTH, constants.SCREEN_HEIGHT))
         
+    scroll1 = constants.scrollFont_M.render("INSTRUCTIONS", True, constants.BLACK, None)
+    scroll12 = constants.scrollFont_P.render("to switch to statistics", True, constants.BLACK, None)
     if pygame.joystick.get_count() <= 1:
-        scroll1 = constants.scrollFont_M.render("INSTRUCTIONS", True, constants.BLACK, None)
         scroll2 = constants.scrollFont_P.render("Press A or LEFT Arrow and D or RIGHT Arrow to move", True, constants.BLACK, None)
         scroll3 = constants.scrollFont_P.render("Press W or UP Arrow to jump", True, constants.BLACK, None)
-        scroll4 = constants.scrollFont_P.render("Press E to recover HP", True, constants.BLACK, None)
-        scroll5 = constants.scrollFont_P.render("Press P to light attack and O to heavy attack", True, constants.BLACK, None)
-        scroll6 = constants.scrollFont_P.render("Press Z to defend", True, constants.BLACK, None)
+        scroll4 = constants.scrollFont_P.render("Press O to recover HP", True, constants.BLACK, None)
+        scroll5 = constants.scrollFont_P.render("Press J to light attack and K to heavy attack", True, constants.BLACK, None)
+        scroll6 = constants.scrollFont_P.render("Press L to defend", True, constants.BLACK, None)
         scroll7 = constants.scrollFont_P.render("Press I to parry and light attack to riposte", True, constants.BLACK, None)
         scroll8 = constants.scrollFont_P.render("Press SPACE to roll", True, constants.BLACK, None)
         scroll9 = constants.scrollFont_P.render("Press ENTER to exit the instructions", True, constants.BLACK, None)
-        scroll10 = constants.scrollFont_P.render("Press M or N to look around", True, constants.BLACK, None)
+        scroll10 = constants.scrollFont_P.render("Press E or Q to look around", True, constants.BLACK, None)
+        scroll11 = constants.scrollFont_P.render("Press A or LEFT Arrow and D or RIGHT Arrow", True, constants.BLACK, None)
     else:
-        scroll1 = constants.scrollFont_M.render("INSTRUCTIONS", True, constants.BLACK, None)
         scroll2 = constants.scrollFont_P.render("Press the D Pad or LEFT Analog to move", True, constants.BLACK, None)
         scroll3 = constants.scrollFont_P.render("Press X to jump", True, constants.BLACK, None)
         scroll4 = constants.scrollFont_P.render("Press SQUARE to recover HP", True, constants.BLACK, None)
@@ -265,8 +265,9 @@ def instructions():
         scroll6 = constants.scrollFont_P.render("Press L1 to defend", True, constants.BLACK, None)
         scroll7 = constants.scrollFont_P.render("Press L2 to parry and light attack to riposte", True, constants.BLACK, None)
         scroll8 = constants.scrollFont_P.render("Press CIRCLE to roll", True, constants.BLACK, None)
-        scroll9 = constants.scrollFont_P.render("Press ENTER to exit the instructions", True, constants.BLACK, None)
+        scroll9 = constants.scrollFont_P.render("Press OPTIONS to exit the instructions", True, constants.BLACK, None)
         scroll10 = constants.scrollFont_P.render("Move the RIGHT Analog to look around", True, constants.BLACK, None)
+        scroll11 = constants.scrollFont_P.render("Press the D Pad or LEFT Analog", True, constants.BLACK, None)
         
     instruct = True
 
@@ -305,16 +306,27 @@ def instructions():
         scroll10_rect = scroll10.get_rect()
         scroll10_rect.center = (constants.SCREEN_WIDTH / 2, constants.SCREEN_HEIGHT - 240)
         screen1.blit(scroll10, scroll10_rect)
+        scroll11_rect = scroll11.get_rect()
+        scroll11_rect.center = (constants.SCREEN_WIDTH / 2, constants.SCREEN_HEIGHT - 110)
+        screen1.blit(scroll11, scroll11_rect)
+        scroll12_rect = scroll12.get_rect()
+        scroll12_rect.center = (constants.SCREEN_WIDTH / 2, constants.SCREEN_HEIGHT - 80)
+        screen1.blit(scroll12, scroll12_rect)
 
         pygame.display.update()
         
         for event in pygame.event.get():
             if pygame.joystick.get_count() > 1:
+                axis_lh = joystick.get_axis(0)
+                hat = joystick.get_hat(0)
                 if event.type == pygame.QUIT:
                     sys.exit()#pygame.quit() # Fecha a janela se o usuário clicar em fechar
                 if event.type == pygame.JOYBUTTONDOWN:
                     if event.button == 9:
                         instruct = False
+                    elif (hat == ((-1,0) or (-1,1) or (-1,-1))) or (hat == ((1,0) or (1,1) or (1,-1))) or axis_lh >= 0.5 or axis_lh <= -0.5:
+                        instruct = False
+                        statistics(player)
             else:            
                 pressed = pygame.key.get_pressed()
                 if event.type == pygame.QUIT:
@@ -325,7 +337,95 @@ def instructions():
                         
                     elif pressed[pygame.K_RETURN] or pressed[pygame.K_KP_ENTER]:
                         instruct = False # Sai da tela de instruções
+                    elif pressed[pygame.K_a] or pressed[pygame.K_d] or pressed[pygame.K_LEFT] or pressed[pygame.K_RIGHT]:
+                        instruct = False
+                        statistics(player)
+                        
+def statistics(player):
     
+    # Inicializa o joystick
+    pygame.joystick.init()
+    if pygame.joystick.get_count() > 1:
+        joystick = pygame.joystick.Joystick(1)
+        joystick.init()
+    
+    background = pygame.image.load("images/scroll.jpg").convert()
+    background = pygame.transform.scale(background, (constants.SCREEN_WIDTH, constants.SCREEN_HEIGHT))
+        
+
+    scroll1 = constants.scrollFont_M.render("STATISTICS", True, constants.BLACK, None)
+    scroll2 = constants.scrollFont_P.render("Number of DEATHS: " + str(player.DEATH), True, constants.BLACK, None)
+    scroll3 = constants.scrollFont_P.render("Number of KILLS: " + str(player.KILL), True, constants.BLACK, None)
+    scroll4 = constants.scrollFont_P.render("Total DAMAGE taken: " + str(int(player.DMG_TAKEN)), True, constants.BLACK, None)
+    scroll5 = constants.scrollFont_P.render("Total DAMAGE dealt: " + str(player.DMG_DEALT), True, constants.BLACK, None)
+    scroll7 = constants.scrollFont_P.render("to switch to instructions", True, constants.BLACK, None)
+    if pygame.joystick.get_count() <= 1:
+        scroll6 = constants.scrollFont_P.render("Press A or LEFT Arrow and D or RIGHT Arrow", True, constants.BLACK, None)
+        scroll9 = constants.scrollFont_P.render("Press ENTER to exit the statistics", True, constants.BLACK, None)
+    else:
+        scroll6 = constants.scrollFont_P.render("Press the D Pad or LEFT Analog", True, constants.BLACK, None)
+        scroll9 = constants.scrollFont_P.render("Press OPTIONS to exit the statistics", True, constants.BLACK, None)
+        
+    instats = True
+
+    while instats:
+        
+        screen1 = pygame.display.set_mode((constants.SCREEN_WIDTH, constants.SCREEN_HEIGHT))
+        screen1.blit(background, (0,0))
+    
+        scroll1_rect = scroll1.get_rect()
+        scroll1_rect.center = (constants.SCREEN_WIDTH / 2, constants.SCREEN_HEIGHT - 525)
+        screen1.blit(scroll1, scroll1_rect)
+        scroll2_rect = scroll2.get_rect()
+        scroll2_rect.center = (constants.SCREEN_WIDTH / 2, constants.SCREEN_HEIGHT - 450)
+        screen1.blit(scroll2, scroll2_rect)
+        scroll3_rect = scroll3.get_rect()
+        scroll3_rect.center = (constants.SCREEN_WIDTH / 2, constants.SCREEN_HEIGHT - 420)
+        screen1.blit(scroll3, scroll3_rect)
+        scroll4_rect = scroll4.get_rect()
+        scroll4_rect.center = (constants.SCREEN_WIDTH / 2, constants.SCREEN_HEIGHT - 390)
+        screen1.blit(scroll4, scroll4_rect)
+        scroll5_rect = scroll5.get_rect()
+        scroll5_rect.center = (constants.SCREEN_WIDTH / 2, constants.SCREEN_HEIGHT - 360)
+        screen1.blit(scroll5, scroll5_rect)
+        scroll6_rect = scroll6.get_rect()
+        scroll6_rect.center = (constants.SCREEN_WIDTH / 2, constants.SCREEN_HEIGHT - 110)
+        screen1.blit(scroll6, scroll6_rect)
+        scroll7_rect = scroll7.get_rect()
+        scroll7_rect.center = (constants.SCREEN_WIDTH / 2, constants.SCREEN_HEIGHT - 80)
+        screen1.blit(scroll7, scroll7_rect)
+        scroll9_rect = scroll9.get_rect()
+        scroll9_rect.center = (constants.SCREEN_WIDTH / 2, constants.SCREEN_HEIGHT - 50)
+        screen1.blit(scroll9, scroll9_rect)
+
+        pygame.display.update()
+        
+        for event in pygame.event.get():
+            if pygame.joystick.get_count() > 1:
+                axis_lh = joystick.get_axis(0)
+                hat = joystick.get_hat(0)
+                if event.type == pygame.QUIT:
+                    sys.exit()#pygame.quit() # Fecha a janela se o usuário clicar em fechar
+                if event.type == pygame.JOYBUTTONDOWN:
+                    if event.button == 9:
+                        instats = False
+                    elif (hat == ((-1,0) or (-1,1) or (-1,-1))) or (hat == ((1,0) or (1,1) or (1,-1))) or axis_lh >= 0.5 or axis_lh <= -0.5:
+                        instats = False
+                        instructions(player)
+            else:            
+                pressed = pygame.key.get_pressed()
+                if event.type == pygame.QUIT:
+                    sys.exit()#pygame.quit() # Fecha a janela se o usuário clicar em fechar
+                if event.type == pygame.KEYDOWN:
+                    if ((pressed[pygame.K_LALT] and pressed[pygame.K_F4]) or (pressed[pygame.K_RALT] and pressed[pygame.K_F4])):
+                        sys.exit()#pygame.quit() # Fecha a janela se o usuário pressionar ALT+F4
+                        
+                    elif pressed[pygame.K_RETURN] or pressed[pygame.K_KP_ENTER]:
+                        instats = False # Sai da tela de instruções
+                    
+                    elif pressed[pygame.K_a] or pressed[pygame.K_d] or pressed[pygame.K_LEFT] or pressed[pygame.K_RIGHT]:
+                        instats = False
+                        instructions(player)
     
 def play(current_level_no):
     if current_level_no == 0:
