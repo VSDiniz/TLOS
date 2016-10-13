@@ -7,11 +7,10 @@ Created on Wed Oct  5 09:49:19 2016
 
 import pygame, constants, spritesheet_functions, sounds, collide
 
-global DEATH, KILL, DMG_TAKEN, DMG_DEALT
-DEATH = 0
-KILL = 0
-DMG_TAKEN = 0
-DMG_DEALT = 0
+#DEATH = 0
+#KILL = 0
+#DMG_TAKEN = 0
+#DMG_DEALT = 0
  
 class Player(pygame.sprite.Sprite):
  

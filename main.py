@@ -492,19 +492,23 @@ def main():
                 for enemy in player1.enemies:
                     enemy.rect.left += diff
         
-#==============================================================================
-#         # Se o player chegar perto do fundo, muda o world para cima (-y)
-#         if player1.rect.bottom >= 550:
-#             diff = player1.rect.bottom - 550
-#             player1.rect.bottom = 550
-#             current_level.shift_world(-diff)
-#             
-#         # Se o player chegar perto do topo, muda o world para baixo (+y)
-#         if player1.rect.top <= 100:
-#             diff = 100 - player1.rect.top
-#             player1.rect.top = 100
-#             current_level.shift_world(diff)      
-#==============================================================================
+        # Se o player chegar perto do fundo, muda o world para cima (-y)
+        if player1.rect.bottom >= 550:
+            diffy = player1.rect.bottom - 550
+            player1.rect.bottom = 550
+            current_level.shifty_world(-diffy)
+            bonfire1.rect.bottom -= diffy
+            for enemy in player1.enemies:
+                enemy.rect.bottom -= diffy
+            
+        # Se o player chegar perto do topo, muda o world para baixo (+y)
+        if player1.rect.top <= 100:
+            diffy = 100 - player1.rect.top
+            player1.rect.top = 100
+            current_level.shifty_world(diffy)
+            bonfire1.rect.top += diffy
+            for enemy in player1.enemies:
+                enemy.rect.top += diffy
  
         # Se o player chegar ao fim do level, vai para o próximo level
         pressed = pygame.key.get_pressed()

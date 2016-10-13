@@ -21,7 +21,7 @@ slow_regen = 0.04
 fast_regen = 0.12
 estus_maxregen = 35
 player_roll_frames = 0
-psp_x = 5500#620,8500
+psp_x = 620#620,8500
 psp_y = SCREEN_HEIGHT - 370
 
 # Boss

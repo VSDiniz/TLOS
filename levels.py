@@ -21,7 +21,7 @@ class Level():
  
         # Quanto o world se deslocou esquerda/direita
         self.world_shift = 0
-#        self.world_shifty = 0
+        self.world_shifty = 0
         self.level_limit = -900
         self.platform_list = pygame.sprite.Group()
         self.enemy_list = pygame.sprite.Group()
@@ -62,6 +62,16 @@ class Level():
         for enemy in self.enemy_list:
             enemy.rect.x += shift_x
 #            enemy.rect.y += shift_y
+            
+    def shifty_world(self, shift_y):
+        
+        self.world_shifty += shift_y
+        
+        for platform in self.platform_list:
+            platform.rect.y += shift_y
+            
+        for enemy in self.enemy_list:
+            enemy.rect.y += shift_y
             
 # Cria as plataformas para o level
 class Level_01(Level):
