@@ -14,8 +14,8 @@ class Boss(pygame.sprite.Sprite):
         super().__init__()
         
         # Define variáveis de características do boss
-        self.maxhealth = 1000
-        self.health = 1000
+        self.maxhealth = 500
+        self.health = 500
         self.maxstamina = 100
         self.stamina = 100
         self.dmg_r = 0
@@ -725,12 +725,12 @@ class Boss(pygame.sprite.Sprite):
         boss_name_rect.y = 565
         screen.blit(boss_name, boss_name_rect)
 
-        pygame.draw.rect(screen, constants.WHITE, (49, 579, (0.8*self.maxhealth)+2, 12))
-        pygame.draw.rect(screen, constants.GRAY, (50, 580, 0.8*self.maxhealth, 10))
+        pygame.draw.rect(screen, constants.WHITE, (49, 579, (1.6*self.maxhealth)+2, 12))
+        pygame.draw.rect(screen, constants.GRAY, (50, 580, 1.6*self.maxhealth, 10))
         if self.health >= self.maxhealth:
             self.health = self.maxhealth
         if self.health > 0:
-            pygame.draw.rect(screen, constants.ORANGE, (850-(0.8*self.health), 580, 0.8*self.health, 10))
+            pygame.draw.rect(screen, constants.ORANGE, (850-(1.6*self.health), 580, 1.6*self.health, 10))
             
     # Inteligência artificial do boss
     def AI(self, player, clock):

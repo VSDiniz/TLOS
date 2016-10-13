@@ -761,12 +761,12 @@ class Player(pygame.sprite.Sprite):
         if not self.start_clocker:
             if not self.defending:
                 if self.stamina < self.maxstamina:
-                    self.stamina += 2
+                    self.stamina += 1.5
                 else:
                     self.stamina = self.maxstamina
             else:
                 if self.stamina < self.maxstamina:
-                    self.stamina += 0.5
+                    self.stamina += 0.1
                 else:
                     self.stamina = self.maxstamina
                 

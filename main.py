@@ -28,19 +28,51 @@ def main():
     # Cria os inimigos
     boss1 = boss.Boss()
     enemyr1 = enemy1.Enemy1()
+    enemyr2 = enemy1.Enemy1()
+    enemyr3 = enemy1.Enemy1()
+    enemyr4 = enemy1.Enemy1()
+    enemyr5 = enemy1.Enemy1()
+    enemyb1 = enemy1.Enemy2()
+    enemyb2 = enemy1.Enemy2()
+    enemyb3 = enemy1.Enemy2()
+    
+    # Define variáveis auxiliares para respawn
+    enemyb1.p = 1
+    enemyb2.p = 2
+    enemyb3.p = 3
     
     # Cria o player
     player1 = player.Player()
     player1.enemies.append(boss1)
     player1.enemies.append(enemyr1)
+    player1.enemies.append(enemyr2)
+    player1.enemies.append(enemyr3)
+    player1.enemies.append(enemyr4)
+    player1.enemies.append(enemyr5)
+    player1.enemies.append(enemyb1)
+    player1.enemies.append(enemyb2)
+    player1.enemies.append(enemyb3)
     boss1.players.append(player1)
     enemyr1.players.append(player1)
+    enemyr2.players.append(player1)
+    enemyr3.players.append(player1)
+    enemyr4.players.append(player1)
+    enemyb1.players.append(player1)
+    enemyb2.players.append(player1)
+    enemyb3.players.append(player1)
     
     bonfire1 = bonfire.Bonfire(player1, screen)
  
     # Cria todos os levels
     level_list = []
     level_list.append(levels.Level_01(player1, enemyr1, screen, bonfire1))
+    level_list.append(levels.Level_01(player1, enemyr2, screen, bonfire1))
+    level_list.append(levels.Level_01(player1, enemyr3, screen, bonfire1))
+    level_list.append(levels.Level_01(player1, enemyr4, screen, bonfire1))
+    level_list.append(levels.Level_01(player1, enemyr5, screen, bonfire1))
+    level_list.append(levels.Level_01(player1, enemyb1, screen, bonfire1))
+    level_list.append(levels.Level_01(player1, enemyb2, screen, bonfire1))
+    level_list.append(levels.Level_01(player1, enemyb3, screen, bonfire1))
     level_list.append(levels.Level_02(player1, boss1, screen, bonfire1))
     
  
@@ -52,6 +84,13 @@ def main():
     player1.level = current_level
     boss1.level = current_level
     enemyr1.level = current_level
+    enemyr2.level = current_level
+    enemyr3.level = current_level
+    enemyr4.level = current_level
+    enemyr5.level = current_level
+    enemyb1.level = current_level
+    enemyb2.level = current_level
+    enemyb3.level = current_level
 
     # Define posição inicial do enemy
     boss1.rect.x = constants.bsp_x
@@ -61,6 +100,33 @@ def main():
     enemyr1.rect.x = constants.er1_x
     enemyr1.rect.y = constants.er1_y - enemyr1.rect.height
     active_sprite_list.add(enemyr1)
+    
+    enemyr2.rect.x = constants.er2_x
+    enemyr2.rect.y = constants.er2_y - enemyr2.rect.height
+    active_sprite_list.add(enemyr2)
+    
+    enemyr3.rect.x = constants.er3_x
+    enemyr3.rect.y = constants.er3_y - enemyr3.rect.height
+    active_sprite_list.add(enemyr3)
+    
+    enemyr4.rect.x = constants.er4_x
+    enemyr4.rect.y = constants.er4_y - enemyr4.rect.height
+    active_sprite_list.add(enemyr4)
+    
+    enemyr5.rect.x = constants.er5_x
+    enemyr5.rect.y = constants.er5_y - enemyr5.rect.height
+    active_sprite_list.add(enemyr5)
+    
+    enemyb1.rect.x = constants.eb1_x
+    enemyb1.rect.y = constants.eb1_y - enemyb1.rect.height
+    active_sprite_list.add(enemyb1)
+    
+    enemyb2.rect.x = constants.eb2_x
+    enemyb2.rect.y = constants.eb2_y - enemyb2.rect.height
+    active_sprite_list.add(enemyb2)
+    enemyb3.rect.x = constants.eb3_x
+    enemyb3.rect.y = constants.eb3_y - enemyb3.rect.height
+    active_sprite_list.add(enemyb3)
     
     # Define posição inicial do player
     player1.rect.x = constants.psp_x
@@ -405,6 +471,8 @@ def main():
         current_level.update()
  
         current_position = player1.rect.x + abs(current_level.world_shift)
+        for enemy in player1.enemies:
+            enemy.current_position = enemy.rect.x + abs(current_level.world_shift)
         if (600 < current_position < 10650 and current_level_no != 1) or (150 < current_position < 840 and current_level_no == 1):
             # Se o player chegar perto do lado direito, muda o world para a esquerda (-x)
             if player1.rect.right >= 700:
@@ -486,7 +554,8 @@ def main():
 
         # AI dos enemies
         for enemy in player1.enemies:
-            enemy.AI(player1, clock)
+            if enemy.rect.left <= 500 + player1.rect.centerx and enemy.rect.right >= 500 - player1.rect.centerx:
+                enemy.AI(player1, clock)
             
         bonfire1.lit_bonfire(player1, screen, pygame.joystick.get_count(), button_triangle, pressed)
         
