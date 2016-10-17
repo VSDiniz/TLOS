@@ -5,7 +5,7 @@ Created on Mon Oct 10 11:56:15 2016
 @author: vini_
 """
 
-import pygame, constants, spritesheet_functions, levels
+import pygame, constants, levels, sounds, spritesheet_functions
 
 class Bonfire(pygame.sprite.Sprite):
     
@@ -18,6 +18,7 @@ class Bonfire(pygame.sprite.Sprite):
         self.notlit_frames = []
         self.player = player
         self.screen = screen
+        self.a = 0
         
         sprite_sheet = spritesheet_functions.SpriteSheet("images/link_2.png")
         
@@ -47,21 +48,43 @@ class Bonfire(pygame.sprite.Sprite):
                     levels.msg_player("PRESS TRIANGLE TO LIT", screen)
                     if b_triang and player.on_ground:
                         self.lit = True
+                        if self.a == 0:
+                            sounds.bonfire_lit.play()
+                            self.a = 1
+                    else:
+                        self.a = 0
                 else:
                     levels.msg_player("PRESS U TO LIT", screen)
                     if pressed[pygame.K_u] and player.on_ground:
                         self.lit = True
+                        if self.a == 0:
+                            sounds.bonfire_lit.play()
+                            self.a = 1
+                    else:
+                        self.a = 0
             else:
                     if joy_count > 1:
                         levels.msg_player("PRESS TRIANGLE TO REST", screen)
                         if b_triang and player.on_ground:
-                            self.lit = True
+                            player.reborn()
+                            if self.a == 0:
+                                sounds.bonfire_active.play()
+                                self.a = 1
+                            for enemy in player.enemies:
+                                enemy.reborn()
+                        else:
+                            self.a = 0
                     else:
                         levels.msg_player("PRESS U TO REST", self.screen)
                         if pressed[pygame.K_u] and player.on_ground:
                             player.reborn()
+                            if self.a == 0:
+                                sounds.bonfire_active.play()
+                                self.a = 1
                             for enemy in player.enemies:
                                 enemy.reborn()
+                        else:
+                            self.a = 0
             
     def update(self):
         self.ani_bonfire()

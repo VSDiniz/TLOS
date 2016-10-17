@@ -5,13 +5,8 @@ Created on Wed Oct  5 09:49:19 2016
 @author: vini_
 """
 
-import pygame, constants, spritesheet_functions, sounds, collide
+import pygame, random, collide, constants, sounds, spritesheet_functions
 
-#DEATH = 0
-#KILL = 0
-#DMG_TAKEN = 0
-#DMG_DEALT = 0
- 
 class Player(pygame.sprite.Sprite):
  
     def __init__(self):
@@ -52,7 +47,7 @@ class Player(pygame.sprite.Sprite):
         self.enemies = []
         self.DEATH = self.KILL = self.DMG_TAKEN = self.DMG_DEALT = 0
         self.a = self.b = self.c = self.d = self.e = self.f = self.g = self.h = self.i = \
-        self.j = self.k = self.l = self.m = 0
+        self.j = self.k = self.l = self.m = self.n = 0
  
         # Define o vetor velocidade do player
         self.change_x = 0
@@ -416,6 +411,15 @@ class Player(pygame.sprite.Sprite):
                 self.latk = False
             else:
                 self.i += 1
+            if self.i == 1:
+                if self.n == 0:
+                    if random.choice([1,2]) == 1:
+                        sounds.player_latk1.play()
+                    else:
+                        sounds.player_latk2.play()
+                    self.n = 1
+            else:
+                self.n = 0
             if self.i == 2:
                 self.dealdmg = True
             else:
@@ -436,6 +440,12 @@ class Player(pygame.sprite.Sprite):
                 self.hatk = False
             else:
                 self.k += 1
+            if self.k == 2:
+                if self.n == 0:
+                    sounds.player_hatk.play()
+                    self.n = 1
+            else:
+                self.n = 0
             if self.k == 3:
                 self.dealdmg = True
             else:
@@ -471,6 +481,15 @@ class Player(pygame.sprite.Sprite):
                 self.recovering = False
             else:
                 self.m += 1
+            if self.m == 1:
+                if self.n == 0:
+                    if random.choice([1,2]) == 1:
+                        sounds.player_estus1.play()
+                    else:
+                        sounds.player_estus2.play()
+                    self.n = 1
+            else:
+                self.n = 0
         else:
             self.l += 1
 #==============================================================================
@@ -725,6 +744,8 @@ class Player(pygame.sprite.Sprite):
                     self.calc_damage()
 #                    print("PLAYER", self.dmg_r)
                     self.dmg_r = 0
+                if not enemy.dealdmg:
+                    self.n = 0
 
     # Calcula o dano recebido pelo player
     def calc_damage(self):
@@ -732,6 +753,9 @@ class Player(pygame.sprite.Sprite):
         if self.guard and self.takedmg:
             if self.defending:
                 self.calc_stamina(self.dmg_r) # Reduz stamina
+                if self.n == 0:
+                    sounds.player_defend.play()
+                    self.n = 1
                 if self.stamina <= 0:
                     self.stamina = 0
                     self.guard = False # Quebra guarda
@@ -741,6 +765,14 @@ class Player(pygame.sprite.Sprite):
                 if self.health - self.dmg_r > 0:
                     self.health -= self.dmg_r # Reduz vida
                     self.DMG_TAKEN += self.dmg_r
+                    if self.n == 0:
+                        if random.choice([1, 2, 3]) == 1:
+                            sounds.player_dmg1.play()
+                        elif 2:
+                            sounds.player_dmg2.play()
+                        elif 3:
+                            sounds.player_dmg3.play()
+                        self.n = 1
                 else:
                     self.health = 0
         else:
@@ -857,7 +889,10 @@ class Player(pygame.sprite.Sprite):
 
 # Mostra tela de morte
 def dead_screen(screen, player, cp):
-    sounds.dead.play()
+    
+    if player.n == 0:
+        sounds.dead.play()
+        player.n = 1
     
     black_surf = pygame.Surface((constants.SCREEN_WIDTH, constants.SCREEN_HEIGHT), pygame.SRCALPHA)
     black_surf.fill((0, 0, 0, 180))
@@ -887,6 +922,7 @@ def dead_screen(screen, player, cp):
                 if event.key == pygame.K_RETURN:
                     player.reborn(cp)
                     player.DEATH += 1
+                    player.n = 0
                     for enemy in player.enemies:
                         enemy.reborn()
 #                if event.key == pygame.K_e:

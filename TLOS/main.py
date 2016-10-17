@@ -5,9 +5,10 @@ Created on Thu Aug 18 08:22:09 2016
 @author: vini_
 """
  
-import pygame, constants, levels, os, player, boss, enemy1, bonfire
+import pygame, os, bonfire, boss, constants, enemy1, enemy2, levels, player, sounds
   
 def main():
+    t = 0
     # Main Program
     pygame.init()
  
@@ -32,9 +33,9 @@ def main():
     enemyr3 = enemy1.Enemy1()
     enemyr4 = enemy1.Enemy1()
     enemyr5 = enemy1.Enemy1()
-    enemyb1 = enemy1.Enemy2()
-    enemyb2 = enemy1.Enemy2()
-    enemyb3 = enemy1.Enemy2()
+    enemyb1 = enemy2.Enemy2()
+    enemyb2 = enemy2.Enemy2()
+    enemyb3 = enemy2.Enemy2()
     
     # Define variáveis auxiliares para respawn
     enemyb1.p = 1
@@ -43,6 +44,8 @@ def main():
     
     # Cria o player
     player1 = player.Player()
+    
+    # Atualiza as listas de inimigos
     player1.enemies.append(boss1)
     player1.enemies.append(enemyr1)
     player1.enemies.append(enemyr2)
@@ -61,6 +64,7 @@ def main():
     enemyb2.players.append(player1)
     enemyb3.players.append(player1)
     
+    # Cria bonfire
     bonfire1 = bonfire.Bonfire(player1, screen)
  
     # Cria todos os levels
@@ -133,6 +137,7 @@ def main():
     player1.rect.y = constants.psp_y - player1.rect.height
     active_sprite_list.add(player1)
     
+    # Define a posição inicial da bonfire
     bonfire1.rect.x = 661
     bonfire1.rect.y = 160
     active_sprite_list.add(bonfire1)
@@ -356,6 +361,7 @@ def main():
                 # Faz o player rolar
                 if event.key == pygame.K_SPACE:
                     if player1.possible("roll"):
+                        sounds.player_roll.play()
                         player1.active_roll()
                         pygame.time.set_timer(player_roll, 1)
                     
@@ -398,8 +404,15 @@ def main():
 #                    player1.stamina = player1.maxstamina
 #                    player1.estus_rn = 5
 
-#                if event.key == pygame.K_t:
-#                    boss1.health += 100
+                if event.key == pygame.K_t:
+                    if t == 0:
+                        for enemy in player1.enemies:
+                            enemy.health = 10
+                            t = 1
+                    else:
+                        for enemy in player1.enemies:
+                            enemy.health = enemy.maxhealth
+                            t = 0
 
 #==============================================================================
             """ -------------------- PRINTA -------------------- """
@@ -492,23 +505,23 @@ def main():
                 for enemy in player1.enemies:
                     enemy.rect.left += diff
         
-        # Se o player chegar perto do fundo, muda o world para cima (-y)
-        if player1.rect.bottom >= 550:
-            diffy = player1.rect.bottom - 550
-            player1.rect.bottom = 550
-            current_level.shifty_world(-diffy)
-            bonfire1.rect.bottom -= diffy
-            for enemy in player1.enemies:
-                enemy.rect.bottom -= diffy
-            
-        # Se o player chegar perto do topo, muda o world para baixo (+y)
-        if player1.rect.top <= 100:
-            diffy = 100 - player1.rect.top
-            player1.rect.top = 100
-            current_level.shifty_world(diffy)
-            bonfire1.rect.top += diffy
-            for enemy in player1.enemies:
-                enemy.rect.top += diffy
+#        # Se o player chegar perto do fundo, muda o world para cima (-y)
+#        if player1.rect.bottom >= 550:
+#            diffy = player1.rect.bottom - 550
+#            player1.rect.bottom = 550
+#            current_level.shifty_world(-diffy)
+#            bonfire1.rect.bottom -= diffy
+#            for enemy in player1.enemies:
+#                enemy.rect.bottom -= diffy
+#            
+#        # Se o player chegar perto do topo, muda o world para baixo (+y)
+#        if player1.rect.top <= 100:
+#            diffy = 100 - player1.rect.top
+#            player1.rect.top = 100
+#            current_level.shifty_world(diffy)
+#            bonfire1.rect.top += diffy
+#            for enemy in player1.enemies:
+#                enemy.rect.top += diffy
  
         # Se o player chegar ao fim do level, vai para o próximo level
         pressed = pygame.key.get_pressed()
@@ -566,9 +579,9 @@ def main():
         # Mostra tela de morte/vitória
         if not player1.live:        
             player.dead_screen(screen, player1, current_position)
-            pygame.mixer.music.stop()
+            levels.play(0)
         if not boss1.live:
-            boss.dead_screen(screen, boss1, current_position)
+            boss.dead_screen(screen, boss1)
             pygame.mixer.music.stop()
             player1.stop()
  
