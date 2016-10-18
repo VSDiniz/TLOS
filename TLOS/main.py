@@ -566,7 +566,7 @@ def main():
         
         # Retira a animação de dano do player após 30 frames
         if player1.takedmg:
-            if constants.b > 30:
+            if constants.b > 20:
                 player1.takedmg = False
                 constants.b = 0
             else:

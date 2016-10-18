@@ -707,9 +707,14 @@ class Enemy2(pygame.sprite.Sprite):
         if self.health >= self.maxhealth:
             self.health = self.maxhealth
         if 0 < self.health < self.maxhealth:
-            pygame.draw.rect(screen, constants.WHITE, (self.rect.top-11, self.rect.left-1, (self.maxhealth)+2, 7))
-            pygame.draw.rect(screen, constants.GRAY, (self.rect.top-10, self.rect.left, self.maxhealth, 5))
-            pygame.draw.rect(screen, constants.ORANGE, (self.rect.top-10, self.rect.left, self.health, 5))
+            if self.direction == "L":
+                pygame.draw.rect(screen, constants.WHITE, (self.rect.left+74, self.rect.top+9, (self.maxhealth)+2, 9))
+                pygame.draw.rect(screen, constants.GRAY, (self.rect.left+75, self.rect.top+10, self.maxhealth, 7))
+                pygame.draw.rect(screen, constants.ORANGE, (self.rect.left+75, self.rect.top+10, self.health, 7))
+            else:
+                pygame.draw.rect(screen, constants.WHITE, (self.rect.left+14, self.rect.top+9, (self.maxhealth)+2, 9))
+                pygame.draw.rect(screen, constants.GRAY, (self.rect.left+15, self.rect.top+10, self.maxhealth, 7))
+                pygame.draw.rect(screen, constants.ORANGE, (self.rect.left+15, self.rect.top+10, self.health, 7))
             
     # Inteligência artificial do enemy
     def AI(self, player, clock):
