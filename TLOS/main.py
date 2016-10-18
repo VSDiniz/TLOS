@@ -55,17 +55,27 @@ def main():
     player1.enemies.append(enemyb1)
     player1.enemies.append(enemyb2)
     player1.enemies.append(enemyb3)
+    player1.common_enemies.append(enemyr1)
+    player1.common_enemies.append(enemyr2)
+    player1.common_enemies.append(enemyr3)
+    player1.common_enemies.append(enemyr4)
+    player1.common_enemies.append(enemyr5)
+    player1.common_enemies.append(enemyb1)
+    player1.common_enemies.append(enemyb2)
+    player1.common_enemies.append(enemyb3)
     boss1.players.append(player1)
     enemyr1.players.append(player1)
     enemyr2.players.append(player1)
     enemyr3.players.append(player1)
     enemyr4.players.append(player1)
+    enemyr5.players.append(player1)
     enemyb1.players.append(player1)
     enemyb2.players.append(player1)
     enemyb3.players.append(player1)
     
     # Cria bonfire
     bonfire1 = bonfire.Bonfire(player1, screen)
+    bonfire2 = bonfire.Bonfire(player1, screen)
  
     # Cria todos os levels
     level_list = []
@@ -76,7 +86,7 @@ def main():
     level_list.append(levels.Level_01(player1, enemyr5, screen, bonfire1))
     level_list.append(levels.Level_01(player1, enemyb1, screen, bonfire1))
     level_list.append(levels.Level_01(player1, enemyb2, screen, bonfire1))
-    level_list.append(levels.Level_01(player1, enemyb3, screen, bonfire1))
+    level_list.append(levels.Level_01(player1, enemyb3, screen, bonfire2))
     level_list.append(levels.Level_02(player1, boss1, screen, bonfire1))
     
  
@@ -138,9 +148,12 @@ def main():
     active_sprite_list.add(player1)
     
     # Define a posição inicial da bonfire
-    bonfire1.rect.x = 661
-    bonfire1.rect.y = 160
+    bonfire1.rect.x = constants.pb1_x
+    bonfire1.rect.y = constants.pb1_y
     active_sprite_list.add(bonfire1)
+    bonfire2.rect.x = constants.pb2_x
+    bonfire2.rect.y = constants.pb2_y
+    active_sprite_list.add(bonfire2)
      
     #Loop até o usuário fechar o jogo
     ingame = True
@@ -495,6 +508,7 @@ def main():
                 player1.rect.right = 700
                 current_level.shift_world(-diff)
                 bonfire1.rect.left -= diff
+                bonfire2.rect.left -= diff
                 for enemy in player1.enemies:
                     enemy.rect.right -= diff
       
@@ -504,6 +518,7 @@ def main():
                 player1.rect.left = 120
                 current_level.shift_world(diff)
                 bonfire1.rect.left += diff
+                bonfire2.rect.left += diff
                 for enemy in player1.enemies:
                     enemy.rect.left += diff
         
@@ -577,8 +592,20 @@ def main():
             if enemy.rect.left <= 500 + player1.rect.centerx and enemy.rect.right >= 500 - player1.rect.centerx:
                 enemy.AI(player1, clock)
                 enemy.enemy_hud(screen)
-            
+        
         bonfire1.lit_bonfire(player1, screen, pygame.joystick.get_count(), button_triangle, pressed)
+        
+        for enemy in player1.common_enemies:
+            if not enemy.live:
+                player1.dead_enemies.append(enemy)
+                player1.common_enemies.remove(enemy)
+        if len(player1.dead_enemies) == len(player1.enemies)-1:
+            bonfire2.lit_bonfire(player1, screen, pygame.joystick.get_count(), button_triangle, pressed)
+        
+        if bonfire2.active:
+            constants.psp_x = 7800
+            constants.psp_y = 555
+            bonfire1.active = False
         
         # Mostra tela de morte/vitória
         if not player1.live:        

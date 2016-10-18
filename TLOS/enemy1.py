@@ -570,7 +570,7 @@ class Enemy1(pygame.sprite.Sprite):
     def light_atk(self):
         if self.latk:
             self.change_x = 0
-            self.dmg_d = 0.5 # Dano real = dmg_d * 12
+            self.dmg_d = 1.3 # Dano real = dmg_d * 12
             self.start_clocker = True
             self.ani_latk()
     
@@ -578,7 +578,7 @@ class Enemy1(pygame.sprite.Sprite):
     def heavy_atk(self):
         if self.hatk:
             self.change_x = 0
-            self.dmg_d = 1 # Dano real = dmg_d * 10
+            self.dmg_d = 2 # Dano real = dmg_d * 10
             self.start_clocker = True
             self.ani_hatk()
                 

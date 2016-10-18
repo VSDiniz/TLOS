@@ -21,7 +21,7 @@ slow_regen = 0.04
 fast_regen = 0.12
 estus_maxregen = 35
 player_roll_frames = 0
-psp_x = 8500#620,9100
+psp_x = 620#620,9100
 psp_y = SCREEN_HEIGHT - 370
 
 # Boss
@@ -40,6 +40,12 @@ eb2_x = 7000
 eb3_x = 8300
 er1_y = er2_y = er3_y = er4_y = er5_y = eb1_y = eb2_y = eb3_y = SCREEN_HEIGHT - 45
 
+# Bonfires
+pb1_x = 661
+pb1_y = 158
+pb2_x = 7800
+pb2_y = 475
+
 # Gerais
 a = b = c = d = k = e = f = 0
  
@@ -48,6 +54,7 @@ BGREEN = (21, 35, 12)
 BLACK    = (0, 0, 0) 
 BLUE     = (0, 0, 255)
 DARKBLUE = (47, 54, 153)
+BLACKBLUE = (51, 51, 153)
 FAINTBLUE = (0, 64, 128)
 GRAY = (81, 74, 67)
 GREEN = (55, 117, 44)

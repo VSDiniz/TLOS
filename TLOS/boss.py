@@ -381,9 +381,11 @@ class Boss(pygame.sprite.Sprite):
             else:
                 self.i += 1
             if self.i == 2:
-                if self.p == 0:
-                    sounds.boss_latk.play()
-                    self.p = 1
+                for player in self.players:
+                    if player.live:
+                        if self.p == 0:
+                            sounds.boss_latk.play()
+                            self.p = 1
             else:
                 self.p = 0
             if self.i == 7:
@@ -407,9 +409,11 @@ class Boss(pygame.sprite.Sprite):
             else:
                 self.k += 1
             if self.k == 7:
-                if self.p == 0:
-                    sounds.boss_hatk.play()
-                    self.p = 1
+                for player in self.players:
+                    if player.live:
+                        if self.p == 0:
+                            sounds.boss_hatk.play()
+                            self.p = 1
             else:
                 self.p = 0
             if self.k == 8:

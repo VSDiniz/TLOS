@@ -45,6 +45,8 @@ class Player(pygame.sprite.Sprite):
         # Define outras variáveis
         self.start_clocker = False
         self.enemies = []
+        self.common_enemies = []
+        self.dead_enemies = []
         self.DEATH = self.KILL = self.DMG_TAKEN = self.DMG_DEALT = 0
         self.a = self.b = self.c = self.d = self.e = self.f = self.g = self.h = self.i = \
         self.j = self.k = self.l = self.m = self.n = self.o = self.p = 0
@@ -754,13 +756,15 @@ class Player(pygame.sprite.Sprite):
         # Verifica se o player está defendendo
         if self.guard and self.takedmg:
             if self.defending:
-                self.calc_stamina(self.dmg_r) # Reduz stamina
+                self.calc_stamina(self.dmg_r/2) # Reduz stamina
                 if self.n == 0:
                     sounds.player_defend.play()
                     self.n = 1
                 if self.stamina <= 0:
                     self.stamina = 0
                     self.guard = False # Quebra guarda
+                    self.takedmg = False
+                    self.dmg_r = 0
                     if self.p == 0:
                         sounds.parry.play()
                         self.p = 1
