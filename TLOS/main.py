@@ -178,6 +178,7 @@ def main():
     levels.play(current_level_no)
     
     current_position = 0
+    current_position_y = 0
     
     printa = pygame.USEREVENT + 1
     pygame.time.set_timer(printa, 1)
@@ -410,9 +411,8 @@ def main():
 #                    if boss1.possible("latk"):
 #                        boss1.latk = True
 #    
-#                if event.key == pygame.K_o:
-#                    if boss1.possible("hatk"):
-#                        boss1.hatk = True
+                if event.key == pygame.K_y:
+                    enemyr1.guard = not enemyr1.guard
                     
                 if event.key == pygame.K_r:
                     player1.stamina = player1.maxstamina
@@ -522,23 +522,34 @@ def main():
                 for enemy in player1.enemies:
                     enemy.rect.left += diff
         
-#        # Se o player chegar perto do fundo, muda o world para cima (-y)
-#        if player1.rect.bottom >= 550:
-#            diffy = player1.rect.bottom - 550
-#            player1.rect.bottom = 550
-#            current_level.shifty_world(-diffy)
-#            bonfire1.rect.bottom -= diffy
-#            for enemy in player1.enemies:
-#                enemy.rect.bottom -= diffy
-#            
-#        # Se o player chegar perto do topo, muda o world para baixo (+y)
-#        if player1.rect.top <= 100:
-#            diffy = 100 - player1.rect.top
-#            player1.rect.top = 100
-#            current_level.shifty_world(diffy)
-#            bonfire1.rect.top += diffy
-#            for enemy in player1.enemies:
-#                enemy.rect.top += diffy
+        current_position_y = player1.rect.y + abs(current_level.world_shifty)
+        for enemy in player1.enemies:
+            enemy.current_position_y = enemy.rect.y + abs(current_level.world_shifty)
+        if current_position_y < 1430:
+            # Se o player chegar perto do fundo, muda o world para cima (-y)
+            if player1.rect.bottom >= 550:
+                diffy = player1.rect.bottom - 550
+                player1.rect.bottom = 550
+                current_level.shifty_world(-diffy)
+                bonfire1.rect.bottom -= diffy
+                bonfire2.rect.bottom -= diffy
+                for enemy in player1.enemies:
+                    enemy.rect.bottom -= diffy
+                
+            # Se o player chegar perto do topo, muda o world para baixo (+y)
+            if player1.rect.top <= 100:
+                diffy = 100 - player1.rect.top
+                player1.rect.top = 100
+                current_level.shifty_world(diffy)
+                bonfire1.rect.top += diffy
+                bonfire2.rect.top += diffy
+                for enemy in player1.enemies:
+                    enemy.rect.top += diffy
+        else:
+            player1.change_y = 0
+            player1.health = 0
+            player1.live = False
+            player1.jumping = False
  
         # Se o player chegar ao fim do level, vai para o próximo level
         pressed = pygame.key.get_pressed()
@@ -595,9 +606,8 @@ def main():
         
         bonfire1.lit_bonfire(player1, screen, pygame.joystick.get_count(), button_triangle, pressed)
         
-        for enemy in player1.common_enemies:
-            if not any(enemy.live == True for enemy in player1.common_enemies):
-                bonfire2.lit_bonfire(player1, screen, pygame.joystick.get_count(), button_triangle, pressed)
+        if not any(enemy.live == True for enemy in player1.common_enemies):
+            bonfire2.lit_bonfire(player1, screen, pygame.joystick.get_count(), button_triangle, pressed)
         
         if bonfire2.active:
             constants.psp_x = constants.psp_x2
@@ -606,7 +616,7 @@ def main():
         
         # Mostra tela de morte/vitória
         if not player1.live:        
-            player.dead_screen(screen, player1, current_position)
+            player.dead_screen(screen, player1, current_position, current_position_y)
             levels.play(0)
         if not boss1.live:
             boss.dead_screen(screen, boss1)

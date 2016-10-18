@@ -46,7 +46,7 @@ class Enemy1(pygame.sprite.Sprite):
         self.DEATH = 1
         self.DMG_TAKEN = 0
         self.a = self.b = self.c = self.d = self.e = self.f = self.g = self.h = self.i = \
-        self.j = self.k = self.l = self.m = self.n = self.o = self.p = 0
+        self.j = self.k = self.l = self.m = self.n = self.o = self.p = self.q = 0
         
         # Define o vetor velocidade do enemy
         self.change_x = 0
@@ -235,6 +235,7 @@ class Enemy1(pygame.sprite.Sprite):
         if self.a > 120:
             self.a = 0
             self.guard = True
+            self.q = 0
         else:
             self.a += 1
         if self.change_x == 0 and self.change_y == 0:
@@ -278,6 +279,9 @@ class Enemy1(pygame.sprite.Sprite):
     
     # Reproduz animação de quebra de guarda
     def ani_guardbreak(self):
+        if self.q == 0:
+            sounds.parry.play()
+            self.q = 1
         if self.direction == "R":
             self.image = self.guardbreak_frames_r[0]
         else:
@@ -331,25 +335,26 @@ class Enemy1(pygame.sprite.Sprite):
     def ani_latk(self):
         if self.h > constants.FPS/len(self.lightatk_frames_r):
             self.h = 0
-            if self.direction == "R":
-                self.image = self.lightatk_frames_r[self.i]
-            else:
-                self.image = self.lightatk_frames_l[self.i]
-            if self.i >= len(self.lightatk_frames_r) - 1:
-                self.i = 0
-                self.latk = False
-            else:
-                self.i += 1
-            if self.i == 4:
-                if self.p == 0:
-                    sounds.enemy_latk.play()
-                    self.p = 1
-            else:
-                self.p = 0
-            if self.i == 5:
-                self.dealdmg = True
-            else:
-                self.dealdmg = False
+            if self.guard:
+                if self.direction == "R":
+                    self.image = self.lightatk_frames_r[self.i]
+                else:
+                    self.image = self.lightatk_frames_l[self.i]
+                if self.i >= len(self.lightatk_frames_r) - 1:
+                    self.i = 0
+                    self.latk = False
+                else:
+                    self.i += 1
+                if self.i == 4:
+                    if self.p == 0:
+                        sounds.enemy_latk.play()
+                        self.p = 1
+                else:
+                    self.p = 0
+                if self.i == 5:
+                    self.dealdmg = True
+                else:
+                    self.dealdmg = False
         else:
             self.h += 1
     
@@ -357,25 +362,26 @@ class Enemy1(pygame.sprite.Sprite):
     def ani_hatk(self):
         if self.j > constants.FPS/len(self.heavyatk_frames_r):
             self.j = 0
-            if self.direction == "R":
-                self.image = self.heavyatk_frames_r[self.k]
-            else:
-                self.image = self.heavyatk_frames_l[self.k]
-            if self.k >= len(self.heavyatk_frames_r) - 1:
-                self.k = 0
-                self.hatk = False
-            else:
-                self.k += 1
-            if self.k == 3:
-                if self.p == 0:
-                    sounds.enemy_hatk.play()
-                    self.p = 1
-            else:
-                self.p = 0
-            if self.k == 4:
-                self.dealdmg = True
-            else:
-                self.dealdmg = False
+            if self.guard:
+                if self.direction == "R":
+                    self.image = self.heavyatk_frames_r[self.k]
+                else:
+                    self.image = self.heavyatk_frames_l[self.k]
+                if self.k >= len(self.heavyatk_frames_r) - 1:
+                    self.k = 0
+                    self.hatk = False
+                else:
+                    self.k += 1
+                if self.k == 3:
+                    if self.p == 0:
+                        sounds.enemy_hatk.play()
+                        self.p = 1
+                else:
+                    self.p = 0
+                if self.k == 4:
+                    self.dealdmg = True
+                else:
+                    self.dealdmg = False
         else:
             self.j += 1
     
@@ -569,18 +575,28 @@ class Enemy1(pygame.sprite.Sprite):
     # Ataque leve
     def light_atk(self):
         if self.latk:
-            self.change_x = 0
-            self.dmg_d = 1.3 # Dano real = dmg_d * 12
-            self.start_clocker = True
-            self.ani_latk()
+            if (player.parrying == False for player in self.players):
+                self.change_x = 0
+                self.dmg_d = 1.3 # Dano real = dmg_d * 12
+                self.start_clocker = True
+                self.ani_latk()
+            else:
+                self.latk = False
+                self.guard = False
+                self.guard_break()
     
     # Ataque forte
     def heavy_atk(self):
         if self.hatk:
-            self.change_x = 0
-            self.dmg_d = 2 # Dano real = dmg_d * 10
-            self.start_clocker = True
-            self.ani_hatk()
+            if (player.parrying == False for player in self.players):
+                self.change_x = 0
+                self.dmg_d = 2 # Dano real = dmg_d * 10
+                self.start_clocker = True
+                self.ani_hatk()
+            else:
+                self.hatk = False
+                self.guard = False
+                self.guard_break()
                 
     # Percebe se o enemy está tomando um ataque
     def detect_atk(self):
@@ -604,6 +620,9 @@ class Enemy1(pygame.sprite.Sprite):
         if self.guard and self.takedmg:
             if self.defending:
                 self.calc_stamina(self.dmg_r/2) # Reduz stamina
+                if self.p == 0:
+                    sounds.enemy_defend.play()
+                    self.p = 1
             else:
                 self.ani_damage()
                 if self.p == 0:

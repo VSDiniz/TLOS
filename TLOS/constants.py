@@ -22,7 +22,7 @@ fast_regen = 0.12
 estus_maxregen = 35
 player_roll_frames = 0
 psp_x = 620#620,9100
-psp_y = SCREEN_HEIGHT - 370
+psp_y = 230
 psp_x2 = 7800
 psp_y2 = 555
 
@@ -55,9 +55,10 @@ a = b = c = d = k = e = f = 0
 BGREEN = (21, 35, 12)
 BLACK    = (0, 0, 0) 
 BLUE     = (0, 0, 255)
-DARKBLUE = (47, 54, 153)
 BLACKBLUE = (51, 51, 153)
+DARKBLUE = (47, 54, 153)
 FAINTBLUE = (0, 64, 128)
+SKYBLUE = (43, 66, 93)
 GRAY = (81, 74, 67)
 GREEN = (55, 117, 44)
 ORANGE = (186, 53, 7)

@@ -41,6 +41,7 @@ class Enemy2(pygame.sprite.Sprite):
         self.start_clocker = False
         self.players = []
         self.current_position = 0
+        self.current_position_y = 0
         self.world_shift = 0
         self.clocker_rt = 0
         self.DEATH = 1
@@ -639,7 +640,7 @@ class Enemy2(pygame.sprite.Sprite):
             
     # Faz o inimigo voltar a vida
     def reborn(self):
-        self.rect.y = constants.eb1_y - 250
+        self.rect.y -= self.current_position_y - constants.eb1_y + 250
         if self.p == 1:
             self.rect.x -= self.current_position - constants.eb1_x
         elif self.p == 2:

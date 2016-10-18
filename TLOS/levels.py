@@ -39,9 +39,9 @@ class Level():
     def draw(self, screen):
         # Desenha tudo num level 
         # Desenha o background
-        screen.fill(constants.RED)
+        screen.fill(constants.SKYBLUE)
         # Faz o world se deslocar mais lentamente que o player
-        screen.blit(self.background, (self.world_shift, 0))
+        screen.blit(self.background, (self.world_shift, self.world_shifty))
  
         # Desenha todas as listas de sprites
         self.platform_list.draw(screen)

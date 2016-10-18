@@ -48,7 +48,7 @@ class Player(pygame.sprite.Sprite):
         self.common_enemies = []
         self.DEATH = self.KILL = self.DMG_TAKEN = self.DMG_DEALT = 0
         self.a = self.b = self.c = self.d = self.e = self.f = self.g = self.h = self.i = \
-        self.j = self.k = self.l = self.m = self.n = self.o = self.p = 0
+        self.j = self.k = self.l = self.m = self.n = self.o = self.p = self.q = 0
  
         # Define o vetor velocidade do player
         self.change_x = 0
@@ -295,7 +295,7 @@ class Player(pygame.sprite.Sprite):
     # Reproduz a animação de espera
     def ani_wait(self):
         if self.a > 120:
-            self.a = 0
+            self.a = self.q = 0
             self.guard = True
         else:
             self.a += 1
@@ -351,6 +351,9 @@ class Player(pygame.sprite.Sprite):
     
     # Reproduz animação de quebra de guarda
     def ani_guardbreak(self):
+        if self.p == 0:
+#            sounds.parry.play()
+            self.p = 1
         if self.direction == "R":
             self.image = self.guardbreak_frames_r[0]
         else:
@@ -612,10 +615,10 @@ class Player(pygame.sprite.Sprite):
         # Verifica se o player está no chão
         if self.rect.y >= constants.LEVEL_BOTTOM - self.rect.height and self.change_y >= 0:
             self.change_y = 0
-            self.live = False
             self.health = 0
+            self.live = False
             self.jumping = False
-
+            
 #==============================================================================
 #   Movimentos do player:
 #==============================================================================
@@ -747,8 +750,7 @@ class Player(pygame.sprite.Sprite):
 #                    print("PLAYER", self.dmg_r)
                     self.dmg_r = 0
                 if not enemy.dealdmg:
-                    self.n = 0
-                    self.p = 0
+                    self.n = self.p = 0
 
     # Calcula o dano recebido pelo player
     def calc_damage(self):
@@ -764,9 +766,9 @@ class Player(pygame.sprite.Sprite):
                     self.guard = False # Quebra guarda
                     self.takedmg = False
                     self.dmg_r = 0
-                    if self.p == 0:
-                        sounds.parry.play()
-                        self.p = 1
+
+            elif self.parrying:
+                pass
                                         
             else:
                 self.ani_damage()
@@ -783,12 +785,12 @@ class Player(pygame.sprite.Sprite):
                         self.n = 1
                 else:
                     self.health = 0
-        else:
+        elif not self.guard and self.takedmg:
             self.health -= self.dmg_r*2
             self.DMG_TAKEN += self.dmg_r*2
-            if self.p == 0:
+            if self.q == 0:
                 sounds.riposte.play()
-                self.p = 1
+                self.q = 1
                 self.guard = True
                 
     # Calcula a stamina gasta pelo player
@@ -814,16 +816,16 @@ class Player(pygame.sprite.Sprite):
                     self.stamina = self.maxstamina
                 
     # Faz o player voltar a vida
-    def reborn(self, cp=None):
+    def reborn(self, cpx=None, cpy=None):
         self.live = True
         self.guard = True
         self.defending = False
         self.health = self.maxhealth
         self.stamina = self.maxstamina
         self.estus_rn = 5
-        if cp:
-            self.rect.y = constants.psp_y - self.rect.height
-            self.rect.x -= cp - constants.psp_x
+        if cpx and cpy:
+            self.rect.y -= cpy - constants.psp_y + 145
+            self.rect.x -= cpx - constants.psp_x
             self.direction = "R"
 #            if self.possible("wait"):
 #                self.rect.x += 1
@@ -900,11 +902,11 @@ class Player(pygame.sprite.Sprite):
             pygame.draw.rect(screen, constants.GREEN, (50, 30, 3*self.stamina, 10))
 
 # Mostra tela de morte
-def dead_screen(screen, player, cp):
+def dead_screen(screen, player, cpx, cpy):
     
     if player.o == 0:
         sounds.dead.play()
-        if cp > 9200:
+        if cpx > 9200:
             sounds.boss_win.play()
         player.o = 1
     
@@ -934,7 +936,7 @@ def dead_screen(screen, player, cp):
                     pygame.quit() # Fecha a janela se o usuário pressionar ALT+F4
                     quit()
                 if event.key == pygame.K_RETURN:
-                    player.reborn(cp)
+                    player.reborn(cpx,cpy)
                     player.DEATH += 1
                     player.o = 0
                     for enemy in player.enemies:
