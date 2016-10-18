@@ -9,9 +9,6 @@ import pygame
 
 pygame.init()
 
-level0 = pygame.mixer.Sound("sounds/TLOZ/Gerudo Valley Theme.wav")
-level1 = pygame.mixer.Sound("sounds/DS/Bloodborne Soundtrack OST - Cleric Beast.wav")
-
 # Player
 player_latk1 = pygame.mixer.Sound("sounds\TLOZ\OOT_WeaponsItems\OOT_Sword1.wav")
 player_latk2 = pygame.mixer.Sound("sounds\TLOZ\OOT_WeaponsItems\OOT_Sword2.wav")
@@ -26,13 +23,17 @@ player_estus2 = pygame.mixer.Sound("sounds\TLOZ\OOT_Navi\OOT_Navi_In.wav")
 dead = pygame.mixer.Sound("sounds\DS\You Died.wav")
 
 # Enemy
+enemy_latk = pygame.mixer.Sound("sounds\TLOZ\OOT_WeaponsItems\OOT_MegatonHammer_Swing.wav")
+enemy_hatk = pygame.mixer.Sound("sounds\TLOZ\OOT_Enemies\OOT_IronKnuckle_Attack_Swipe.wav")
 enemy_dmg = pygame.mixer.Sound("sounds\TLOZ\OOT_WeaponsItems\OOT_Sword_Clang1.wav")
 
 # Boss
-#boss_latk = pygame.mixer.Sound("sounds\TLOZ\OOT_.wav")
-#boss_hatk = pygame.mixer.Sound("sounds\TLOZ\OOT_.wav")
-#boss_dmg = pygame.mixer.Sound("sounds\TLOZ\OOT_.wav")
-#boss_win = pygame.mixer.Sound("sounds\TLOZ\OOT_.wav")
+boss_latk = pygame.mixer.Sound("sounds\TLOZ\OOT_Bosses\OOT_Ganondorf_Pound.wav")
+boss_hatk = pygame.mixer.Sound("sounds\TLOZ\OOT_Bosses\OOT_Ganondorf_Burst_C.wav")
+boss_defend = pygame.mixer.Sound("sounds\TLOZ\OOT_Bosses\OOT_Ganondorf_Deflect.wav")
+boss_dmg = pygame.mixer.Sound("sounds\TLOZ\OOT_Bosses\OOT_Ganondorf_Hurt.wav")
+boss_laugh = pygame.mixer.Sound("sounds\TLOZ\OOT_Voices\OOT_Ganondorf_Heheh.wav")
+boss_win = pygame.mixer.Sound("sounds\TLOZ\OOT_Voices\OOT_Ganondorf_Laugh.wav")
 
 # Others
 bonfire_active = pygame.mixer.Sound("sounds\TLOZ\OOT_WeaponsItems\OOT_Sword_Away.wav")

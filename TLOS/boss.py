@@ -5,7 +5,7 @@ Created on Sat Aug 20 13:25:12 2016
 @author: vini_
 """
 
-import pygame, random, constants, spritesheet_functions
+import pygame, random, constants, sounds, spritesheet_functions
 
 class Boss(pygame.sprite.Sprite):
  
@@ -45,7 +45,7 @@ class Boss(pygame.sprite.Sprite):
         self.DEATH = 1
         self.DMG_TAKEN = 0
         self.a = self.b = self.c = self.d = self.e = self.f = self.g = self.h = self.i = \
-        self.j = self.k = self.l = self.m = self.n = self.o = 0
+        self.j = self.k = self.l = self.m = self.n = self.o = self.p = 0
         
         # Define o vetor velocidade do boss
         self.change_x = 0
@@ -380,6 +380,12 @@ class Boss(pygame.sprite.Sprite):
                 self.latk = False
             else:
                 self.i += 1
+            if self.i == 2:
+                if self.p == 0:
+                    sounds.boss_latk.play()
+                    self.p = 1
+            else:
+                self.p = 0
             if self.i == 7:
                 self.dealdmg = True
             else:
@@ -400,6 +406,12 @@ class Boss(pygame.sprite.Sprite):
                 self.hatk = False
             else:
                 self.k += 1
+            if self.k == 7:
+                if self.p == 0:
+                    sounds.boss_hatk.play()
+                    self.p = 1
+            else:
+                self.p = 0
             if self.k == 8:
                 self.dealdmg = True
             else:
@@ -623,6 +635,8 @@ class Boss(pygame.sprite.Sprite):
                 else:
                     self.dmg_r = 0
                     self.takedmg = False
+                if not player.dealdmg:
+                    self.p = 0
             
     # Calcula o dano recebido pelo boss
     def calc_damage(self):
@@ -630,11 +644,17 @@ class Boss(pygame.sprite.Sprite):
         if self.guard and self.takedmg:
             if self.defending:
                 self.calc_stamina(self.dmg_r/2) # Reduz stamina
+                if self.p == 0:
+                    sounds.boss_defend.play()
+                    self.p = 1
             else:
                 self.ani_damage()
+                self.DMG_TAKEN += self.dmg_r
+                if self.p == 0:
+                    sounds.boss_dmg.play()
+                    self.p = 1
                 if self.health - self.dmg_r > 0:
                     self.health -= self.dmg_r # Reduz vida
-                    self.DMG_TAKEN += self.dmg_r
                 else:
                     self.health = 0
                 
@@ -731,6 +751,9 @@ class Boss(pygame.sprite.Sprite):
             self.health = self.maxhealth
         if self.health > 0:
             pygame.draw.rect(screen, constants.ORANGE, (850-(1.6*self.health), 580, 1.6*self.health, 10))
+            
+    def enemy_hud(self, screen):
+        pass
             
     # Inteligência artificial do boss
     def AI(self, player, clock):

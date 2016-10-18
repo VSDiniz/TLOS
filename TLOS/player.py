@@ -47,7 +47,7 @@ class Player(pygame.sprite.Sprite):
         self.enemies = []
         self.DEATH = self.KILL = self.DMG_TAKEN = self.DMG_DEALT = 0
         self.a = self.b = self.c = self.d = self.e = self.f = self.g = self.h = self.i = \
-        self.j = self.k = self.l = self.m = self.n = 0
+        self.j = self.k = self.l = self.m = self.n = self.o = self.p = 0
  
         # Define o vetor velocidade do player
         self.change_x = 0
@@ -501,6 +501,7 @@ class Player(pygame.sprite.Sprite):
         self.calc_grav()
         if self.health <= 0:
             self.live = False
+            self.dealdmg = False
         if self.possible("wait"):
             self.ani_wait()
         if self.possible("move"):
@@ -746,6 +747,7 @@ class Player(pygame.sprite.Sprite):
                     self.dmg_r = 0
                 if not enemy.dealdmg:
                     self.n = 0
+                    self.p = 0
 
     # Calcula o dano recebido pelo player
     def calc_damage(self):
@@ -759,6 +761,9 @@ class Player(pygame.sprite.Sprite):
                 if self.stamina <= 0:
                     self.stamina = 0
                     self.guard = False # Quebra guarda
+                    if self.p == 0:
+                        sounds.parry.play()
+                        self.p = 1
                                         
             else:
                 self.ani_damage()
@@ -778,6 +783,10 @@ class Player(pygame.sprite.Sprite):
         else:
             self.health -= self.dmg_r*2
             self.DMG_TAKEN += self.dmg_r*2
+            if self.p == 0:
+                sounds.riposte.play()
+                self.p = 1
+                self.guard = True
                 
     # Calcula a stamina gasta pelo player
     def calc_stamina(self, stm_cost):
@@ -890,9 +899,11 @@ class Player(pygame.sprite.Sprite):
 # Mostra tela de morte
 def dead_screen(screen, player, cp):
     
-    if player.n == 0:
+    if player.o == 0:
         sounds.dead.play()
-        player.n = 1
+        if cp > 9200:
+            sounds.boss_win.play()
+        player.o = 1
     
     black_surf = pygame.Surface((constants.SCREEN_WIDTH, constants.SCREEN_HEIGHT), pygame.SRCALPHA)
     black_surf.fill((0, 0, 0, 180))
@@ -922,7 +933,7 @@ def dead_screen(screen, player, cp):
                 if event.key == pygame.K_RETURN:
                     player.reborn(cp)
                     player.DEATH += 1
-                    player.n = 0
+                    player.o = 0
                     for enemy in player.enemies:
                         enemy.reborn()
 #                if event.key == pygame.K_e:

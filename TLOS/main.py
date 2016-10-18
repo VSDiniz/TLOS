@@ -259,6 +259,7 @@ def main():
 #                   Button_circle
                     if event.button == 2:
                         if player1.possible("roll"):
+                            sounds.player_roll.play()
                             player1.active_roll()
                             pygame.time.set_timer(player_roll, 1)
                             
@@ -400,9 +401,10 @@ def main():
 #                    if boss1.possible("hatk"):
 #                        boss1.hatk = True
                     
-#                if event.key == pygame.K_r:
-#                    player1.stamina = player1.maxstamina
-#                    player1.estus_rn = 5
+                if event.key == pygame.K_r:
+                    player1.stamina = player1.maxstamina
+                    player1.estus_rn = 5
+                    enemyr1.health = enemyr1.maxhealth
 
                 if event.key == pygame.K_t:
                     if t == 0:
@@ -532,6 +534,7 @@ def main():
             if current_level_no < len(level_list)-1:
                 levels.play(1)
                 player1.rect.x += 1210
+                sounds.boss_laugh.play()
                 
         # Todo código de desenhar
         current_level.draw(screen)
@@ -573,6 +576,7 @@ def main():
         for enemy in player1.enemies:
             if enemy.rect.left <= 500 + player1.rect.centerx and enemy.rect.right >= 500 - player1.rect.centerx:
                 enemy.AI(player1, clock)
+                enemy.enemy_hud(screen)
             
         bonfire1.lit_bonfire(player1, screen, pygame.joystick.get_count(), button_triangle, pressed)
         

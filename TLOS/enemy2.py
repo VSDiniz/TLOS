@@ -5,7 +5,7 @@ Created on Mon Oct 17 09:11:21 2016
 @author: vini_
 """
 
-import pygame, random, constants, spritesheet_functions
+import pygame, random, constants, sounds, spritesheet_functions
 
 class Enemy2(pygame.sprite.Sprite):
  
@@ -46,7 +46,7 @@ class Enemy2(pygame.sprite.Sprite):
         self.DEATH = 1
         self.DMG_TAKEN = 0
         self.a = self.b = self.c = self.d = self.e = self.f = self.g = self.h = self.i = \
-        self.j = self.k = self.l = self.m = self.n = self.o = self.p = 0
+        self.j = self.k = self.l = self.m = self.n = self.o = self.p = self.q = 0
         
         # Define o vetor velocidade do enemy
         self.change_x = 0
@@ -340,6 +340,12 @@ class Enemy2(pygame.sprite.Sprite):
                 self.latk = False
             else:
                 self.i += 1
+            if self.i == 4:
+                if self.q == 0:
+                    sounds.enemy_latk.play()
+                    self.q = 1
+            else:
+                self.q = 0
             if self.i == 5:
                 self.dealdmg = True
             else:
@@ -360,6 +366,12 @@ class Enemy2(pygame.sprite.Sprite):
                 self.hatk = False
             else:
                 self.k += 1
+            if self.k == 4:
+                if self.q == 0:
+                    sounds.enemy_hatk.play()
+                    self.q = 1
+            else:
+                self.q = 0
             if self.k == 4:
                 self.dealdmg = True
             else:
@@ -583,6 +595,8 @@ class Enemy2(pygame.sprite.Sprite):
                 else:
                     self.dmg_r = 0
                     self.takedmg = False
+                if not player.dealdmg:
+                    self.q = 0
             
     # Calcula o dano recebido pelo inimigo
     def calc_damage(self):
@@ -592,6 +606,9 @@ class Enemy2(pygame.sprite.Sprite):
                 self.calc_stamina(self.dmg_r/2) # Reduz stamina
             else:
                 self.ani_damage()
+                if self.q == 0:
+                    sounds.enemy_dmg.play()
+                    self.q = 1
                 if self.health - self.dmg_r > 0:
                     self.health -= self.dmg_r # Reduz vida
                     self.DMG_TAKEN += self.dmg_r
@@ -687,12 +704,12 @@ class Enemy2(pygame.sprite.Sprite):
             return False
         
     def enemy_hud(self, screen):
-        pygame.draw.rect(screen, constants.WHITE, (self.rect.top-11, self.rect.left-1, (self.maxhealth)+2, 7))
-        pygame.draw.rect(screen, constants.GRAY, (self.rect.top-10, self.rect.left, self.maxhealth, 5))
         if self.health >= self.maxhealth:
             self.health = self.maxhealth
-        if self.health > 0:
-            pygame.draw.rect(screen, constants.ORANGE, self.rect.top-10, self.rect.left, self.health, 5)
+        if 0 < self.health < self.maxhealth:
+            pygame.draw.rect(screen, constants.WHITE, (self.rect.top-11, self.rect.left-1, (self.maxhealth)+2, 7))
+            pygame.draw.rect(screen, constants.GRAY, (self.rect.top-10, self.rect.left, self.maxhealth, 5))
+            pygame.draw.rect(screen, constants.ORANGE, (self.rect.top-10, self.rect.left, self.health, 5))
             
     # Inteligência artificial do enemy
     def AI(self, player, clock):

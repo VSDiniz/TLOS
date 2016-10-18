@@ -5,7 +5,7 @@ Created on Mon Oct  3 10:55:17 2016
 @author: vini_
 """
 
-import pygame, random, constants, spritesheet_functions
+import pygame, random, constants, sounds, spritesheet_functions
 
 class Enemy1(pygame.sprite.Sprite):
  
@@ -46,7 +46,7 @@ class Enemy1(pygame.sprite.Sprite):
         self.DEATH = 1
         self.DMG_TAKEN = 0
         self.a = self.b = self.c = self.d = self.e = self.f = self.g = self.h = self.i = \
-        self.j = self.k = self.l = self.m = self.n = self.o = 0
+        self.j = self.k = self.l = self.m = self.n = self.o = self.p = 0
         
         # Define o vetor velocidade do enemy
         self.change_x = 0
@@ -340,6 +340,12 @@ class Enemy1(pygame.sprite.Sprite):
                 self.latk = False
             else:
                 self.i += 1
+            if self.i == 4:
+                if self.p == 0:
+                    sounds.enemy_latk.play()
+                    self.p = 1
+            else:
+                self.p = 0
             if self.i == 5:
                 self.dealdmg = True
             else:
@@ -360,6 +366,12 @@ class Enemy1(pygame.sprite.Sprite):
                 self.hatk = False
             else:
                 self.k += 1
+            if self.k == 3:
+                if self.p == 0:
+                    sounds.enemy_hatk.play()
+                    self.p = 1
+            else:
+                self.p = 0
             if self.k == 4:
                 self.dealdmg = True
             else:
@@ -583,6 +595,8 @@ class Enemy1(pygame.sprite.Sprite):
                 else:
                     self.dmg_r = 0
                     self.takedmg = False
+                if not player.dealdmg:
+                    self.p = 0
             
     # Calcula o dano recebido pelo inimigo
     def calc_damage(self):
@@ -592,6 +606,9 @@ class Enemy1(pygame.sprite.Sprite):
                 self.calc_stamina(self.dmg_r/2) # Reduz stamina
             else:
                 self.ani_damage()
+                if self.p == 0:
+                    sounds.enemy_dmg.play()
+                    self.p = 1
                 if self.health - self.dmg_r > 0:
                     self.health -= self.dmg_r # Reduz vida
                     self.DMG_TAKEN += self.dmg_r
@@ -640,8 +657,15 @@ class Enemy1(pygame.sprite.Sprite):
             else:
                 constants.k += self.clocker_rt
                 
+#==============================================================================
+#     def randomize(self):
+#         self.l = random.choice(["latk", "hatk", "roll", "wait"])
+#         self.m = random.choice(["def", "wait"])
+#         self.n = random.uniform(0, 1)
+#         self.o = random.uniform(0, 1)
+#==============================================================================
     def randomize(self):
-        self.l = random.choice(["latk", "hatk", "roll", "wait"])
+        self.l = random.choice(["latk", "hatk", "wait"])
         self.m = random.choice(["def", "wait"])
         self.n = random.uniform(0, 1)
         self.o = random.uniform(0, 1)
@@ -679,13 +703,81 @@ class Enemy1(pygame.sprite.Sprite):
             return False
         
     def enemy_hud(self, screen):
-        pygame.draw.rect(screen, constants.WHITE, (self.rect.top-11, self.rect.left-1, (self.maxhealth)+2, 7))
-        pygame.draw.rect(screen, constants.GRAY, (self.rect.top-10, self.rect.left, self.maxhealth, 5))
         if self.health >= self.maxhealth:
             self.health = self.maxhealth
-        if self.health > 0:
-            pygame.draw.rect(screen, constants.ORANGE, self.rect.top-10, self.rect.left, self.health, 5)
+        if 0 < self.health < self.maxhealth:
+            pygame.draw.rect(screen, constants.WHITE, (self.rect.top-11, self.rect.left-1, (self.maxhealth)+2, 9))
+            pygame.draw.rect(screen, constants.GRAY, (self.rect.top-10, self.rect.left, self.maxhealth, 7))
+            pygame.draw.rect(screen, constants.ORANGE, (self.rect.top-10, self.rect.left, self.health, 7))
             
+#==============================================================================
+#     # Inteligência artificial do enemy
+#     def AI(self, player, clock):
+#         if self.direction == "R":
+#             self.right = self.rect.centerx
+#             self.left = self.rect.centerx - 30
+#             self.center = self.rect.centerx - 15
+#         else:
+#             self.right = self.rect.centerx + 30
+#             self.left = self.rect.centerx
+#             self.center = self.rect.centerx + 15
+#         # Vira o boss na direção do player
+#         if self.possible("wait"):
+#             if player.rect.centerx > self.center:
+#                 self.direction = "R"
+#             else:
+#                 self.direction = "L"
+#             block_hit_list =  self.level.platform_list
+#             for block in block_hit_list:
+#                 if player.rect.bottom == self.rect.bottom:
+#                     if block.rect.left <= self.rect.left and block.rect.right >= self.rect.right:
+#                         # Persegue o player
+# #                        if player.rect.centerx + 15 < self.left:
+# #                            self.go_left()
+# #                        elif player.rect.centerx - 15 > self.right:
+# #                            self.go_right()
+#                         if player.rect.left > self.right +400 or player.rect.right < self.left -400:
+#                               self.stop()
+#                         elif (player.rect.centerx > self.center -55 and player.rect.centerx < self.center) \
+#                           or (player.rect.centerx < self.center +55 and player.rect.centerx > self.center):
+#                             self.stop()
+#                             if clock.get_fps() > 60:
+#                 #                                self.l = random.choice(["latk", "hatk", "roll", "wait"])
+#                                 if self.l == "latk" and self.possible("latk"):
+#                                     self.latk = True
+#                                 elif self.l == "hatk" and self.possible("hatk"):
+#                                     self.hatk = True
+#                                 elif self.l == "roll" and self.possible("roll"):
+#                                     self.rolling = True
+#                                     self.active_roll()
+#                                 elif self.l == "wait":
+#                                     pass
+#                 #                                    self.m = random.choice(["def", "wait"])
+#                 #                                    self.n = random.uniform(0, 1)
+#                 #                                    self.o = random.uniform(0, 1)
+#                                 if player.dealdmg:
+#                                     if self.direction != player.direction:
+#                                         if self.m == "def":
+#                                             if self.n > 0.01:
+#                                                 if self.possible("defend"):
+#                                                     self.defending = True
+#                                         if not self.defending:
+#                                             self.dmg_r = player.dmg_d
+#                                             self.takedmg = True
+#                                         else:
+#                                             if self.o > 0.1:
+#                                                 if self.possible("parry"):
+#                                                     self.parrying = True
+#                                                     if self.possible("latk"):
+#                                                         self.latk = True
+#                                 else:
+#                                     self.defending = False
+#                                     self.parrying = False
+#                                     self.dmg_r = 0
+#                                 self.rolling = False
+#                         else:
+#                             self.stop()
+#==============================================================================
     # Inteligência artificial do enemy
     def AI(self, player, clock):
         if self.direction == "R":
@@ -702,52 +794,42 @@ class Enemy1(pygame.sprite.Sprite):
                 self.direction = "R"
             else:
                 self.direction = "L"
-            block_hit_list =  self.level.platform_list
-            for block in block_hit_list:
-                if player.rect.bottom == self.rect.bottom:
-                    if block.rect.left <= self.rect.left and block.rect.right >= self.rect.right:
                         # Persegue o player
 #                        if player.rect.centerx + 15 < self.left:
 #                            self.go_left()
 #                        elif player.rect.centerx - 15 > self.right:
 #                            self.go_right()
-                        if player.rect.left > self.right +400 or player.rect.right < self.left -400:
-                              self.stop()
-                        elif (player.rect.centerx > self.center -55 and player.rect.centerx < self.center) \
-                          or (player.rect.centerx < self.center +55 and player.rect.centerx > self.center):
-                            self.stop()
-            #                                self.l = random.choice(["latk", "hatk", "roll", "wait"])
-                            if self.l == "latk" and self.possible("latk"):
-                                self.latk = True
-                            elif self.l == "hatk" and self.possible("hatk"):
-                                self.hatk = True
-                            elif self.l == "roll" and self.possible("roll"):
-                                self.rolling = True
-                                self.active_roll()
-                            elif self.l == "wait":
-                                pass
-            #                                    self.m = random.choice(["def", "wait"])
-            #                                    self.n = random.uniform(0, 1)
-            #                                    self.o = random.uniform(0, 1)
-                            if player.dealdmg:
-                                if self.direction != player.direction:
-                                    if self.m == "def":
-                                        if self.n > 0.4:
-                                            if self.possible("defend"):
-                                                self.defending = True
-                                    if not self.defending:
-                                        self.dmg_r = player.dmg_d
-                                        self.takedmg = True
-                                    else:
-                                        if self.o > 0.1:
-                                            if self.possible("parry"):
-                                                self.parrying = True
-                                                if self.possible("latk"):
-                                                    self.latk = True
-                            else:
-                                self.defending = False
-                                self.parrying = False
-                                self.dmg_r = 0
-                            self.rolling = False
+        if player.rect.left > self.right +400 or player.rect.right < self.left -400:
+              self.stop()
+        elif (player.rect.centerx > self.center -55 and player.rect.centerx < self.center) \
+          or (player.rect.centerx < self.center +55 and player.rect.centerx > self.center):
+            self.stop()
+#                                self.l = random.choice(["latk", "hatk", "roll", "wait"])
+            if self.l == "latk" and self.possible("latk"):
+                self.latk = True
+            elif self.l == "hatk" and self.possible("hatk"):
+                self.hatk = True
+            elif self.l == "wait":
+                pass
+#                                    self.m = random.choice(["def", "wait"])
+#                                    self.n = random.uniform(0, 1)
+#                                    self.o = random.uniform(0, 1)
+            if player.dealdmg:
+                if self.direction != player.direction:
+                    if self.m == "def":
+                        if self.n > 0.01:
+                            if self.possible("defend"):
+                                self.defending = True
+                    if not self.defending:
+                        self.dmg_r = player.dmg_d
+                        self.takedmg = True
                     else:
-                        self.stop()
+                        if self.o > 0.1:
+                            if self.possible("parry"):
+                                self.parrying = True
+                                if self.possible("latk"):
+                                    self.latk = True
+            else:
+                self.defending = False
+                self.parrying = False
+                self.dmg_r = 0
