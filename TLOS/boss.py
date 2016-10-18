@@ -45,7 +45,7 @@ class Boss(pygame.sprite.Sprite):
         self.DEATH = 1
         self.DMG_TAKEN = 0
         self.a = self.b = self.c = self.d = self.e = self.f = self.g = self.h = self.i = \
-        self.j = self.k = self.l = self.m = self.n = self.o = self.p = 0
+        self.j = self.k = self.l = self.m = self.n = self.o = self.p = self.q = 0
         
         # Define o vetor velocidade do boss
         self.change_x = 0
@@ -688,6 +688,7 @@ class Boss(pygame.sprite.Sprite):
         self.health = self.maxhealth
         self.stamina = self.maxstamina
         self.DEATH = 1
+        self.q = 0
         self.direction = "L"
         
     # Estabelece um delay
@@ -810,6 +811,11 @@ class Boss(pygame.sprite.Sprite):
 
 # Mostra tela de vitória
 def dead_screen(screen, boss):
+    
+    if boss.q == 0:
+        sounds.boss_lose.play()
+        boss.q = 1
+        
     s = pygame.Surface((constants.SCREEN_WIDTH, constants.SCREEN_HEIGHT), pygame.SRCALPHA)
     s.fill((255, 255, 255, 60))
     screen.blit(s, (0, 0))

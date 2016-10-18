@@ -26,6 +26,7 @@ dead = pygame.mixer.Sound("sounds\DS\You Died.wav")
 enemy_latk = pygame.mixer.Sound("sounds\TLOZ\OOT_WeaponsItems\OOT_MegatonHammer_Swing.wav")
 enemy_hatk = pygame.mixer.Sound("sounds\TLOZ\OOT_Enemies\OOT_IronKnuckle_Attack_Swipe.wav")
 enemy_dmg = pygame.mixer.Sound("sounds\TLOZ\OOT_WeaponsItems\OOT_Sword_Clang1.wav")
+enemy_dead = pygame.mixer.Sound("sounds\TLOZ\OOT_Enemies\OOT_ReDead_Die.wav")
 
 # Boss
 boss_latk = pygame.mixer.Sound("sounds\TLOZ\OOT_Bosses\OOT_Ganondorf_Pound.wav")
@@ -34,6 +35,7 @@ boss_defend = pygame.mixer.Sound("sounds\TLOZ\OOT_Bosses\OOT_Ganondorf_Deflect.w
 boss_dmg = pygame.mixer.Sound("sounds\TLOZ\OOT_Bosses\OOT_Ganondorf_Hurt.wav")
 boss_laugh = pygame.mixer.Sound("sounds\TLOZ\OOT_Voices\OOT_Ganondorf_Heheh.wav")
 boss_win = pygame.mixer.Sound("sounds\TLOZ\OOT_Voices\OOT_Ganondorf_Laugh.wav")
+boss_lose = pygame.mixer.Sound("sounds\DS\Defeated_Boss.wav")
 
 # Others
 bonfire_active = pygame.mixer.Sound("sounds\TLOZ\OOT_WeaponsItems\OOT_Sword_Away.wav")
