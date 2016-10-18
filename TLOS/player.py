@@ -46,7 +46,6 @@ class Player(pygame.sprite.Sprite):
         self.start_clocker = False
         self.enemies = []
         self.common_enemies = []
-        self.dead_enemies = []
         self.DEATH = self.KILL = self.DMG_TAKEN = self.DMG_DEALT = 0
         self.a = self.b = self.c = self.d = self.e = self.f = self.g = self.h = self.i = \
         self.j = self.k = self.l = self.m = self.n = self.o = self.p = 0

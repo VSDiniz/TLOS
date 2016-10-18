@@ -596,15 +596,12 @@ def main():
         bonfire1.lit_bonfire(player1, screen, pygame.joystick.get_count(), button_triangle, pressed)
         
         for enemy in player1.common_enemies:
-            if not enemy.live:
-                player1.dead_enemies.append(enemy)
-                player1.common_enemies.remove(enemy)
-        if len(player1.dead_enemies) == len(player1.enemies)-1:
-            bonfire2.lit_bonfire(player1, screen, pygame.joystick.get_count(), button_triangle, pressed)
+            if not any(enemy.live == True for enemy in player1.common_enemies):
+                bonfire2.lit_bonfire(player1, screen, pygame.joystick.get_count(), button_triangle, pressed)
         
         if bonfire2.active:
-            constants.psp_x = 7800
-            constants.psp_y = 555
+            constants.psp_x = constants.psp_x2
+            constants.psp_y = constants.psp_y2
             bonfire1.active = False
         
         # Mostra tela de morte/vitória

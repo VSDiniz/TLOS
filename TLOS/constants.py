@@ -23,6 +23,8 @@ estus_maxregen = 35
 player_roll_frames = 0
 psp_x = 620#620,9100
 psp_y = SCREEN_HEIGHT - 370
+psp_x2 = 7800
+psp_y2 = 555
 
 # Boss
 boss_roll_frames = 0
