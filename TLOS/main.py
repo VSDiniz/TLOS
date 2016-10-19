@@ -535,17 +535,29 @@ def main():
                 bonfire2.rect.bottom -= diffy
                 for enemy in player1.enemies:
                     enemy.rect.bottom -= diffy
-                
-            # Se o player chegar perto do topo, muda o world para baixo (+y)
-            if player1.rect.top <= 100:
-                diffy = 100 - player1.rect.top
-                player1.rect.top = 100
-                current_level.shifty_world(diffy)
-                bonfire1.rect.top += diffy
-                bonfire2.rect.top += diffy
-                for enemy in player1.enemies:
-                    enemy.rect.top += diffy
-        else:
+
+            if current_position < 1100:
+                # Se o player chegar perto do topo, muda o world para baixo (+y)
+                if player1.rect.top <= 100:
+                    diffy = 100 - player1.rect.top
+                    player1.rect.top = 100
+                    current_level.shifty_world(diffy)
+                    bonfire1.rect.top += diffy
+                    bonfire2.rect.top += diffy
+                    for enemy in player1.enemies:
+                        enemy.rect.top += diffy
+                        
+            if current_position > 1100:
+                # Se o player chegar perto do topo, muda o world para baixo (+y)
+                if player1.rect.top <= 277:
+                    diffy = 277 - player1.rect.top
+                    player1.rect.top = 277
+                    current_level.shifty_world(diffy)
+                    bonfire1.rect.top += diffy
+                    bonfire2.rect.top += diffy
+                    for enemy in player1.enemies:
+                        enemy.rect.top += diffy
+        elif current_position_y > 1600:
             player1.change_y = 0
             player1.health = 0
             player1.live = False
@@ -606,12 +618,12 @@ def main():
         
         bonfire1.lit_bonfire(player1, screen, pygame.joystick.get_count(), button_triangle, pressed)
         
-        if not any(enemy.live == True for enemy in player1.common_enemies):
-            bonfire2.lit_bonfire(player1, screen, pygame.joystick.get_count(), button_triangle, pressed)
+#        if not any(enemy.live == True for enemy in player1.common_enemies):
+        bonfire2.lit_bonfire(player1, screen, pygame.joystick.get_count(), button_triangle, pressed)
         
         if bonfire2.active:
-            constants.psp_x = constants.psp_x2
-            constants.psp_y = constants.psp_y2
+            constants.psp_x = constants.pb2_x
+            constants.psp_y = constants.pb2_y + 65
             bonfire1.active = False
         
         # Mostra tela de morte/vitória
@@ -619,7 +631,7 @@ def main():
             player.dead_screen(screen, player1, current_position, current_position_y)
             levels.play(0)
         if not boss1.live:
-            boss.dead_screen(screen, boss1)
+            boss.dead_screen(screen, boss1, player1)
             pygame.mixer.music.stop()
             player1.stop()
  

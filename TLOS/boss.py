@@ -5,7 +5,7 @@ Created on Sat Aug 20 13:25:12 2016
 @author: vini_
 """
 
-import pygame, random, constants, sounds, spritesheet_functions
+import pygame, random, constants, levels, sounds, spritesheet_functions
 
 class Boss(pygame.sprite.Sprite):
  
@@ -814,7 +814,7 @@ class Boss(pygame.sprite.Sprite):
         self.rolling = False
 
 # Mostra tela de vitória
-def dead_screen(screen, boss):
+def dead_screen(screen, boss, player):
     
     if boss.q == 0:
         sounds.boss_lose.play()
@@ -841,3 +841,5 @@ def dead_screen(screen, boss):
                     quit()
                 if event.key == pygame.K_BACKSPACE:
                     boss.reborn()
+                if event.key == pygame.K_RETURN:
+                    levels.statistics(player)

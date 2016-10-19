@@ -21,8 +21,8 @@ slow_regen = 0.04
 fast_regen = 0.12
 estus_maxregen = 35
 player_roll_frames = 0
-psp_x = 620#620,9100
-psp_y = 230
+psp_x = 8000#620,9100
+psp_y = 230#230
 psp_x2 = 7800
 psp_y2 = 555
 
@@ -45,8 +45,8 @@ er1_y = er2_y = er3_y = er4_y = er5_y = eb1_y = eb2_y = eb3_y = SCREEN_HEIGHT - 
 # Bonfires
 pb1_x = 661
 pb1_y = 158
-pb2_x = 7800
-pb2_y = 475
+pb2_x = 8120
+pb2_y = 1502
 
 # Gerais
 a = b = c = d = k = e = f = 0

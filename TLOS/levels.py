@@ -80,7 +80,7 @@ class Level_01(Level):
  
         Level.__init__(self, player, enemy, screen, bonfire)
  
-        self.background = pygame.image.load("images/map1(2).png").convert()
+        self.background = pygame.image.load("images/map1(3).png").convert()
         self.background = pygame.transform.scale2x(self.background)
         self.level_limit = 9150
  
@@ -117,7 +117,31 @@ class Level_01(Level):
                  [platforms.stone_wall, 9248, 0],
                  [platforms.plat2, 9952, 548],
                  [platforms.stone_wall, 9952, 0],
-                 [platforms.stone_wall, 10909, 0],]
+                 [platforms.stone_wall, 10909, 0],
+                 [platforms.black_wall, 6912, 612],
+                 [platforms.black_wall, 8320, 612],
+                 [platforms.block1, 7584, 676],
+                 [platforms.block1, 7744, 804],
+                 [platforms.block1, 7008, 932],
+                 [platforms.block1, 7264, 932],
+                 [platforms.block1, 7584, 932],
+                 [platforms.block1, 7872, 932],
+                 [platforms.block1, 7744, 1060],
+                 [platforms.block1, 8000, 1060],
+                 [platforms.block1, 8160, 1060],
+                 [platforms.block1, 7008, 1188],
+                 [platforms.block1, 7264, 1188],
+                 [platforms.block1, 7584, 1188],
+                 [platforms.block1, 7872, 1188],
+                 [platforms.block1, 8000, 1316],
+                 [platforms.block1, 8128, 1412],
+                 [platforms.block2, 8256, 804],
+                 [platforms.block3, 7104, 804],
+                 [platforms.block3, 7360, 804],
+                 [platforms.block3, 8000, 804],
+                 [platforms.block3, 7104, 1060],
+                 [platforms.block3, 7360, 1060],
+                 [platforms.black_floor, 7904, 1572],]
  
         # Passa pelo array e adiciona plataformas
         for platform in level:

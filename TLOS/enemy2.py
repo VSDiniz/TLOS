@@ -805,7 +805,7 @@ class Enemy2(pygame.sprite.Sprite):
                 self.go_left()
             elif player.rect.centerx - 15 > self.right:
                 self.go_right()
-        if player.rect.left > self.right +400 or player.rect.right < self.left -400:
+        if player.rect.left > self.right +400 or player.rect.right < self.left -400 or player.rect.bottom >= self.rect.bottom + 10:
               self.stop()
         elif (player.rect.centerx > self.center -55 and player.rect.centerx < self.center) \
           or (player.rect.centerx < self.center +55 and player.rect.centerx > self.center):

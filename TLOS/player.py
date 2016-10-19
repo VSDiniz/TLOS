@@ -817,6 +817,7 @@ class Player(pygame.sprite.Sprite):
                 
     # Faz o player voltar a vida
     def reborn(self, cpx=None, cpy=None):
+        self.image = self.waiting_frames_r[0]
         self.live = True
         self.guard = True
         self.defending = False
@@ -826,9 +827,9 @@ class Player(pygame.sprite.Sprite):
         if cpx and cpy:
             self.rect.y -= cpy - constants.psp_y + 145
             self.rect.x -= cpx - constants.psp_x
-            self.direction = "R"
-#            if self.possible("wait"):
-#                self.rect.x += 1
+#            self.direction = "R"
+            if self.possible("wait"):
+                self.rect.y -= 10
         
     # Estabelece um delay
     def clocker(self):

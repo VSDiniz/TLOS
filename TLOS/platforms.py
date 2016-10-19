@@ -35,6 +35,8 @@ block2 = (0, 0, 64, 32)
 block3 = (0, 0, 96, 32)
 floatplat3 = (0, 0, 92, 16)
 floatplat4 = (0, 0, 128, 16)
+black_floor = (0, 0, 416, 32)
+black_wall = (0, 0, 32, 960)
 stone_wall = (0, 0, 64, 1600)
  
 class Platform(pygame.sprite.Sprite):
