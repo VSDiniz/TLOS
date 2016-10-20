@@ -14,6 +14,7 @@ player_latk1 = pygame.mixer.Sound("sounds\TLOZ\OOT_WeaponsItems\OOT_Sword1.wav")
 player_latk2 = pygame.mixer.Sound("sounds\TLOZ\OOT_WeaponsItems\OOT_Sword2.wav")
 player_hatk = pygame.mixer.Sound("sounds\TLOZ\OOT_WeaponsItems\OOT_Sword_Spin.wav")
 player_defend = pygame.mixer.Sound("sounds\TLOZ\OOT_WeaponsItems\OOT_Sword_Clang_Bombable.wav")
+player_jump = pygame.mixer.Sound("sounds\TLOZ\OOT_AdultLink\OOT_AdultLink_Jump1.wav")
 player_roll = pygame.mixer.Sound("sounds\TLOZ\OOT_AdultLink\OOT_AdultLink_Attack1.wav")
 player_dmg1 = pygame.mixer.Sound("sounds\TLOZ\OOT_AdultLink\OOT_AdultLink_Hurt1.wav")
 player_dmg2 = pygame.mixer.Sound("sounds\TLOZ\OOT_AdultLink\OOT_AdultLink_Hurt2.wav")
@@ -39,6 +40,9 @@ boss_win = pygame.mixer.Sound("sounds\TLOZ\OOT_Voices\OOT_Ganondorf_Laugh.wav")
 boss_lose = pygame.mixer.Sound("sounds\DS\Defeated_Boss.wav")
 
 # Menus
+menu_open = pygame.mixer.Sound("sounds\TLOZ\OOT_Menus\OOT_PauseMenu_Open.wav")
+menu_close = pygame.mixer.Sound("sounds\TLOZ\OOT_Menus\OOT_PauseMenu_Close.wav")
+menu_cursor = pygame.mixer.Sound("sounds\TLOZ\OOT_Menus\OOT_PauseMenu_Cursor.wav")
 
 # Others
 bonfire_active = pygame.mixer.Sound("sounds\TLOZ\OOT_WeaponsItems\OOT_Sword_Away.wav")

@@ -311,6 +311,7 @@ def main():
 #                    Button_start
                     if event.button == 9:
                         if current_level.level_limit + 10 > current_position:
+                            sounds.menu_open.play()
                             levels.instructions(player1)
                             
                 if event.type == pygame.JOYBUTTONUP:
@@ -401,6 +402,7 @@ def main():
                 # Abre a tela de instruções
                 if event.key == pygame.K_RETURN or pressed[pygame.K_KP_ENTER]:
                     if current_level.level_limit + 10 > current_position:
+                        sounds.menu_open.play()
                         levels.instructions(player1)
                         
 #                if event.key == pygame.K_q:

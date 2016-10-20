@@ -573,6 +573,7 @@ class Player(pygame.sprite.Sprite):
                             self.on_ground = True
                             self.jumping = False
                             self.change_y = 0
+                            self.n = 0
                     if self.rect.top < block.rect.bottom and (self.rect.top + 10) > block.rect.bottom:
                         if self.change_y < 0 and not self.on_ground:
                             self.rect.top = block.rect.bottom
@@ -611,6 +612,9 @@ class Player(pygame.sprite.Sprite):
         else:
             self.jumping = True
             self.change_y += .35
+            if self.n == 0:
+                sounds.player_jump.play()
+                self.n = 1
  
         # Verifica se o player está no chão
         if self.rect.y >= constants.LEVEL_BOTTOM - self.rect.height and self.change_y >= 0:

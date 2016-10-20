@@ -47,7 +47,7 @@ class Enemy2(pygame.sprite.Sprite):
         self.DEATH = 1
         self.DMG_TAKEN = 0
         self.a = self.b = self.c = self.d = self.e = self.f = self.g = self.h = self.i = \
-        self.j = self.k = self.l = self.m = self.n = self.o = self.p = self.q = 0
+        self.j = self.k = self.l = self.m = self.n = self.o = self.p = self.q = self.r = 0
         
         # Define o vetor velocidade do enemy
         self.change_x = 0
@@ -414,6 +414,9 @@ class Enemy2(pygame.sprite.Sprite):
                 self.rect.x += self.change_x
                 self.ani_walk()
         if not self.live:
+            if self.r == 0:
+                sounds.enemy_dead.play()
+                self.r = 1
             self.ani_death()
  
         # Verifica se existe colisão ao andar
@@ -654,6 +657,7 @@ class Enemy2(pygame.sprite.Sprite):
         self.health = self.maxhealth
         self.stamina = self.maxstamina
         self.DEATH = 1
+        self.r = 0
         self.image = self.waiting_frames_l[0]
         self.direction = "L"
         

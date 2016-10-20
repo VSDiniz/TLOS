@@ -5,7 +5,7 @@ Created on Thu Aug 18 08:53:45 2016
 @author: vini_
 """
 
-import pygame, constants, platforms, sys
+import pygame, constants, platforms, sounds, sys
 
 class Level():
     # Classe genérica para definir um level
@@ -357,8 +357,10 @@ def instructions(player):
                     sys.exit()#pygame.quit() # Fecha a janela se o usuário clicar em fechar
                 if event.type == pygame.JOYBUTTONDOWN:
                     if event.button == 9:
+                        sounds.menu_close.play()
                         instruct = False
                     elif (hat == ((-1,0) or (-1,1) or (-1,-1))) or (hat == ((1,0) or (1,1) or (1,-1))) or axis_lh >= 0.5 or axis_lh <= -0.5:
+                        sounds.menu_cursor.play()
                         instruct = False
                         statistics(player)
             else:            
@@ -370,8 +372,10 @@ def instructions(player):
                         sys.exit()#pygame.quit() # Fecha a janela se o usuário pressionar ALT+F4
                         
                     elif pressed[pygame.K_RETURN] or pressed[pygame.K_KP_ENTER]:
+                        sounds.menu_close.play()
                         instruct = False # Sai da tela de instruções
                     elif pressed[pygame.K_a] or pressed[pygame.K_d] or pressed[pygame.K_LEFT] or pressed[pygame.K_RIGHT]:
+                        sounds.menu_cursor.play()
                         instruct = False
                         statistics(player)
                         
@@ -442,8 +446,10 @@ def statistics(player):
                     sys.exit()#pygame.quit() # Fecha a janela se o usuário clicar em fechar
                 if event.type == pygame.JOYBUTTONDOWN:
                     if event.button == 9:
+                        sounds.menu_close.play()
                         instats = False
                     elif (hat == ((-1,0) or (-1,1) or (-1,-1))) or (hat == ((1,0) or (1,1) or (1,-1))) or axis_lh >= 0.5 or axis_lh <= -0.5:
+                        sounds.menu_cursor.play()
                         instats = False
                         instructions(player)
             else:            
@@ -455,9 +461,11 @@ def statistics(player):
                         sys.exit()#pygame.quit() # Fecha a janela se o usuário pressionar ALT+F4
                         
                     elif pressed[pygame.K_RETURN] or pressed[pygame.K_KP_ENTER]:
+                        sounds.menu_close.play()
                         instats = False # Sai da tela de instruções
                     
                     elif pressed[pygame.K_a] or pressed[pygame.K_d] or pressed[pygame.K_LEFT] or pressed[pygame.K_RIGHT]:
+                        sounds.menu_cursor.play()
                         instats = False
                         instructions(player)
     
